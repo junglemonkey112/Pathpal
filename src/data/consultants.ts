@@ -1,0 +1,820 @@
+// Using diverse avatar personas from DiceBear
+// Different ethnicities, genders, and styles
+
+export interface Consultant {
+  id: string;
+  name: string;
+  avatar: string;
+  school: string;
+  major: string;
+  gpa: string;
+  bio: string;
+  specialties: string[];
+  services: {
+    duration: number;
+    price: number;
+  }[];
+  rating: number;
+  reviewCount: number;
+  reviews: Review[];
+  availableSlots: AvailableSlot[];
+  studentSuccess: string[];
+  year: string;
+}
+
+export interface Review {
+  id: string;
+  author: string;
+  rating: number;
+  date: string;
+  content: string;
+}
+
+export interface AvailableSlot {
+  date: string;
+  times: string[];
+}
+
+// Diverse consultant data with different ethnicities, genders, backgrounds
+export const consultants: Consultant[] = [
+  {
+    id: "1",
+    name: "Alex Chen",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Alex&backgroundColor=f6e5d3",
+    school: "Harvard University",
+    major: "Computer Science",
+    gpa: "3.9",
+    bio: "Junior at Harvard CS. Helped 30+ students get into Stanford, MIT, and CMU. Expert in CS applications, resume building, and interview prep.",
+    specialties: ["College Selection", "CS Applications", "Resume", "Interview"],
+    services: [
+      { duration: 30, price: 50 },
+      { duration: 60, price: 90 },
+    ],
+    rating: 4.9,
+    reviewCount: 32,
+    reviews: [
+      {
+        id: "r1",
+        author: "Michael L.",
+        rating: 5,
+        date: "2026-02-15",
+        content: "Alex helped me so much! From school selection to interview prep, I finally got into Stanford!",
+      },
+      {
+        id: "r2",
+        author: "Jennifer W.",
+        rating: 5,
+        date: "2026-01-20",
+        content: "Very professional consultant. The resume feedback was incredibly helpful.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-19", times: ["10:00", "14:00", "16:00"] },
+      { date: "2026-03-20", times: ["09:00", "11:00", "15:00"] },
+      { date: "2026-03-21", times: ["10:00", "13:00", "18:00"] },
+      { date: "2026-03-23", times: ["14:00", "16:00", "19:00"] },
+    ],
+    studentSuccess: ["Stanford", "MIT", "CMU"],
+    year: "Junior",
+  },
+  {
+    id: "2",
+    name: "Sarah Liu",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Sarah&backgroundColor=ffdfbf",
+    school: "Stanford University",
+    major: "Economics",
+    gpa: "3.8",
+    bio: "Junior at Stanford Economics. DIY application expert. Helped students get into Harvard, Yale, and Columbia.",
+    specialties: ["College Selection", "Liberal Arts", "Essays", "Interview"],
+    services: [
+      { duration: 30, price: 45 },
+      { duration: 60, price: 80 },
+    ],
+    rating: 4.8,
+    reviewCount: 28,
+    reviews: [
+      {
+        id: "r3",
+        author: "David H.",
+        rating: 5,
+        date: "2026-02-10",
+        content: "Sarah's essay advice was amazing!",
+      },
+      {
+        id: "r4",
+        author: "Emma T.",
+        rating: 5,
+        date: "2026-01-15",
+        content: "She helped me craft a compelling personal statement that got me into Harvard!",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-19", times: ["11:00", "15:00"] },
+      { date: "2026-03-20", times: ["10:00", "14:00"] },
+    ],
+    studentSuccess: ["Harvard", "Yale", "Columbia"],
+    year: "Junior",
+  },
+  {
+    id: "3",
+    name: "James Wilson",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=James&backgroundColor=d1d4f9",
+    school: "MIT",
+    major: "Mathematics",
+    gpa: "4.0",
+    bio: "Freshman at MIT. IMO Silver Medalist. Expert in STEM applications and academic profile enhancement.",
+    specialties: ["STEM Applications", "Competitions", "Academic", "College Selection"],
+    services: [
+      { duration: 30, price: 55 },
+      { duration: 60, price: 100 },
+    ],
+    rating: 4.7,
+    reviewCount: 15,
+    reviews: [
+      {
+        id: "r5",
+        author: "Kevin L.",
+        rating: 5,
+        date: "2026-02-20",
+        content: "James helped me prepare for math competitions and I won Silver at State!",
+      },
+      {
+        id: "r6",
+        author: "Rachel M.",
+        rating: 4,
+        date: "2026-01-25",
+        content: "Great advice on STEM applications. Very knowledgeable about MIT.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-19", times: ["13:00", "17:00"] },
+      { date: "2026-03-20", times: ["08:00", "12:00"] },
+    ],
+    studentSuccess: ["MIT", "Caltech", "Princeton"],
+    year: "Freshman",
+  },
+  {
+    id: "4",
+    name: "Emily Zhang",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Emily&backgroundColor=ffd5dc",
+    school: "Yale University",
+    major: "Political Science",
+    gpa: "3.85",
+    bio: "Sophomore at Yale. Extensive experience in public policy and international relations applications.",
+    specialties: ["Liberal Arts", "Public Policy", "Essays", "Interview"],
+    services: [
+      { duration: 30, price: 40 },
+      { duration: 60, price: 75 },
+    ],
+    rating: 4.9,
+    reviewCount: 21,
+    reviews: [
+      {
+        id: "r7",
+        author: "Amanda S.",
+        rating: 5,
+        date: "2026-02-18",
+        content: "Emily's insights on Yale's culture helped me decide to apply early action.",
+      },
+      {
+        id: "r8",
+        author: "Daniel K.",
+        rating: 5,
+        date: "2026-01-30",
+        content: "Excellent essay feedback. She really helped me find my voice.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-19", times: ["09:00", "14:00"] },
+      { date: "2026-03-21", times: ["11:00", "15:00"] },
+    ],
+    studentSuccess: ["Yale", "Stanford", "Georgetown"],
+    year: "Sophomore",
+  },
+  {
+    id: "5",
+    name: "Marcus Johnson",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Marcus&backgroundColor=c1c1c1",
+    school: "Columbia University",
+    major: "Business Analytics",
+    gpa: "3.75",
+    bio: "Master's student at Columbia Business School. Expert in business school applications and career planning.",
+    specialties: ["Business School", "Career Planning", "Interview", "College Selection"],
+    services: [
+      { duration: 30, price: 45 },
+      { duration: 60, price: 85 },
+    ],
+    rating: 4.6,
+    reviewCount: 18,
+    reviews: [
+      {
+        id: "r9",
+        author: "Chris P.",
+        rating: 5,
+        date: "2026-02-12",
+        content: "Marcus's career planning advice was invaluable for my MBA application.",
+      },
+      {
+        id: "r10",
+        author: "Lisa R.",
+        rating: 4,
+        date: "2026-01-18",
+        content: "Great interview prep sessions. Felt much more confident after our mock interview.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-20", times: ["10:00", "16:00"] },
+      { date: "2026-03-22", times: ["09:00", "13:00"] },
+    ],
+    studentSuccess: ["Columbia", "Wharton", "Kellogg"],
+    year: "Master's",
+  },
+  {
+    id: "6",
+    name: "Priya Patel",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Priya&backgroundColor=ffdfbf",
+    school: "Princeton University",
+    major: "Physics",
+    gpa: "3.95",
+    bio: "Junior at Princeton Physics. Expert in engineering applications and research experience packaging.",
+    specialties: ["Engineering", "Research", "College Selection", "Essays"],
+    services: [
+      { duration: 30, price: 50 },
+      { duration: 60, price: 90 },
+    ],
+    rating: 4.8,
+    reviewCount: 24,
+    reviews: [
+      {
+        id: "r11",
+        author: "Tom H.",
+        rating: 5,
+        date: "2026-02-22",
+        content: "Priya helped me structure my research experience perfectly for my application.",
+      },
+      {
+        id: "r12",
+        author: "Nina W.",
+        rating: 5,
+        date: "2026-01-28",
+        content: "She gave amazing advice on how to present my engineering projects.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-19", times: ["15:00", "18:00"] },
+      { date: "2026-03-20", times: ["11:00", "14:00"] },
+    ],
+    studentSuccess: ["Princeton", "Stanford", "Duke"],
+    year: "Junior",
+  },
+  {
+    id: "7",
+    name: "David Kim",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=David&backgroundColor=e0e0e0",
+    school: "University of Pennsylvania",
+    major: "Computer Science",
+    gpa: "3.92",
+    bio: "Junior at UPenn CS. Specializes in helping students transition from community college to top CS programs.",
+    specialties: ["CS Applications", "Transfer Students", "College Selection", "Resume"],
+    services: [
+      { duration: 30, price: 48 },
+      { duration: 60, price: 85 },
+    ],
+    rating: 4.85,
+    reviewCount: 19,
+    reviews: [
+      {
+        id: "r13",
+        author: "Jake M.",
+        rating: 5,
+        date: "2026-02-15",
+        content: "David helped me transfer from community college to UPenn. Couldn't have done it without him!",
+      },
+      {
+        id: "r14",
+        author: "Sophia L.",
+        rating: 5,
+        date: "2026-01-22",
+        content: "Great advice on CS applications and resume building.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-19", times: ["10:00", "14:00"] },
+      { date: "2026-03-21", times: ["09:00", "15:00"] },
+    ],
+    studentSuccess: ["UPenn", "Cornell", "UMich"],
+    year: "Junior",
+  },
+  {
+    id: "8",
+    name: "Aisha Williams",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Aisha&backgroundColor=8d5524",
+    school: "Duke University",
+    major: "Biomedical Engineering",
+    gpa: "3.88",
+    bio: "Sophomore at Duke. Pre-med advisor with experience helping students get into top medical schools.",
+    specialties: ["Pre-Med", "Biomedical", "Research", "College Selection"],
+    services: [
+      { duration: 30, price: 45 },
+      { duration: 60, price: 80 },
+    ],
+    rating: 4.75,
+    reviewCount: 16,
+    reviews: [
+      {
+        id: "r15",
+        author: "Ben J.",
+        rating: 5,
+        date: "2026-02-19",
+        content: "Aisha guided me through the pre-med path and helped me get into Duke!",
+      },
+      {
+        id: "r16",
+        author: "Grace K.",
+        rating: 4,
+        date: "2026-01-26",
+        content: "Very knowledgeable about medical school requirements.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-20", times: ["11:00", "15:00"] },
+      { date: "2026-03-22", times: ["10:00", "14:00"] },
+    ],
+    studentSuccess: ["Duke", "Johns Hopkins", "Harvard"],
+    year: "Sophomore",
+  },
+  {
+    id: "9",
+    name: "Carlos Martinez",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Carlos&backgroundColor=c1c1c1",
+    school: "Cornell University",
+    major: "Computer Engineering",
+    gpa: "3.82",
+    bio: "Junior at Cornell Engineering. Expert in engineering school applications and technical interviews.",
+    specialties: ["Engineering", "Technical Interview", "CS Applications", "College Selection"],
+    services: [
+      { duration: 30, price: 42 },
+      { duration: 60, price: 75 },
+    ],
+    rating: 4.65,
+    reviewCount: 22,
+    reviews: [
+      {
+        id: "r17",
+        author: "Oscar R.",
+        rating: 5,
+        date: "2026-02-21",
+        content: "Carlos's technical interview prep was incredibly helpful for my internship hunt.",
+      },
+      {
+        id: "r18",
+        author: "Mia S.",
+        rating: 4,
+        date: "2026-01-20",
+        content: "Great guidance on engineering school applications.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-19", times: ["09:00", "13:00"] },
+      { date: "2026-03-21", times: ["14:00", "17:00"] },
+    ],
+    studentSuccess: ["Cornell", "Gatech", "UCLA"],
+    year: "Junior",
+  },
+  {
+    id: "10",
+    name: "Olivia Brown",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Olivia&backgroundColor=ffd5dc",
+    school: "Brown University",
+    major: "Comparative Literature",
+    gpa: "3.91",
+    bio: "Junior at Brown. Expert in humanities applications and creative writing for college essays.",
+    specialties: ["Humanities", "Creative Writing", "Essays", "College Selection"],
+    services: [
+      { duration: 30, price: 44 },
+      { duration: 60, price: 78 },
+    ],
+    rating: 4.88,
+    reviewCount: 17,
+    reviews: [
+      {
+        id: "r19",
+        author: "Olivia M.",
+        rating: 5,
+        date: "2026-02-17",
+        content: "Olivia's creative writing tips transformed my essay completely!",
+      },
+      {
+        id: "r20",
+        author: "Henry T.",
+        rating: 5,
+        date: "2026-01-24",
+        content: "She helped me find my unique voice for the personal statement.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-20", times: ["10:00", "16:00"] },
+      { date: "2026-03-22", times: ["11:00", "15:00"] },
+    ],
+    studentSuccess: ["Brown", "Yale", "Columbia"],
+    year: "Junior",
+  },
+  {
+    id: "11",
+    name: "Kenji Tanaka",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Kenji&backgroundColor=ffe0bd",
+    school: "UC Berkeley",
+    major: "Electrical Engineering",
+    gpa: "3.78",
+    bio: "Junior at UC Berkeley EECS. Expert in helping international students with US college applications.",
+    specialties: ["International Students", "Engineering", "College Selection", "Interview"],
+    services: [
+      { duration: 30, price: 40 },
+      { duration: 60, price: 72 },
+    ],
+    rating: 4.7,
+    reviewCount: 25,
+    reviews: [
+      {
+        id: "r21",
+        author: "Yuki T.",
+        rating: 5,
+        date: "2026-02-23",
+        content: "Kenji's advice for international students was priceless. Got into Stanford!",
+      },
+      {
+        id: "r22",
+        author: "Wei L.",
+        rating: 4,
+        date: "2026-01-29",
+        content: "Great help with application strategy and interview prep.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-19", times: ["08:00", "12:00"] },
+      { date: "2026-03-21", times: ["09:00", "14:00"] },
+    ],
+    studentSuccess: ["UC Berkeley", "Stanford", "UCLA"],
+    year: "Junior",
+  },
+  {
+    id: "12",
+    name: "Amara Johnson",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Amara&backgroundColor=8d5524",
+    school: "Northwestern University",
+    major: "Journalism",
+    gpa: "3.87",
+    bio: "Sophomore at Northwestern Medill. Expert in communications and journalism school applications.",
+    specialties: ["Journalism", "Communications", "Essays", "Interview"],
+    services: [
+      { duration: 30, price: 43 },
+      { duration: 60, price: 76 },
+    ],
+    rating: 4.82,
+    reviewCount: 14,
+    reviews: [
+      {
+        id: "r23",
+        author: "Taylor S.",
+        rating: 5,
+        date: "2026-02-16",
+        content: "Amara helped me craft a compelling narrative for my journalism application!",
+      },
+      {
+        id: "r24",
+        author: "Jordan P.",
+        rating: 4,
+        date: "2026-01-21",
+        content: "Great advice on portfolio preparation for media schools.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-20", times: ["13:00", "17:00"] },
+      { date: "2026-03-22", times: ["10:00", "15:00"] },
+    ],
+    studentSuccess: ["Northwestern", "Columbia", "USC"],
+    year: "Sophomore",
+  },
+  {
+    id: "13",
+    name: "Ryan Chen",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Ryan&backgroundColor=f6e5d3",
+    school: "Carnegie Mellon University",
+    major: "Robotics",
+    gpa: "3.95",
+    bio: "Junior at CMU Robotics Institute. Expert in STEM applications with focus on robotics and AI programs.",
+    specialties: ["Robotics", "AI/ML", "STEM Applications", "Research"],
+    services: [
+      { duration: 30, price: 52 },
+      { duration: 60, price: 95 },
+    ],
+    rating: 4.92,
+    reviewCount: 20,
+    reviews: [
+      {
+        id: "r25",
+        author: "Alex W.",
+        rating: 5,
+        date: "2026-02-24",
+        content: "Ryan's robotics program insights helped me get into CMU!",
+      },
+      {
+        id: "r26",
+        author: "Diana C.",
+        rating: 5,
+        date: "2026-01-27",
+        content: "Excellent guidance on research experience and applications.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-19", times: ["11:00", "15:00"] },
+      { date: "2026-03-21", times: ["10:00", "14:00"] },
+    ],
+    studentSuccess: ["CMU", "MIT", "Stanford"],
+    year: "Junior",
+  },
+  {
+    id: "14",
+    name: "Chloe Kim",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Chloe&backgroundColor=ffdfbf",
+    school: "University of Chicago",
+    major: "Economics",
+    gpa: "3.89",
+    bio: "Junior at UChicago. Expert in economics and business school preparation with quantitative focus.",
+    specialties: ["Economics", "Business", "Quantitative", "College Selection"],
+    services: [
+      { duration: 30, price: 46 },
+      { duration: 60, price: 82 },
+    ],
+    rating: 4.78,
+    reviewCount: 18,
+    reviews: [
+      {
+        id: "r27",
+        author: "Brian L.",
+        rating: 5,
+        date: "2026-02-14",
+        content: "Chloe's quantitative focus helped me strengthen my economics application.",
+      },
+      {
+        id: "r28",
+        author: "Anna M.",
+        rating: 4,
+        date: "2026-01-19",
+        content: "Great insights on business school preparation.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-20", times: ["09:00", "13:00"] },
+      { date: "2026-03-22", times: ["14:00", "18:00"] },
+    ],
+    studentSuccess: ["UChicago", "Columbia", "Duke"],
+    year: "Junior",
+  },
+  {
+    id: "15",
+    name: "Malik Thompson",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Malik&backgroundColor=c1c1c1",
+    school: "Johns Hopkins University",
+    major: "Neuroscience",
+    gpa: "3.93",
+    bio: "Sophomore at JHU. Pre-med advisor specializing in medical school preparation and research.",
+    specialties: ["Pre-Med", "Neuroscience", "Research", "Medical School"],
+    services: [
+      { duration: 30, price: 48 },
+      { duration: 60, price: 86 },
+    ],
+    rating: 4.85,
+    reviewCount: 12,
+    reviews: [
+      {
+        id: "r29",
+        author: "Sarah K.",
+        rating: 5,
+        date: "2026-02-11",
+        content: "Malik's pre-med guidance was amazing. Got into Johns Hopkins!",
+      },
+      {
+        id: "r30",
+        author: "Michael R.",
+        rating: 5,
+        date: "2026-01-16",
+        content: "Very helpful with research opportunities and medical school apps.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-19", times: ["10:00", "14:00"] },
+      { date: "2026-03-21", times: ["11:00", "16:00"] },
+    ],
+    studentSuccess: ["Johns Hopkins", "Harvard", "Stanford"],
+    year: "Sophomore",
+  },
+  {
+    id: "16",
+    name: "Sophie Martin",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Sophie&backgroundColor=ffd5dc",
+    school: "UCLA",
+    major: "Film and Television",
+    gpa: "3.76",
+    bio: "Junior at UCLA Film School. Expert in arts school applications and portfolio preparation.",
+    specialties: ["Film School", "Arts Portfolio", "Creative", "College Selection"],
+    services: [
+      { duration: 30, price: 42 },
+      { duration: 60, price: 75 },
+    ],
+    rating: 4.72,
+    reviewCount: 16,
+    reviews: [
+      {
+        id: "r31",
+        author: "Chris B.",
+        rating: 5,
+        date: "2026-02-13",
+        content: "Sophie's portfolio advice got me into UCLA Film School!",
+      },
+      {
+        id: "r32",
+        author: "Ashley T.",
+        rating: 4,
+        date: "2026-01-23",
+        content: "Great help with creative projects and application strategy.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-20", times: ["12:00", "16:00"] },
+      { date: "2026-03-22", times: ["10:00", "14:00"] },
+    ],
+    studentSuccess: ["UCLA", "USC", "NYU"],
+    year: "Junior",
+  },
+  {
+    id: "17",
+    name: "Omar Hassan",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Omar&backgroundColor=e0c0a8",
+    school: "Georgetown University",
+    major: "International Economics",
+    gpa: "3.84",
+    bio: "Junior at Georgetown. Expert in international relations and policy school applications.",
+    specialties: ["International Relations", "Policy", "Economics", "College Selection"],
+    services: [
+      { duration: 30, price: 44 },
+      { duration: 60, price: 78 },
+    ],
+    rating: 4.68,
+    reviewCount: 11,
+    reviews: [
+      {
+        id: "r33",
+        author: "David L.",
+        rating: 5,
+        date: "2026-02-08",
+        content: "Omar's international relations insights helped me get into Georgetown!",
+      },
+      {
+        id: "r34",
+        author: "Maria S.",
+        rating: 4,
+        date: "2026-01-14",
+        content: "Excellent guidance on policy school applications.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-19", times: ["09:00", "13:00"] },
+      { date: "2026-03-21", times: ["15:00", "18:00"] },
+    ],
+    studentSuccess: ["Georgetown", "Syracuse", "Harvard"],
+    year: "Junior",
+  },
+  {
+    id: "18",
+    name: "Zoe Anderson",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Zoe&backgroundColor=ffd5dc",
+    school: "Vanderbilt University",
+    major: "Education Policy",
+    gpa: "3.81",
+    bio: "Sophomore at Vanderbilt. Expert in education policy and social impact career paths.",
+    specialties: ["Education Policy", "Social Impact", "Essays", "Career Planning"],
+    services: [
+      { duration: 30, price: 38 },
+      { duration: 60, price: 68 },
+    ],
+    rating: 4.8,
+    reviewCount: 9,
+    reviews: [
+      {
+        id: "r35",
+        author: "Emma R.",
+        rating: 5,
+        date: "2026-02-09",
+        content: "Zoe's education policy expertise helped me find my path!",
+      },
+      {
+        id: "r36",
+        author: "Jason K.",
+        rating: 4,
+        date: "2026-01-12",
+        content: "Great essay feedback and career guidance.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-20", times: ["10:00", "14:00"] },
+      { date: "2026-03-22", times: ["11:00", "15:00"] },
+    ],
+    studentSuccess: ["Vanderbilt", "Harvard Ed", "Stanford"],
+    year: "Sophomore",
+  },
+  {
+    id: "19",
+    name: "Tyler Wang",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Tyler&backgroundColor=f6e5d3",
+    school: "University of Michigan",
+    major: "Data Science",
+    gpa: "3.86",
+    bio: "Junior at UMich Data Science. Expert in data science and analytics program applications.",
+    specialties: ["Data Science", "Analytics", "CS Applications", "College Selection"],
+    services: [
+      { duration: 30, price: 45 },
+      { duration: 60, price: 80 },
+    ],
+    rating: 4.75,
+    reviewCount: 13,
+    reviews: [
+      {
+        id: "r37",
+        author: "Peter N.",
+        rating: 5,
+        date: "2026-02-07",
+        content: "Tyler's data science advice was crucial for my applications!",
+      },
+      {
+        id: "r38",
+        author: "Linda W.",
+        rating: 4,
+        date: "2026-01-11",
+        content: "Very helpful with analytics programs and career paths.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-19", times: ["08:00", "12:00"] },
+      { date: "2026-03-21", times: ["09:00", "13:00"] },
+    ],
+    studentSuccess: ["UMich", "Columbia", "UCLA"],
+    year: "Junior",
+  },
+  {
+    id: "20",
+    name: "Isabella Reyes",
+    avatar: "https://api.dicebear.com/7.x/personas/svg?seed=Isabella&backgroundColor=ffdfbf",
+    school: "NYU",
+    major: "Global Liberal Arts",
+    gpa: "3.79",
+    bio: "Sophomore at NYU Gallatin. Expert in interdisciplinary studies and unique college paths.",
+    specialties: ["Interdisciplinary", "Liberal Arts", "Essays", "College Selection"],
+    services: [
+      { duration: 30, price: 40 },
+      { duration: 60, price: 72 },
+    ],
+    rating: 4.82,
+    reviewCount: 15,
+    reviews: [
+      {
+        id: "r39",
+        author: "Rosa M.",
+        rating: 5,
+        date: "2026-02-06",
+        content: "Isabella helped me find my unique interdisciplinary path to NYU!",
+      },
+      {
+        id: "r40",
+        author: "Tom H.",
+        rating: 5,
+        date: "2026-01-10",
+        content: "Great advice on crafting a distinctive college application.",
+      },
+    ],
+    availableSlots: [
+      { date: "2026-03-20", times: ["11:00", "15:00"] },
+      { date: "2026-03-22", times: ["10:00", "14:00"] },
+    ],
+    studentSuccess: ["NYU", "Brown", "Wake Forest"],
+    year: "Sophomore",
+  },
+];
+
+export const schools = [
+  "Harvard University",
+  "Stanford University",
+  "MIT",
+  "Yale University",
+  "Princeton University",
+  "Columbia University",
+  "University of Pennsylvania",
+  "Cornell University",
+  "Duke University",
+  "Northwestern University",
+  "University of Chicago",
+  "Johns Hopkins University",
+  "Brown University",
+  "UC Berkeley",
+  "UCLA",
+];
