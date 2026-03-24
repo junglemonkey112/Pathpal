@@ -1295,7 +1295,6 @@ export const consultants: Consultant[] = [
     school: "Johns Hopkins University",
     major: "Biomedical Engineering",
     gpa: "3.9",
-    minGPA: 3.39,
     minGPA: 3.5,
     bio: "Junior at JHU BME. Expert in pre-med engineering and medical school preparation.",
     specialties: ["Biomedical Engineering", "Pre-Med", "Research", "College Selection"],
