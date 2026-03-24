@@ -46,7 +46,6 @@ export const consultants: Consultant[] = [
     major: "Computer Science",
     gpa: "3.9",
     minGPA: 3.5,
-    minGPA: 3.5,
     bio: "Junior at Harvard CS. Helped 30+ students get into Stanford, MIT, and CMU. Expert in CS applications, resume building, and interview prep.",
     specialties: ["College Selection", "CS Applications", "Resume", "Interview"],
     services: [
