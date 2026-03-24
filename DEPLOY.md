@@ -1,7 +1,9 @@
 # PathPal Deployment
 
 ## 外网访问地址
-https://robert-coordinates-sizes-consistency.trycloudflare.com
+https://companion-problems-mid-carbon.trycloudflare.com (2026-03-21)
+https://yet-flat-contacting-purpose.trycloudflare.com (2026-03-21)
+https://robert-coordinates-sizes-consistency.trycloudflare.com (历史)
 
 ## 启动命令
 ```bash

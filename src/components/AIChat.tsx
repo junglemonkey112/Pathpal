@@ -148,7 +148,7 @@ export default function AIChat() {
         <div className="flex items-center gap-2">
           <GraduationCap className="w-5 h-5" />
           <span className="font-semibold">PathPal AI</span>
-          <span className="text-xs bg-emerald-500 px-2 py-0.5 rounded-full">免费</span>
+          <span className="text-xs bg-emerald-500 px-2 py-0.5 rounded-full">Free</span>
         </div>
         <button onClick={() => setIsOpen(false)} className="hover:bg-white/10 p-1 rounded">
           <X className="w-5 h-5" />
@@ -207,7 +207,7 @@ export default function AIChat() {
             onClick={() => setIsOpen(false)}
             className="block text-center text-xs text-emerald-600 hover:text-emerald-700 mt-2"
           >
-            成为顾问 →
+            Become a Consultant →
           </Link>
         )}
       </div>

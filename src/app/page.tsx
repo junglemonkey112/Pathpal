@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Star, GraduationCap, ChevronRight, Sparkles, FileText, Calendar, Video, CheckCircle2, ArrowRight, SlidersHorizontal, X } from "lucide-react";
+import { Search, Star, GraduationCap, ChevronRight, Sparkles, FileText, Calendar, Video, CheckCircle2, ArrowRight, SlidersHorizontal, X, MessageCircle, Heart, Award, Plus, Menu } from "lucide-react";
 import { consultants } from "@/data/consultants";
 import { clsx } from "clsx";
 import { UserProvider } from "@/context/UserContext";
 import AIChat from "@/components/AIChat";
+import { samplePosts, Post } from "@/data/forum";
 
 // Interest options
 const interests = [
@@ -199,6 +200,40 @@ export default function Home() {
   const [sortBy, setSortBy] = useState<"rating" | "price-asc" | "price-desc">("rating");
   const [showAllConsultants, setShowAllConsultants] = useState(false);
 
+  // Mobile menu state
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // Forum posts state
+  const [forumPosts, setForumPosts] = useState<Post[]>(samplePosts);
+
+  // Load forum posts from localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("forum_posts");
+      if (stored) {
+        const storedPosts = JSON.parse(stored).map((p: any) => ({
+          ...p,
+          createdAt: new Date(p.createdAt),
+          comments: p.comments?.map((c: any) => ({
+            ...c,
+            createdAt: new Date(c.createdAt),
+            replies: c.replies?.map((r: any) => ({
+              ...r,
+              createdAt: new Date(r.createdAt)
+            })) || []
+          })) || []
+        }));
+        
+        const allPosts = [...storedPosts, ...samplePosts].sort((a, b) => 
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setForumPosts(allPosts);
+      }
+    } catch (e) {
+      console.error("Failed to load forum posts:", e);
+    }
+  }, []);
+
   // Toggle interest
   const toggleInterest = (id: string) => {
     setSelectedInterests(prev => 
@@ -212,8 +247,13 @@ export default function Home() {
       let score = 0;
       let reasons: string[] = [];
       
-      // Budget filter
-      if (!budgetUnlimited && c.services[0].price > budget) {
+      // Budget filter (using 60-min session price)
+      if (!budgetUnlimited && c.services[1].price > budget) {
+        return null;
+      }
+      
+      // GPA filter - user's GPA must meet consultant's minimum requirement
+      if (gpa && parseFloat(gpa) < c.minGPA) {
         return null;
       }
       
@@ -270,7 +310,7 @@ export default function Home() {
 
   const displayedConsultants = showAllConsultants
     ? consultants
-    : matchedConsultants;
+    : matchedConsultants.slice(0, 5);
 
   const filteredConsultants = displayedConsultants
     .filter((c: any) => {
@@ -314,15 +354,64 @@ export default function Home() {
             
             <nav className="hidden md:flex items-center gap-8">
               <button onClick={() => setShowAllConsultants(true)} className="text-slate-600 hover:text-slate-900 font-medium">All Consultants</button>
+              <Link href="/forum" className="text-slate-600 hover:text-slate-900 font-medium">Community</Link>
               <a href="#how-it-works" className="text-slate-600 hover:text-slate-900 font-medium">How It Works</a>
               <a href="#success-stories" className="text-slate-600 hover:text-slate-900 font-medium">Success Stories</a>
             </nav>
 
-            <Link href="/become-consultant" className="bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm">
+            <Link href="/become-consultant" className="hidden md:block bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm">
+              Become a Consultant
+            </Link>
+            
+            {/* Mobile Menu Button */}
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 text-slate-600"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
+        
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-3">
+            <button 
+              onClick={() => { setShowAllConsultants(true); setMobileMenuOpen(false); }}
+              className="block w-full text-left text-slate-600 hover:text-slate-900 font-medium py-2"
+            >
+              All Consultants
+            </button>
+            <Link 
+              href="/forum" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="block text-slate-600 hover:text-slate-900 font-medium py-2"
+            >
+              Community
+            </Link>
+            <a 
+              href="#how-it-works" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="block text-slate-600 hover:text-slate-900 font-medium py-2"
+            >
+              How It Works
+            </a>
+            <a 
+              href="#success-stories" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="block text-slate-600 hover:text-slate-900 font-medium py-2"
+            >
+              Success Stories
+            </a>
+            <Link 
+              href="/become-consultant" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="block bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm text-center"
+            >
               Become a Consultant
             </Link>
           </div>
-        </div>
+        )}
       </header>
 
       {/* Quick Finder Hero */}
@@ -377,7 +466,7 @@ export default function Home() {
             {/* Row 2: Budget Slider */}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
-                Budget per session 
+                Budget per session within 
                 {budgetUnlimited ? <span className="text-emerald-400 ml-2">(No limit)</span> : <span className="ml-2">${budget}</span>}
               </label>
               <div className="flex items-center gap-4">
@@ -400,7 +489,7 @@ export default function Home() {
                     budgetUnlimited ? "bg-emerald-500 text-slate-900" : "bg-white/10 text-slate-400 hover:text-white"
                   )}
                 >
-                  Doesn't matter
+                  Any
                 </button>
               </div>
             </div>
@@ -704,6 +793,72 @@ export default function Home() {
                 <p className="text-sm text-slate-600">{item.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Community Forum Preview */}
+      <section className="py-12 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Community</h2>
+              <p className="text-slate-600">Connect with peers and consultants</p>
+            </div>
+            <Link 
+              href="/forum" 
+              className="text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1"
+            >
+              View All <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {forumPosts.slice(0, 3).map((post) => (
+              <Link 
+                key={post.id} 
+                href={`/forum/${post.id}`}
+                className="bg-white rounded-xl border border-slate-200 p-4 hover:shadow-lg hover:border-slate-300 transition-all"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm">
+                    {post.author.avatar}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-medium text-slate-900 text-sm truncate">{post.author.name}</span>
+                      {post.author.isConsultant && (
+                        <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded-full flex-shrink-0">
+                          <Award className="w-2.5 h-2.5" />
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <h3 className="font-semibold text-slate-900 mb-2 line-clamp-2 text-sm md:text-base">{post.title}</h3>
+                <p className="text-slate-600 text-sm line-clamp-2 mb-3">{post.content}</p>
+                <div className="flex items-center gap-3 text-xs text-slate-500">
+                  <span className="flex items-center gap-1">
+                    <Heart className="w-3.5 h-3.5" />
+                    {post.likes}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <MessageCircle className="w-3.5 h-3.5" />
+                    {post.comments.length}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="mt-6 text-center">
+            <Link 
+              href="/forum/new"
+              className="inline-flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm"
+            >
+              <Plus className="w-4 h-4" />
+              Start a Discussion
+            </Link>
           </div>
         </div>
       </section>
