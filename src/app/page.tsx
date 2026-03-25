@@ -1,185 +1,28 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 import Link from "next/link";
-import { Search, Star, GraduationCap, ChevronRight, Sparkles, FileText, Calendar, Video, CheckCircle2, ArrowRight, SlidersHorizontal, X, MessageCircle, Heart, Award, Plus, Menu } from "lucide-react";
-import { consultants } from "@/data/consultants";
+import { Search, GraduationCap, ChevronRight, Sparkles, FileText, Calendar, Video, SlidersHorizontal, X, Menu, LogOut, User } from "lucide-react";
+import { consultants, Consultant } from "@/data/consultants";
 import { clsx } from "clsx";
-import { UserProvider } from "@/context/UserContext";
 import AIChat from "@/components/AIChat";
+import ConsultantCard from "@/components/ConsultantCard";
+import ForumPreview from "@/components/ForumPreview";
 import { samplePosts, Post } from "@/data/forum";
+import { getRecommendedSchools, getRecommendedMajors } from "@/data/universities";
+import { INTERESTS, GRADE_LEVELS } from "@/lib/constants";
+import type { SortOption } from "@/lib/constants";
+import { useUser } from "@/context/UserContext";
 
-// Interest options
-const interests = [
-  { id: "stem", label: "STEM", icon: "🔬" },
-  { id: "business", label: "Business", icon: "💼" },
-  { id: "arts", label: "Arts", icon: "🎨" },
-  { id: "social", label: "Social Sciences", icon: "🌍" },
-  { id: "health", label: "Health/Pre-Med", icon: "🏥" },
-  { id: "humanities", label: "Humanities", icon: "📚" },
-];
-
-// US Universities with tiers and GPA requirements
-// Tier 1: Most selective (3.8+)
-// Tier 2: Very selective (3.5+)
-// Tier 3: Selective (3.2+)
-// Tier 4: Moderate (3.0+)
-const universities = [
-  // Tier 1 - Most Selective
-  { name: "Harvard University", tier: 1, labels: ["business", "stem", "social", "health"] },
-  { name: "Stanford University", tier: 1, labels: ["stem", "business", "arts"] },
-  { name: "MIT", tier: 1, labels: ["stem"] },
-  { name: "Yale University", tier: 1, labels: ["arts", "humanities", "social"] },
-  { name: "Princeton University", tier: 1, labels: ["stem", "humanities"] },
-  { name: "Columbia University", tier: 1, labels: ["business", "arts", "stem"] },
-  { name: "University of Chicago", tier: 1, labels: ["stem", "business", "humanities"] },
-  { name: "University of Pennsylvania", tier: 1, labels: ["business", "stem", "social"] },
-  { name: "Caltech", tier: 1, labels: ["stem"] },
-  { name: "Brown University", tier: 1, labels: ["humanities", "arts", "social"] },
-  { name: "Duke University", tier: 1, labels: ["sports", "health", "business"] },
-  { name: "Northwestern University", tier: 1, labels: ["business", "stem", "arts"] },
-  { name: "Cornell University", tier: 1, labels: ["stem", "business", "health"] },
-  { name: "Johns Hopkins University", tier: 1, labels: ["health", "stem", "social"] },
-  { name: "Rice University", tier: 1, labels: ["stem", "arts", "humanities"] },
-  { name: "Vanderbilt University", tier: 1, labels: ["social", "health", "business"] },
-  { name: "Notre Dame", tier: 1, labels: ["business", "humanities", "social"] },
-  { name: "Georgetown University", tier: 1, labels: ["social", "business", "humanities"] },
-  { name: "Carnegie Mellon", tier: 1, labels: ["stem", "business", "arts"] },
-  { name: "University of California, Berkeley", tier: 1, labels: ["stem", "business"] },
-  { name: "University of California, Los Angeles", tier: 1, labels: ["arts", "business", "stem"] },
-  { name: "University of Michigan", tier: 1, labels: ["business", "stem", "health"] },
-  { name: "University of Southern California", tier: 1, labels: ["arts", "business", "stem"] },
-  { name: "NYU", tier: 1, labels: ["arts", "business", "social"] },
-  
-  // Tier 2 - Very Selective
-  { name: "Emory University", tier: 2, labels: ["health", "business", "social"] },
-  { name: "Washington University in St. Louis", tier: 2, labels: ["business", "stem", "health"] },
-  { name: "University of Virginia", tier: 2, labels: ["business", "humanities", "social"] },
-  { name: "Georgia Tech", tier: 2, labels: ["stem", "business"] },
-  { name: "University of Florida", tier: 2, labels: ["business", "stem", "health"] },
-  { name: "University of North Carolina at Chapel Hill", tier: 2, labels: ["health", "social", "business"] },
-  { name: "University of Texas at Austin", tier: 2, labels: ["business", "stem", "arts"] },
-  { name: "Boston College", tier: 2, labels: ["business", "humanities", "social"] },
-  { name: "Boston University", tier: 2, labels: ["arts", "business", "health"] },
-  { name: "College of William & Mary", tier: 2, labels: ["humanities", "social", "stem"] },
-  { name: "Wake Forest University", tier: 2, labels: ["business", "health", "humanities"] },
-  { name: "University of Wisconsin-Madison", tier: 2, labels: ["stem", "business", "social"] },
-  { name: "University of Washington", tier: 2, labels: ["stem", "health", "business"] },
-  { name: "University of Illinois at Urbana-Champaign", tier: 2, labels: ["stem", "business"] },
-  { name: "Ohio State University", tier: 2, labels: ["stem", "business", "health"] },
-  { name: "University of Maryland", tier: 2, labels: ["stem", "business", "social"] },
-  { name: "University of Rochester", tier: 2, labels: ["stem", "arts", "health"] },
-  { name: "Case Western Reserve University", tier: 2, labels: ["stem", "health", "business"] },
-  { name: "Tulane University", tier: 2, labels: ["business", "health", "social"] },
-  { name: "University of Georgia", tier: 2, labels: ["business", "social", "arts"] },
-  
-  // Tier 3 - Selective
-  { name: "University of Miami", tier: 3, labels: ["business", "arts", "health"] },
-  { name: "University of Colorado Boulder", tier: 3, labels: ["stem", "arts", "business"] },
-  { name: "University of Minnesota Twin Cities", tier: 3, labels: ["stem", "business", "health"] },
-  { name: "University of Pittsburgh", tier: 3, labels: ["health", "business", "stem"] },
-  { name: "University of Arizona", tier: 3, labels: ["stem", "arts", "social"] },
-  { name: "University of Utah", tier: 3, labels: ["stem", "health", "arts"] },
-  { name: "Arizona State University", tier: 3, labels: ["stem", "business", "arts"] },
-  { name: "University of California, Davis", tier: 3, labels: ["stem", "health", "arts"] },
-  { name: "University of California, San Diego", tier: 3, labels: ["stem", "health", "social"] },
-  { name: "University of California, Irvine", tier: 3, labels: ["stem", "business", "arts"] },
-  { name: "University of California, Santa Barbara", tier: 3, labels: ["stem", "arts", "social"] },
-  { name: "University of California, Santa Cruz", tier: 3, labels: ["stem", "arts", "humanities"] },
-  { name: "Penn State University", tier: 3, labels: ["stem", "business", "social"] },
-  { name: "Rutgers University", tier: 3, labels: ["stem", "business", "health"] },
-  { name: "University of Connecticut", tier: 3, labels: ["business", "health", "stem"] },
-  { name: "University of Iowa", tier: 3, labels: ["business", "health", "arts"] },
-  { name: "University of Kansas", tier: 3, labels: ["business", "health", "arts"] },
-  { name: "University of Nebraska-Lincoln", tier: 3, labels: ["business", "stem", "arts"] },
-  { name: "University of Oklahoma", tier: 3, labels: ["business", "social", "arts"] },
-  { name: "University of Tennessee", tier: 3, labels: ["business", "health", "social"] },
-  
-  // Tier 4 - Moderate
-  { name: "University of South Florida", tier: 4, labels: ["business", "health", "arts"] },
-  { name: "University of Louisville", tier: 4, labels: ["health", "business", "arts"] },
-  { name: "University of Arkansas", tier: 4, labels: ["business", "stem", "social"] },
-  { name: "University of Mississippi", tier: 4, labels: ["business", "social", "arts"] },
-  { name: "University of Nevada, Las Vegas", tier: 4, labels: ["business", "arts", "social"] },
-  { name: "University of New Mexico", tier: 4, labels: ["arts", "social", "health"] },
-  { name: "University of Alaska Anchorage", tier: 4, labels: ["stem", "social", "arts"] },
-  { name: "University of Hawaii at Manoa", tier: 4, labels: ["arts", "social", "stem"] },
-];
-
-// Get universities by tier
-const getTierGPA = (tier: number) => {
-  switch(tier) {
-    case 1: return "3.8+";
-    case 2: return "3.5+";
-    case 3: return "3.2+";
-    case 4: return "3.0+";
-    default: return "3.0+";
-  }
-};
-
-// Map interests to recommended majors
-const interestToMajors: Record<string, string[]> = {
-  stem: ["Computer Science", "Electrical Engineering", "Data Science", "Mathematics"],
-  business: ["Business Analytics", "Economics", "Finance", "Marketing"],
-  arts: ["Visual Arts", "Film & Media", "Music", "Design"],
-  social: ["International Relations", "Political Science", "Sociology", "Psychology"],
-  health: ["Biology", "Neuroscience", "Pre-Medicine", "Public Health"],
-  humanities: ["Literature", "History", "Philosophy", "Comparative Literature"],
-};
-
-// Get recommended majors based on interests
-const getRecommendedMajors = (selectedInterests: string[]) => {
-  if (selectedInterests.length === 0) {
-    return ["Explore majors →"];
-  }
-  
-  // Collect all majors from selected interests
-  const majors: string[] = [];
-  selectedInterests.forEach(interest => {
-    if (interestToMajors[interest]) {
-      majors.push(...interestToMajors[interest]);
-    }
-  });
-  
-  // Return unique majors, limited to 3
-  return [...new Set(majors)].slice(0, 3);
-};
-
-// Get recommended schools based on interests and GPA
-const getRecommendedSchools = (selectedInterests: string[], userGPA?: string) => {
-  let filtered = universities;
-  
-  // Filter by GPA if provided
-  if (userGPA) {
-    const gpaThreshold = parseFloat(userGPA);
-    filtered = universities.filter(u => u.tier <= 4 - Math.floor(gpaThreshold - 2.5));
-  }
-  
-  if (selectedInterests.length === 0) return filtered.slice(0, 3).map(s => s.name);
-  
-  // Score each school based on matching labels
-  const scored = filtered.map(school => {
-    const matchCount = school.labels.filter(label => selectedInterests.includes(label)).length;
-    return { ...school, matchCount };
-  }).sort((a, b) => b.matchCount - a.matchCount);
-  
-  // Return top 3 matched schools (no GPA shown)
-  return scored.slice(0, 3).map(s => s.name);
-};
-
-// Grade levels
-const grades = ["Grade 9", "Grade 10", "Grade 11", "Grade 12"];
-
-// Budget options
-const budgetOptions = [
-  { label: "< $30", value: 30 },
-  { label: "$30-50", value: 50 },
-  { label: "$50-80", value: 80 },
-  { label: "$80-100", value: 100 },
-  { label: "$100+", value: 150 },
-];
+interface MatchedConsultant {
+  consultant: Consultant;
+  score: number;
+  reasons: string[];
+}
 
 export default function Home() {
+  const { user, signOut, isLoading: authLoading } = useUser();
+
   // Quick finder state
   const [grade, setGrade] = useState("");
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
@@ -187,79 +30,80 @@ export default function Home() {
   const [budgetUnlimited, setBudgetUnlimited] = useState(false);
   const [currentSchool, setCurrentSchool] = useState("");
   const [gpa, setGpa] = useState("");
-  
+
   // Deep match state
   const [showDeepMatch, setShowDeepMatch] = useState(false);
   const [targetMajor, setTargetMajor] = useState("");
   const [targetSchools, setTargetSchools] = useState<string[]>([]);
-  const [gpaRange, setGpaRange] = useState("");
-  
+
   // Search state
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSchool, setSelectedSchool] = useState("");
-  const [sortBy, setSortBy] = useState<"rating" | "price-asc" | "price-desc">("rating");
+  const [sortBy, setSortBy] = useState<SortOption>("rating");
   const [showAllConsultants, setShowAllConsultants] = useState(false);
 
   // Mobile menu state
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+
   // Forum posts state
   const [forumPosts, setForumPosts] = useState<Post[]>(samplePosts);
 
   // Load forum posts from localStorage
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem("forum_posts");
-      if (stored) {
-        const storedPosts = JSON.parse(stored).map((p: any) => ({
-          ...p,
-          createdAt: new Date(p.createdAt),
-          comments: p.comments?.map((c: any) => ({
-            ...c,
-            createdAt: new Date(c.createdAt),
-            replies: c.replies?.map((r: any) => ({
-              ...r,
-              createdAt: new Date(r.createdAt)
-            })) || []
-          })) || []
-        }));
-        
-        const allPosts = [...storedPosts, ...samplePosts].sort((a, b) => 
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-        setForumPosts(allPosts);
+    startTransition(() => {
+      try {
+        const stored = localStorage.getItem("forum_posts");
+        if (stored) {
+          const storedPosts = JSON.parse(stored).map((p: Post) => ({
+            ...p,
+            createdAt: new Date(p.createdAt),
+            comments: (p.comments ?? []).map((c) => ({
+              ...c,
+              createdAt: new Date(c.createdAt),
+              replies: (c.replies ?? []).map((r) => ({
+                ...r,
+                createdAt: new Date(r.createdAt)
+              }))
+            }))
+          }));
+
+          const allPosts = [...storedPosts, ...samplePosts].sort((a: Post, b: Post) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+          setForumPosts(allPosts);
+        }
+      } catch (e) {
+        console.error("Failed to load forum posts:", e);
       }
-    } catch (e) {
-      console.error("Failed to load forum posts:", e);
-    }
+    });
   }, []);
 
   // Toggle interest
   const toggleInterest = (id: string) => {
-    setSelectedInterests(prev => 
+    setSelectedInterests(prev =>
       prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
     );
   };
 
   // Simple matching logic
-  const getMatchedConsultants = () => {
-    let matched = consultants.map(c => {
+  const getMatchedConsultants = (): MatchedConsultant[] => {
+    return consultants.map(c => {
       let score = 0;
-      let reasons: string[] = [];
-      
+      const reasons: string[] = [];
+
       // Budget filter (using 60-min session price)
       if (!budgetUnlimited && c.services[1].price > budget) {
         return null;
       }
-      
-      // GPA filter - user's GPA must meet consultant's minimum requirement
+
+      // GPA filter
       if (gpa && parseFloat(gpa) < c.minGPA) {
         return null;
       }
-      
+
       // Interest match
-      const interestMatch = c.specialties.filter(s => 
-        selectedInterests.some(i => 
+      const interestMatch = c.specialties.filter(s =>
+        selectedInterests.some(i =>
           (i === "stem" && (s.includes("CS") || s.includes("Engineering") || s.includes("STEM") || s.includes("Math") || s.includes("Science"))) ||
           (i === "business" && (s.includes("Business") || s.includes("Economics"))) ||
           (i === "arts" && (s.includes("Arts") || s.includes("Creative") || s.includes("Film") || s.includes("Design"))) ||
@@ -268,74 +112,77 @@ export default function Home() {
           (i === "humanities" && (s.includes("Literature") || s.includes("History") || s.includes("Humanities") || s.includes("Philosophy")))
         )
       );
-      
+
       if (interestMatch.length > 0) {
         score += interestMatch.length * 20;
         reasons.push(interestMatch[0]);
       }
-      
+
       // Deep match: target major
       if (showDeepMatch && targetMajor) {
-        if (c.major.toLowerCase().includes(targetMajor.toLowerCase()) || 
+        if (c.major.toLowerCase().includes(targetMajor.toLowerCase()) ||
             c.specialties.some(s => s.toLowerCase().includes(targetMajor.toLowerCase()))) {
           score += 30;
-          reasons.push("匹配目标专业");
+          reasons.push("Matches target major");
         }
       }
-      
+
       // Deep match: target schools
       if (showDeepMatch && targetSchools.length > 0) {
-        const schoolMatch = targetSchools.some(s => 
+        const schoolMatch = targetSchools.some(s =>
           c.studentSuccess.some(ss => ss.toLowerCase().includes(s.toLowerCase()))
         );
         if (schoolMatch) {
           score += 25;
-          reasons.push("有目标校经验");
+          reasons.push("Experience with target school");
         }
       }
-      
+
       // Current school boost (same school alumni)
       if (currentSchool && c.school.toLowerCase().includes(currentSchool.toLowerCase())) {
         score += 15;
-        reasons.push("同校学长学姐");
+        reasons.push("Same school alumni");
       }
-      
+
       return { consultant: c, score, reasons: reasons.slice(0, 2) };
-    }).filter(Boolean).sort((a: any, b: any) => b.score - a.score);
-    
-    return matched;
+    }).filter((item): item is MatchedConsultant => item !== null)
+      .sort((a, b) => b.score - a.score);
   };
 
   const matchedConsultants = getMatchedConsultants();
 
-  const displayedConsultants = showAllConsultants
+  const displayedConsultants: (MatchedConsultant | Consultant)[] = showAllConsultants
     ? consultants
     : matchedConsultants.slice(0, 5);
 
+  const getConsultantData = (item: MatchedConsultant | Consultant) => {
+    if ("consultant" in item) {
+      return { consultant: item.consultant, score: item.score, reasons: item.reasons };
+    }
+    return { consultant: item, score: 0, reasons: [] as string[] };
+  };
+
   const filteredConsultants = displayedConsultants
-    .filter((c: any) => {
-      const consultant = 'consultant' in c ? c.consultant : c;
+    .filter((c) => {
+      const { consultant } = getConsultantData(c);
       const matchesSearch =
         consultant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         consultant.school.toLowerCase().includes(searchQuery.toLowerCase()) ||
         consultant.major.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        consultant.specialties.some((s: string) => s.toLowerCase().includes(searchQuery.toLowerCase()));
+        consultant.specialties.some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()));
       const matchesSchool = !selectedSchool || consultant.school === selectedSchool;
       return matchesSearch && matchesSchool;
     })
-    .sort((a: any, b: any) => {
-      const consultantA = 'consultant' in a ? a.consultant : a;
-      const consultantB = 'consultant' in b ? b.consultant : b;
-      const scoreA = 'score' in a ? a.score : 0;
-      const scoreB = 'score' in b ? b.score : 0;
-      
-      // Default to sorting by match score when showing recommendations
+    .sort((a, b) => {
+      const dataA = getConsultantData(a);
+      const dataB = getConsultantData(b);
+
       if (!showAllConsultants && sortBy === "rating") {
-        return scoreB - scoreA;
+        return dataB.score - dataA.score;
       }
-      if (sortBy === "rating") return consultantB.rating - consultantA.rating;
-      if (sortBy === "price-asc") return consultantA.services[0].price - consultantB.services[0].price;
-      if (sortBy === "price-desc") return consultantB.services[0].price - consultantA.services[0].price;
+      if (sortBy === "rating") return dataB.consultant.rating - dataA.consultant.rating;
+      if (sortBy === "price-asc") return dataA.consultant.services[0].price - dataB.consultant.services[0].price;
+      if (sortBy === "price-desc") return dataB.consultant.services[0].price - dataA.consultant.services[0].price;
       return 0;
     });
 
@@ -351,7 +198,7 @@ export default function Home() {
               </div>
               <span className="text-xl font-bold text-slate-900">PathPal</span>
             </Link>
-            
+
             <nav className="hidden md:flex items-center gap-8">
               <button onClick={() => setShowAllConsultants(true)} className="text-slate-600 hover:text-slate-900 font-medium">All Consultants</button>
               <Link href="/forum" className="text-slate-600 hover:text-slate-900 font-medium">Community</Link>
@@ -359,12 +206,42 @@ export default function Home() {
               <a href="#success-stories" className="text-slate-600 hover:text-slate-900 font-medium">Success Stories</a>
             </nav>
 
-            <Link href="/become-consultant" className="hidden md:block bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm">
-              Become a Consultant
-            </Link>
-            
-            {/* Mobile Menu Button */}
-            <button 
+            <div className="hidden md:flex items-center gap-3">
+              {user ? (
+                <>
+                  <Link href="/become-consultant" className="text-slate-600 hover:text-slate-900 font-medium text-sm">
+                    Become a Consultant
+                  </Link>
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg">
+                    <User className="w-4 h-4 text-slate-600" />
+                    <span className="text-sm font-medium text-slate-700 max-w-[120px] truncate">
+                      {user.user_metadata?.full_name || user.email?.split("@")[0]}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => signOut()}
+                    className="text-slate-500 hover:text-slate-700 p-2 rounded-lg hover:bg-slate-100 transition-colors"
+                    title="Sign out"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/become-consultant" className="text-slate-600 hover:text-slate-900 font-medium text-sm">
+                    Become a Consultant
+                  </Link>
+                  <Link href="/login" className="text-slate-600 hover:text-slate-900 font-medium text-sm">
+                    Sign In
+                  </Link>
+                  <Link href="/signup" className="bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm">
+                    Sign Up
+                  </Link>
+                </>
+              )}
+            </div>
+
+            <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden p-2 text-slate-600"
             >
@@ -372,44 +249,34 @@ export default function Home() {
             </button>
           </div>
         </div>
-        
-        {/* Mobile Menu */}
+
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-3">
-            <button 
+            <button
               onClick={() => { setShowAllConsultants(true); setMobileMenuOpen(false); }}
               className="block w-full text-left text-slate-600 hover:text-slate-900 font-medium py-2"
             >
               All Consultants
             </button>
-            <Link 
-              href="/forum" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block text-slate-600 hover:text-slate-900 font-medium py-2"
-            >
-              Community
-            </Link>
-            <a 
-              href="#how-it-works" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block text-slate-600 hover:text-slate-900 font-medium py-2"
-            >
-              How It Works
-            </a>
-            <a 
-              href="#success-stories" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block text-slate-600 hover:text-slate-900 font-medium py-2"
-            >
-              Success Stories
-            </a>
-            <Link 
-              href="/become-consultant" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm text-center"
-            >
+            <Link href="/forum" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">Community</Link>
+            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">How It Works</a>
+            <a href="#success-stories" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">Success Stories</a>
+            <Link href="/become-consultant" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">
               Become a Consultant
             </Link>
+            {user ? (
+              <button
+                onClick={() => { signOut(); setMobileMenuOpen(false); }}
+                className="block w-full text-left text-slate-600 hover:text-slate-900 font-medium py-2"
+              >
+                Sign Out
+              </button>
+            ) : (
+              <>
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">Sign In</Link>
+                <Link href="/signup" onClick={() => setMobileMenuOpen(false)} className="block bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm text-center">Sign Up</Link>
+              </>
+            )}
           </div>
         )}
       </header>
@@ -426,9 +293,8 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Quick Form */}
           <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 md:p-6 space-y-5">
-            {/* Row 1: Grade + Interests */}
+            {/* Grade + Interests */}
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">Grade Level *</label>
@@ -438,13 +304,13 @@ export default function Home() {
                   className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 >
                   <option value="" className="text-slate-900">Select your grade</option>
-                  {grades.map(g => <option key={g} value={g} className="text-slate-900">{g}</option>)}
+                  {GRADE_LEVELS.map(g => <option key={g} value={g} className="text-slate-900">{g}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">Interests *</label>
                 <div className="flex flex-wrap gap-2">
-                  {interests.map(item => (
+                  {INTERESTS.map(item => (
                     <button
                       key={item.id}
                       onClick={() => toggleInterest(item.id)}
@@ -463,10 +329,10 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Row 2: Budget Slider */}
+            {/* Budget Slider */}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
-                Budget per session within 
+                Budget per session within
                 {budgetUnlimited ? <span className="text-emerald-400 ml-2">(No limit)</span> : <span className="ml-2">${budget}</span>}
               </label>
               <div className="flex items-center gap-4">
@@ -494,7 +360,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Row 3: GPA (Optional) */}
+            {/* GPA */}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
                 GPA <span className="text-slate-500">(Optional - helps filter target schools)</span>
@@ -522,7 +388,6 @@ export default function Home() {
               <ChevronRight className={clsx("w-4 h-4 transition-transform", showDeepMatch && "rotate-90")} />
             </button>
 
-            {/* Deep Match Section */}
             {showDeepMatch && (
               <div className="bg-black/20 rounded-xl p-4 space-y-4 animate-in slide-in-from-top-2">
                 <div>
@@ -556,10 +421,7 @@ export default function Home() {
                   />
                 </div>
                 <button
-                  onClick={() => {
-                    setTargetMajor("");
-                    setTargetSchools([]);
-                  }}
+                  onClick={() => { setTargetMajor(""); setTargetSchools([]); }}
                   className="text-xs text-slate-500 hover:text-slate-300"
                 >
                   Clear advanced options
@@ -570,10 +432,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Results or All Consultants */}
+      {/* Results */}
       <section className="py-8 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Summary - show when user has entered any criteria OR just has interests selected */}
+          {/* Match Summary */}
           {(selectedInterests.length > 0 || grade) && (
             <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-4 md:p-6 mb-6 text-white">
               <div className="flex items-center gap-2 mb-3">
@@ -590,9 +452,9 @@ export default function Home() {
                 <div>
                   <span className="text-emerald-100">Target Schools</span>
                   <div className="font-semibold text-lg">
-                    {targetSchools.length > 0 
+                    {targetSchools.length > 0
                       ? targetSchools.slice(0, 3).join(", ") + (targetSchools.length > 3 ? "..." : "")
-                      : targetMajor 
+                      : targetMajor
                         ? targetMajor
                         : getRecommendedSchools(selectedInterests, gpa).join(", ")}
                   </div>
@@ -618,14 +480,12 @@ export default function Home() {
                 <span className="text-sm text-slate-500">({matchedConsultants.length} matched)</span>
               )}
             </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setShowAllConsultants(!showAllConsultants)}
-                className="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
-              >
-                {showAllConsultants ? "Show matched only" : "View all"}
-              </button>
-            </div>
+            <button
+              onClick={() => setShowAllConsultants(!showAllConsultants)}
+              className="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+            >
+              {showAllConsultants ? "Show matched only" : "View all"}
+            </button>
           </div>
 
           {/* Search & Filter */}
@@ -653,7 +513,7 @@ export default function Home() {
               </select>
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
+                onChange={(e) => setSortBy(e.target.value as SortOption)}
                 className="px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900"
               >
                 <option value="rating">Top Rated</option>
@@ -665,89 +525,15 @@ export default function Home() {
 
           {/* Consultant Grid */}
           <div className="grid gap-4">
-            {filteredConsultants.map((item: any) => {
-              const consultant = 'consultant' in item ? item.consultant : item;
-              const matchScore = 'score' in item ? item.score : null;
-              const reasons = 'reasons' in item ? item.reasons : [];
-
+            {filteredConsultants.map((item) => {
+              const { consultant, score, reasons } = getConsultantData(item);
               return (
-                <Link
+                <ConsultantCard
                   key={consultant.id}
-                  href={`/consultant/${consultant.id}`}
-                  className="group bg-white rounded-2xl border border-slate-200 p-4 md:p-6 hover:shadow-xl hover:border-slate-300 transition-all duration-200"
-                >
-                  <div className="flex gap-4 md:gap-6">
-                    <div className="relative flex-shrink-0">
-                      <img
-                        src={consultant.avatar}
-                        alt={consultant.name}
-                        className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-slate-100 object-cover"
-                      />
-                      {matchScore && matchScore > 0 && (
-                        <div className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                          {matchScore}%
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2 md:gap-3 mb-1">
-                            <h3 className="text-lg font-semibold text-slate-900 group-hover:text-emerald-600 transition-colors">
-                              {consultant.name}
-                            </h3>
-                            <span className="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded-full">{consultant.year}</span>
-                          </div>
-                          <p className="text-slate-600">{consultant.school}</p>
-                          <p className="text-sm text-slate-500">{consultant.major} · GPA {consultant.gpa}</p>
-                        </div>
-                        <div className="text-right flex-shrink-0">
-                          <p className="text-xl md:text-2xl font-bold text-slate-900">${consultant.services[0].price}</p>
-                          <p className="text-slate-500 text-sm">/{consultant.services[0].duration}min</p>
-                        </div>
-                      </div>
-
-                      <p className="text-slate-600 mt-2 md:mt-3 line-clamp-2 text-sm md:text-base">{consultant.bio}</p>
-
-                      {reasons.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mt-3">
-                          {reasons.map((reason: string, idx: number) => (
-                            <span key={idx} className="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded-lg">
-                              {reason}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-
-                      <div className="flex flex-wrap gap-2 mt-3 md:mt-4">
-                        {consultant.specialties.slice(0, 4).map((specialty: string) => (
-                          <span key={specialty} className="px-2 md:px-3 py-1 bg-slate-100 text-slate-600 text-xs md:text-sm rounded-full">
-                            {specialty}
-                          </span>
-                        ))}
-                      </div>
-
-                      <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
-                        <div className="flex items-center gap-3 md:gap-4">
-                          <div className="flex items-center gap-1">
-                            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                            <span className="font-semibold text-slate-900 text-sm md:text-base">{consultant.rating}</span>
-                            <span className="text-slate-500 text-sm">({consultant.reviewCount})</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-emerald-600">
-                            <CheckCircle2 className="w-4 h-4" />
-                            <span className="text-sm font-medium hidden md:inline">{consultant.studentSuccess.slice(0, 2).join(", ")}</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-900 font-medium group-hover:translate-x-1 transition-transform text-sm md:text-base">
-                          <span>View Profile</span>
-                          <ChevronRight className="w-4 h-4" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
+                  consultant={consultant}
+                  matchScore={score > 0 ? score : undefined}
+                  reasons={reasons}
+                />
               );
             })}
           </div>
@@ -798,70 +584,7 @@ export default function Home() {
       </section>
 
       {/* Community Forum Preview */}
-      <section className="py-12 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Community</h2>
-              <p className="text-slate-600">Connect with peers and consultants</p>
-            </div>
-            <Link 
-              href="/forum" 
-              className="text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1"
-            >
-              View All <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {forumPosts.slice(0, 3).map((post) => (
-              <Link 
-                key={post.id} 
-                href={`/forum/${post.id}`}
-                className="bg-white rounded-xl border border-slate-200 p-4 hover:shadow-lg hover:border-slate-300 transition-all"
-              >
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm">
-                    {post.author.avatar}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-medium text-slate-900 text-sm truncate">{post.author.name}</span>
-                      {post.author.isConsultant && (
-                        <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded-full flex-shrink-0">
-                          <Award className="w-2.5 h-2.5" />
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <h3 className="font-semibold text-slate-900 mb-2 line-clamp-2 text-sm md:text-base">{post.title}</h3>
-                <p className="text-slate-600 text-sm line-clamp-2 mb-3">{post.content}</p>
-                <div className="flex items-center gap-3 text-xs text-slate-500">
-                  <span className="flex items-center gap-1">
-                    <Heart className="w-3.5 h-3.5" />
-                    {post.likes}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <MessageCircle className="w-3.5 h-3.5" />
-                    {post.comments.length}
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          <div className="mt-6 text-center">
-            <Link 
-              href="/forum/new"
-              className="inline-flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm"
-            >
-              <Plus className="w-4 h-4" />
-              Start a Discussion
-            </Link>
-          </div>
-        </div>
-      </section>
+      <ForumPreview posts={forumPosts} />
 
       {/* Success Stories */}
       <section id="success-stories" className="py-16 bg-slate-900 text-white">
@@ -881,7 +604,7 @@ export default function Home() {
             ].map((story, idx) => (
               <div key={idx} className="bg-white/5 rounded-2xl p-6 hover:bg-white/10 transition-colors">
                 <div className="text-4xl mb-4">{story.avatar}</div>
-                <p className="text-slate-300 mb-4">"{story.quote}"</p>
+                <p className="text-slate-300 mb-4">&ldquo;{story.quote}&rdquo;</p>
                 <div>
                   <div className="font-semibold">{story.name}</div>
                   <div className="text-emerald-400 text-sm">Accepted to {story.school}</div>
@@ -902,7 +625,7 @@ export default function Home() {
               </div>
               <span className="text-lg font-bold text-slate-900">PathPal</span>
             </div>
-            <p className="text-slate-500 text-sm">© 2026 PathPal. All rights reserved.</p>
+            <p className="text-slate-500 text-sm">&copy; 2026 PathPal. All rights reserved.</p>
           </div>
         </div>
       </footer>

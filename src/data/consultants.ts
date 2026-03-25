@@ -8,7 +8,7 @@ export interface Consultant {
   school: string;
   major: string;
   gpa: string;
-  minGPA: number; // 最低GPA要求
+  minGPA: number;
   bio: string;
   specialties: string[];
   services: {

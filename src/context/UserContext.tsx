@@ -1,6 +1,8 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createClient } from "@/lib/supabase/client";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 export interface UserProfile {
   grade: string;
@@ -14,6 +16,13 @@ export interface UserProfile {
 }
 
 interface UserContextType {
+  // Auth
+  user: SupabaseUser | null;
+  isLoading: boolean;
+  signIn: (email: string, password: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, name: string) => Promise<{ error: string | null }>;
+  signOut: () => Promise<void>;
+  // Profile
   profile: UserProfile | null;
   setProfile: (profile: UserProfile) => void;
   showOnboarding: boolean;
@@ -25,13 +34,62 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [isOnboarded, setIsOnboarded] = useState(true); // Default to true, no quiz modal
+  const [isOnboarded, setIsOnboarded] = useState(true);
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    // Check initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setIsLoading(false);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+        setIsLoading(false);
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const signIn = async (email: string, password: string) => {
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error: error?.message ?? null };
+  };
+
+  const signUp = async (email: string, password: string, name: string) => {
+    const supabase = createClient();
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { full_name: name } },
+    });
+    return { error: error?.message ?? null };
+  };
+
+  const signOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    setUser(null);
+  };
 
   return (
     <UserContext.Provider
       value={{
+        user,
+        isLoading,
+        signIn,
+        signUp,
+        signOut,
         profile,
         setProfile,
         showOnboarding,

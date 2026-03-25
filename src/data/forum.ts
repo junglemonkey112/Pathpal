@@ -29,13 +29,23 @@ export interface Comment {
   replies: Comment[];
 }
 
-// Current user (mock)
-export const currentUser: User = {
-  id: "user-1",
-  name: "Bruce",
+// Default guest user (used when not authenticated)
+export const guestUser: User = {
+  id: "guest",
+  name: "Guest",
   avatar: "👤",
   isConsultant: false,
 };
+
+// Create a user object from auth data
+export function createAuthUser(id: string, name: string): User {
+  return {
+    id,
+    name,
+    avatar: "👤",
+    isConsultant: false,
+  };
+}
 
 // Sample users
 export const sampleUsers: User[] = [
@@ -130,10 +140,10 @@ export const samplePosts: Post[] = [
 ];
 
 // Helper functions
-export function createPost(title: string, content: string, images: string[] = []): Post {
+export function createPost(title: string, content: string, images: string[] = [], author?: User): Post {
   return {
     id: `post-${Date.now()}`,
-    author: currentUser,
+    author: author ?? guestUser,
     title,
     content,
     images,
@@ -144,10 +154,10 @@ export function createPost(title: string, content: string, images: string[] = []
   };
 }
 
-export function createComment(content: string): Comment {
+export function createComment(content: string, author?: User): Comment {
   return {
     id: `comment-${Date.now()}`,
-    author: currentUser,
+    author: author ?? guestUser,
     content,
     createdAt: new Date(),
     likes: 0,

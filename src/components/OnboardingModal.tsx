@@ -302,9 +302,9 @@ export default function OnboardingModal() {
               </div>
 
               <div className="bg-indigo-50 rounded-2xl p-4 mt-6">
-                <h4 className="font-semibold text-indigo-900 mb-2">🎉 You're All Set!</h4>
+                <h4 className="font-semibold text-indigo-900 mb-2">You&apos;re All Set!</h4>
                 <p className="text-sm text-indigo-700">
-                  We'll match you with the best consultants based on your profile.
+                  We&apos;ll match you with the best consultants based on your profile.
                 </p>
               </div>
             </div>

@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { GraduationCap, ArrowLeft, Heart, MessageCircle, Award, Send, CornerDownRight } from "lucide-react";
-import { Post, Comment, samplePosts, currentUser, createComment } from "@/data/forum";
+import { Post, Comment, samplePosts, guestUser, createAuthUser, createComment } from "@/data/forum";
 import { clsx } from "clsx";
+import { useUser } from "@/context/UserContext";
 
 function formatTimeAgo(date: Date): string {
   const now = new Date();
@@ -147,14 +148,41 @@ export default function PostDetailPage() {
   const [post, setPost] = useState<Post | null>(null);
   const [newComment, setNewComment] = useState("");
   const [liked, setLiked] = useState(false);
+  const { user } = useUser();
+
+  const currentAuthor = user
+    ? createAuthUser(user.id, user.user_metadata?.full_name || user.email?.split("@")[0] || "User")
+    : guestUser;
 
   useEffect(() => {
-    // Try to get from window first, then sample data
-    const windowPosts = (window as any).__forumPosts as Post[] | undefined;
-    const allPosts = windowPosts || samplePosts;
-    const found = allPosts.find(p => p.id === postId);
+    // Try localStorage first, then sample data
+    try {
+      const stored = localStorage.getItem("forum_posts");
+      if (stored) {
+        const storedPosts: Post[] = JSON.parse(stored).map((p: Post) => ({
+          ...p,
+          createdAt: new Date(p.createdAt),
+          comments: (p.comments ?? []).map((c: Comment) => ({
+            ...c,
+            createdAt: new Date(c.createdAt),
+            replies: (c.replies ?? []).map((r: Comment) => ({
+              ...r,
+              createdAt: new Date(r.createdAt)
+            }))
+          }))
+        }));
+        const found = storedPosts.find(p => p.id === postId);
+        if (found) {
+          startTransition(() => setPost(found));
+          return;
+        }
+      }
+    } catch {
+      // fallthrough to sample data
+    }
+    const found = samplePosts.find(p => p.id === postId);
     if (found) {
-      setPost(found);
+      startTransition(() => setPost(found));
     }
   }, [postId]);
 
@@ -170,7 +198,7 @@ export default function PostDetailPage() {
   const handleAddComment = () => {
     if (!newComment.trim() || !post) return;
 
-    const comment = createComment(newComment);
+    const comment = createComment(newComment, currentAuthor);
     setPost({
       ...post,
       comments: [...post.comments, comment]
@@ -186,7 +214,7 @@ export default function PostDetailPage() {
         if (comment.id === parentId) {
           return {
             ...comment,
-            replies: [...comment.replies, createComment(content)]
+            replies: [...comment.replies, createComment(content, currentAuthor)]
           };
         }
         if (comment.replies.length > 0) {
@@ -301,7 +329,7 @@ export default function PostDetailPage() {
           {/* Comment Input */}
           <div className="flex gap-3 mb-6">
             <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-xl flex-shrink-0">
-              {currentUser.avatar}
+              {currentAuthor.avatar}
             </div>
             <div className="flex-1 flex gap-2">
               <input
