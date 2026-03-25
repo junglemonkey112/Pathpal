@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, startTransition, ReactNode } from "react";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 
@@ -42,13 +42,13 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
-      setIsLoading(false);
+      startTransition(() => setIsLoading(false));
       return;
     }
 
     const supabase = createClient();
     if (!supabase) {
-      setIsLoading(false);
+      startTransition(() => setIsLoading(false));
       return;
     }
 

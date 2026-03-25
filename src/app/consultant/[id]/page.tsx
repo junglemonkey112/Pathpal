@@ -2,30 +2,43 @@
 
 import { use, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Star, Calendar, Video, Check, Menu, X } from "lucide-react";
+import { ArrowLeft, Star, Calendar, Video, Check, LogIn } from "lucide-react";
 import { consultants } from "@/data/consultants";
 import { clsx } from "clsx";
+import { useUser } from "@/context/UserContext";
 
 export default function ConsultantPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const consultant = consultants.find((c) => c.id === resolvedParams.id);
-  
+  const { user } = useUser();
+
   const [selectedService, setSelectedService] = useState(consultant?.services[0]);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [bookingStep, setBookingStep] = useState(1);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   if (!consultant) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Consultant not found</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="text-6xl mb-4">🔍</div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Consultant not found</h2>
+          <p className="text-gray-500 mb-4">This consultant profile doesn&apos;t exist or has been removed.</p>
+          <Link href="/" className="text-indigo-600 hover:text-indigo-700 font-medium">
+            ← Browse all consultants
+          </Link>
+        </div>
       </div>
     );
   }
 
   const handleBooking = () => {
+    if (!user) {
+      setShowBookingModal(true);
+      setBookingStep(0); // Auth required step
+      return;
+    }
     setShowBookingModal(true);
     setBookingStep(1);
   };
@@ -99,11 +112,24 @@ export default function ConsultantPage({ params }: { params: Promise<{ id: strin
                   ))}
                 </div>
               </div>
+
+              {consultant.studentSuccess.length > 0 && (
+                <div className="mt-5 md:mt-6">
+                  <h2 className="font-semibold text-gray-900 mb-2 md:mb-3">Students Accepted To</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {consultant.studentSuccess.map((school) => (
+                      <span key={school} className="px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-sm font-medium">
+                        {school}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Reviews */}
             <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6">
-              <h2 className="font-semibold text-gray-900 mb-4">Reviews</h2>
+              <h2 className="font-semibold text-gray-900 mb-4">Reviews ({consultant.reviewCount})</h2>
               {consultant.reviews.length > 0 ? (
                 <div className="space-y-4">
                   {consultant.reviews.map((review) => (
@@ -131,7 +157,6 @@ export default function ConsultantPage({ params }: { params: Promise<{ id: strin
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <div className="text-4xl mb-2">💬</div>
                   <p className="text-gray-500">No reviews yet</p>
                   <p className="text-gray-400 text-sm mt-1">Be the first to leave a review</p>
                 </div>
@@ -141,7 +166,6 @@ export default function ConsultantPage({ params }: { params: Promise<{ id: strin
 
           {/* Right Column - Booking */}
           <div className="space-y-4 md:space-y-6 order-1 md:order-2">
-            {/* Services */}
             <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6 sticky top-20">
               <h2 className="font-semibold text-gray-900 mb-4">Services</h2>
               <div className="space-y-3">
@@ -173,7 +197,7 @@ export default function ConsultantPage({ params }: { params: Promise<{ id: strin
                   <Calendar className="w-4 h-4 text-gray-400" />
                   <h3 className="font-medium text-gray-900 text-sm">Available Slots</h3>
                 </div>
-                
+
                 {consultant.availableSlots.length > 0 ? (
                   <div className="space-y-3 max-h-64 overflow-y-auto">
                     {consultant.availableSlots.slice(0, 5).map((slot) => (
@@ -214,9 +238,9 @@ export default function ConsultantPage({ params }: { params: Promise<{ id: strin
                 {selectedService && selectedDate && selectedTime && (
                   <button
                     onClick={handleBooking}
-                    className="w-full mt-5 md:mt-6 bg-indigo-600 text-white py-3 md:py-3.5 rounded-xl hover:bg-indigo-700 transition-colors font-semibold shadow-lg hover:shadow-xl active:scale-[0.98] transition-transform"
+                    className="w-full mt-5 md:mt-6 bg-indigo-600 text-white py-3 md:py-3.5 rounded-xl hover:bg-indigo-700 transition-colors font-semibold shadow-lg hover:shadow-xl active:scale-[0.98]"
                   >
-                    Book Now
+                    {user ? "Book Now" : "Sign in to Book"}
                   </button>
                 )}
               </div>
@@ -229,6 +253,39 @@ export default function ConsultantPage({ params }: { params: Promise<{ id: strin
       {showBookingModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-sm w-full p-5 md:p-6 mx-4">
+            {/* Auth required step */}
+            {bookingStep === 0 && (
+              <div className="text-center">
+                <div className="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <LogIn className="w-7 h-7 text-indigo-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Sign in to book</h3>
+                <p className="text-gray-600 text-sm mb-6">
+                  Create a free account to book sessions with {consultant.name}.
+                </p>
+                <div className="flex gap-3">
+                  <Link
+                    href="/login"
+                    className="flex-1 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-medium text-center"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="flex-1 py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 font-medium text-center"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+                <button
+                  onClick={() => setShowBookingModal(false)}
+                  className="mt-3 text-sm text-gray-500 hover:text-gray-700"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
+
             {bookingStep === 1 && (
               <>
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Confirm Booking</h3>
@@ -270,30 +327,28 @@ export default function ConsultantPage({ params }: { params: Promise<{ id: strin
             )}
 
             {bookingStep === 2 && (
-              <>
-                <div className="text-center">
-                  <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Check className="w-7 h-7 text-green-600" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Booking Confirmed!</h3>
-                  <p className="text-gray-600 text-sm mb-6">
-                    Your session has been booked. The consultant will contact you soon.
-                  </p>
-                  <button
-                    onClick={handleJoinCall}
-                    className="w-full py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 flex items-center justify-center gap-2 font-medium shadow-lg mb-3"
-                  >
-                    <Video className="w-5 h-5" />
-                    Join Video Call
-                  </button>
-                  <button
-                    onClick={() => setShowBookingModal(false)}
-                    className="w-full py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 font-medium"
-                  >
-                    Close
-                  </button>
+              <div className="text-center">
+                <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Check className="w-7 h-7 text-green-600" />
                 </div>
-              </>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Booking Confirmed!</h3>
+                <p className="text-gray-600 text-sm mb-6">
+                  Your session with {consultant.name} has been booked. You&apos;ll receive a confirmation email shortly.
+                </p>
+                <button
+                  onClick={handleJoinCall}
+                  className="w-full py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 flex items-center justify-center gap-2 font-medium shadow-lg mb-3"
+                >
+                  <Video className="w-5 h-5" />
+                  Join Video Call
+                </button>
+                <button
+                  onClick={() => setShowBookingModal(false)}
+                  className="w-full py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 font-medium"
+                >
+                  Close
+                </button>
+              </div>
             )}
           </div>
         </div>

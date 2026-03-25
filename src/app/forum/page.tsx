@@ -67,9 +67,9 @@ export default function ForumPage() {
               <span className="text-xl font-bold text-slate-900">PathPal</span>
             </Link>
             
-            <nav className="flex items-center gap-6">
-              <Link href="/forum" className="text-emerald-600 font-semibold">Community</Link>
-              <Link href="/become-consultant" className="text-slate-600 hover:text-slate-900 font-medium">Become a Consultant</Link>
+            <nav className="flex items-center gap-4 md:gap-6">
+              <Link href="/forum" className="text-emerald-600 font-semibold text-sm md:text-base">Community</Link>
+              <Link href="/become-consultant" className="hidden sm:block text-slate-600 hover:text-slate-900 font-medium text-sm md:text-base">Become a Consultant</Link>
             </nav>
           </div>
         </div>
@@ -77,17 +77,18 @@ export default function ForumPage() {
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         {/* Forum Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">Community</h1>
-            <p className="text-slate-600">Ask questions, share experiences, connect with peers and consultants</p>
+        <div className="flex items-center justify-between mb-6 gap-4">
+          <div className="min-w-0">
+            <h1 className="text-xl md:text-2xl font-bold text-slate-900">Community</h1>
+            <p className="text-slate-600 text-sm md:text-base hidden sm:block">Ask questions, share experiences, connect with peers</p>
           </div>
-          <Link 
+          <Link
             href="/forum/new"
-            className="bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm flex items-center gap-2"
+            className="bg-slate-900 text-white px-4 md:px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm flex items-center gap-2 flex-shrink-0"
           >
             <Plus className="w-4 h-4" />
-            New Post
+            <span className="hidden sm:inline">New Post</span>
+            <span className="sm:hidden">Post</span>
           </Link>
         </div>
 

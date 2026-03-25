@@ -50,6 +50,8 @@ const timeSlots = [
 
 export default function BecomeConsultant() {
   const [step, setStep] = useState(1);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     role: "",
     fullName: "",
@@ -103,10 +105,34 @@ export default function BecomeConsultant() {
     }
   };
 
+  const validateStep = (targetStep: number): boolean => {
+    const newErrors: Record<string, string> = {};
+    if (targetStep === 2) {
+      if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
+      if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        newErrors.email = "Please enter a valid email address";
+      }
+      if (!formData.city) newErrors.city = "Please select a city";
+      if (formData.role === "counselor" && !formData.company.trim()) newErrors.company = "Company is required";
+      if (formData.role === "peer" && !formData.school.trim()) newErrors.school = "School is required";
+    }
+    if (targetStep === 3) {
+      if (formData.services.length === 0) newErrors.services = "Select at least one service";
+      if (formData.availability.length === 0) newErrors.availability = "Select at least one time slot";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (step === 2 && !validateStep(2)) return;
+    setStep(step + 1);
+  };
+
   const handleSubmit = () => {
-    // Save to localStorage for demo
+    if (!validateStep(3)) return;
     localStorage.setItem("consultantProfile", JSON.stringify(formData));
-    alert("Profile submitted successfully! We'll review and get back to you.");
+    setSubmitted(true);
   };
 
   return (
@@ -122,6 +148,23 @@ export default function BecomeConsultant() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-8">
+        {/* Success State */}
+        {submitted && (
+          <div className="text-center py-16">
+            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Check className="w-8 h-8 text-emerald-600" />
+            </div>
+            <h1 className="text-2xl font-bold text-slate-900 mb-2">Application Submitted!</h1>
+            <p className="text-slate-600 mb-6">
+              We&apos;ll review your profile and get back to you within 24-48 hours.
+            </p>
+            <Link href="/" className="bg-slate-900 text-white px-6 py-3 rounded-xl hover:bg-slate-800 transition-colors font-medium">
+              Back to Home
+            </Link>
+          </div>
+        )}
+
+        {!submitted && <>
         {/* Progress */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
@@ -190,9 +233,10 @@ export default function BecomeConsultant() {
                     type="text"
                     value={formData.fullName}
                     onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className={clsx("w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500", errors.fullName ? "border-red-300" : "border-slate-200")}
                     placeholder="John Smith"
                   />
+                  {errors.fullName && <p className="text-red-500 text-xs mt-1">{errors.fullName}</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Preferred Name</label>
@@ -215,6 +259,7 @@ export default function BecomeConsultant() {
                   className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   placeholder="john@example.com"
                 />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
               </div>
 
               <div>
@@ -381,7 +426,7 @@ export default function BecomeConsultant() {
           )}
           {step < totalSteps ? (
             <button
-              onClick={() => setStep(step + 1)}
+              onClick={handleNext}
               disabled={!canProceed()}
               className={clsx(
                 "flex-1 py-3 rounded-xl font-medium flex items-center justify-center gap-2",
@@ -408,6 +453,7 @@ export default function BecomeConsultant() {
             </button>
           )}
         </div>
+        </>}
       </main>
     </div>
   );
