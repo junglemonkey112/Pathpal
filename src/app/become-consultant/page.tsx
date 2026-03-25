@@ -141,7 +141,7 @@ export default function BecomeConsultant() {
           <div className="space-y-6">
             <div>
               <h1 className="text-2xl font-bold text-slate-900 mb-2">Choose Your Role</h1>
-              <p className="text-slate-600">Select how you'd like to help students</p>
+              <p className="text-slate-600">Select how you&apos;d like to help students</p>
             </div>
 
             <div className="space-y-3">

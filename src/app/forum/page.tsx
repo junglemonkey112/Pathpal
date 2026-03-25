@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 import Link from "next/link";
 import { GraduationCap, MessageCircle, Heart, Plus, Award } from "lucide-react";
 import { samplePosts, Post } from "@/data/forum";
@@ -18,17 +18,17 @@ function formatTimeAgo(date: Date): string {
 }
 
 // Helper to parse dates from localStorage
-function parsePosts(posts: any[]): Post[] {
+function parsePosts(posts: Post[]): Post[] {
   return posts.map(p => ({
     ...p,
     createdAt: new Date(p.createdAt),
-    comments: p.comments.map((c: any) => ({
+    comments: (p.comments ?? []).map((c) => ({
       ...c,
       createdAt: new Date(c.createdAt),
-      replies: c.replies?.map((r: any) => ({
+      replies: (c.replies ?? []).map((r) => ({
         ...r,
         createdAt: new Date(r.createdAt)
-      })) || []
+      }))
     }))
   }));
 }
@@ -38,22 +38,20 @@ export default function ForumPage() {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
-    // Merge localStorage posts with sample posts, sorted by time (newest first)
-    try {
-      const stored = localStorage.getItem("forum_posts");
-      const storedPosts = stored ? parsePosts(JSON.parse(stored)) : [];
-      
-      // Combine and sort by date descending
-      const allPosts = [...storedPosts, ...samplePosts].sort((a, b) => 
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-      
-      setPosts(allPosts);
-    } catch (e) {
-      console.error("Failed to load posts:", e);
-      setPosts(samplePosts);
-    }
+    startTransition(() => {
+      setIsClient(true);
+      try {
+        const stored = localStorage.getItem("forum_posts");
+        const storedPosts = stored ? parsePosts(JSON.parse(stored)) : [];
+        const allPosts = [...storedPosts, ...samplePosts].sort((a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setPosts(allPosts);
+      } catch (e) {
+        console.error("Failed to load posts:", e);
+        setPosts(samplePosts);
+      }
+    });
   }, []);
 
   return (

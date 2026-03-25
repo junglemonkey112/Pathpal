@@ -1,20 +1,24 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { UserProvider } from "@/context/UserContext";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "PathPal – US College Admissions Consulting",
-  description: "PathPal connects students with experienced college consultants to navigate US university admissions. Get personalised guidance on essays, school selection, and more.",
+  description: "PathPal connects students with experienced college consultants to navigate US university admissions. Get personalized guidance on essays, school selection, and more.",
+  openGraph: {
+    title: "PathPal – US College Admissions Consulting",
+    description: "Connect with affordable college consultants. AI-powered matching, peer community, and expert guidance from $30/hr.",
+    type: "website",
+    siteName: "PathPal",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PathPal – US College Admissions Consulting",
+    description: "Connect with affordable college consultants. AI-powered matching, peer community, and expert guidance from $30/hr.",
+  },
+  keywords: ["college admissions", "college consulting", "university applications", "SAT prep", "essay editing", "college mentor"],
 };
 
 export default function RootLayout({
@@ -24,10 +28,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body className="antialiased font-sans">
+        <ErrorBoundary>
+          <UserProvider>
+            {children}
+          </UserProvider>
+        </ErrorBoundary>
+        <Analytics />
       </body>
     </html>
   );

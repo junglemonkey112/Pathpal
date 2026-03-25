@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { GraduationCap, X, Send, MessageCircle, Sparkles, ChevronRight } from "lucide-react";
+import { GraduationCap, X, Send, MessageCircle, Sparkles } from "lucide-react";
 import { consultants } from "@/data/consultants";
 import { clsx } from "clsx";
 import Link from "next/link";
+import { MAX_FREE_QUESTIONS, AI_RESPONSE_DELAY_MS } from "@/lib/constants";
 
 interface Message {
   role: "user" | "ai";
@@ -101,7 +102,7 @@ export default function AIChat() {
     setMessages(prev => [...prev, { role: "user", content: userMessage }]);
     
     // Check if should recommend consultant (after 3 questions)
-    if (questionCount >= 3) {
+    if (questionCount >= MAX_FREE_QUESTIONS) {
       const recommended = recommendConsultant();
       setTimeout(() => {
         const recommendationText = `You've asked 3 questions! 👆\n\nBased on your questions, I recommend these consultants:\n\n${recommended.map((c, i) => {
@@ -110,7 +111,7 @@ export default function AIChat() {
         }).join("\n\n")}\n\nReady to book a 1-on-1 session?`;
         
         setMessages(prev => [...prev, { role: "ai", content: recommendationText }]);
-      }, 500);
+      }, AI_RESPONSE_DELAY_MS);
       return;
     }
     
@@ -120,7 +121,7 @@ export default function AIChat() {
     
     setTimeout(() => {
       setMessages(prev => [...prev, { role: "ai", content: response }]);
-    }, 500);
+    }, AI_RESPONSE_DELAY_MS);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -158,7 +159,7 @@ export default function AIChat() {
       {/* Question counter */}
       <div className="bg-emerald-50 px-4 py-2 text-xs text-emerald-700 flex items-center gap-2">
         <Sparkles className="w-3 h-3" />
-        Free questions remaining: {3 - questionCount}
+        Free questions remaining: {MAX_FREE_QUESTIONS - questionCount}
       </div>
 
       {/* Messages */}
@@ -173,9 +174,22 @@ export default function AIChat() {
                 : "bg-slate-100 text-slate-800 rounded-bl-sm"
             )}
           >
-            <p className="text-sm whitespace-pre-line" dangerouslySetInnerHTML={{ 
-              __html: msg.content.replace(/📅 Book: (\/consultant\/\d+)/g, '📅 <a href="$1" class="text-emerald-600 underline hover:text-emerald-700" target="_blank" rel="noopener">$1</a>')
-            }} />
+            <p className="text-sm whitespace-pre-line">
+              {msg.content.split(/(📅 Book: \/consultant\/\d+)/).map((part, i) => {
+                const linkMatch = part.match(/📅 Book: (\/consultant\/\d+)/);
+                if (linkMatch) {
+                  return (
+                    <span key={i}>
+                      📅{" "}
+                      <Link href={linkMatch[1]} className="text-emerald-600 underline hover:text-emerald-700">
+                        Book Now
+                      </Link>
+                    </span>
+                  );
+                }
+                return <span key={i}>{part}</span>;
+              })}
+            </p>
           </div>
         ))}
         <div ref={messagesEndRef} />
@@ -201,7 +215,7 @@ export default function AIChat() {
           </button>
         </div>
         
-        {questionCount >= 2 && (
+        {questionCount >= MAX_FREE_QUESTIONS - 1 && (
           <Link 
             href="/become-consultant"
             onClick={() => setIsOpen(false)}

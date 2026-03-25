@@ -3,15 +3,38 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { GraduationCap, ArrowLeft, Image, X } from "lucide-react";
-import { currentUser, createPost } from "@/data/forum";
+import { ArrowLeft, Image, X, LogIn } from "lucide-react";
+import { createPost, createAuthUser } from "@/data/forum";
+import { useUser } from "@/context/UserContext";
 
 export default function NewPostPage() {
   const router = useRouter();
+  const { user } = useUser();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Gate behind auth
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+        <div className="text-center">
+          <LogIn className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-slate-900 mb-2">Sign in to post</h2>
+          <p className="text-slate-600 mb-6">You need an account to create forum posts.</p>
+          <div className="flex gap-3 justify-center">
+            <Link href="/login" className="bg-slate-900 text-white px-6 py-2.5 rounded-lg hover:bg-slate-800 transition-colors font-medium">
+              Sign In
+            </Link>
+            <Link href="/signup" className="border border-slate-200 text-slate-700 px-6 py-2.5 rounded-lg hover:bg-slate-50 transition-colors font-medium">
+              Sign Up
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,23 +42,20 @@ export default function NewPostPage() {
 
     setIsSubmitting(true);
 
-    // Create post
-    const newPost = createPost(title, content, images);
-    
-    // In a real app, this would be an API call
-    // For MVP, we'll store in localStorage and redirect
+    const author = createAuthUser(
+      user.id,
+      user.user_metadata?.full_name || user.email?.split("@")[0] || "User"
+    );
+    const newPost = createPost(title, content, images, author);
+
     const existingPosts = JSON.parse(localStorage.getItem("forum_posts") || "[]");
     localStorage.setItem("forum_posts", JSON.stringify([newPost, ...existingPosts]));
-
-    // Also store in window for current session
-    (window as any).__forumPosts = [(newPost as any), ...((window as any).__forumPosts || [])];
 
     router.push("/forum");
   };
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
-      {/* Header */}
       <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
@@ -52,7 +72,6 @@ export default function NewPostPage() {
           <h1 className="text-2xl font-bold text-slate-900 mb-6">Create a New Post</h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Title */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">Title</label>
               <input
@@ -65,7 +84,6 @@ export default function NewPostPage() {
               />
             </div>
 
-            {/* Content */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">Content</label>
               <textarea
@@ -76,12 +94,8 @@ export default function NewPostPage() {
                 className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent resize-none"
                 required
               />
-              <p className="text-sm text-slate-500 mt-2">
-                Supports text and images (up to 10s video coming soon)
-              </p>
             </div>
 
-            {/* Images */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">Images (Optional)</label>
               <div className="flex flex-wrap gap-3">
@@ -106,10 +120,9 @@ export default function NewPostPage() {
               </div>
             </div>
 
-            {/* Submit */}
             <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
-              <Link 
-                href="/forum" 
+              <Link
+                href="/forum"
                 className="px-5 py-2.5 text-slate-600 hover:text-slate-900 font-medium"
               >
                 Cancel

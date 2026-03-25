@@ -19,33 +19,33 @@ interface RecommendationResult {
 
 // Interest to specialty mapping
 const interestToSpecialty: Record<string, string[]> = {
-  cs: ["CS申请", "计算机科学", "理工科", "选校"],
-  business: ["商科申请", "职业规划", "Business"],
-  engineering: ["理工科", "EE", "机械工程", "选校"],
-  arts: ["艺术设计", "文科申请", "文书"],
-  science: ["科研", "学术", "自然科学"],
-  social: ["文科申请", "公共政策", "社会科学"],
-  medicine: ["生物", "医学预科", "科研"],
-  law: ["法律", "文科申请", "政治科学"],
+  cs: ["CS", "Computer Science", "STEM", "School Selection"],
+  business: ["Business", "Career Planning", "Economics"],
+  engineering: ["STEM", "EE", "Mechanical Engineering", "School Selection"],
+  arts: ["Art & Design", "Liberal Arts", "Essay Writing"],
+  science: ["Research", "Academic", "Natural Sciences"],
+  social: ["Liberal Arts", "Public Policy", "Social Sciences"],
+  medicine: ["Biology", "Pre-Med", "Research"],
+  law: ["Law", "Liberal Arts", "Political Science"],
 };
 
 // Major to specialty/school mapping
 const majorToKeywords: Record<string, string[]> = {
-  "计算机科学 (CS)": ["CS申请", "计算机科学", "理工科", "Computer"],
-  "商业分析 (Business Analytics)": ["商科", "Business", "职业规划"],
-  "电子工程 (EE)": ["EE", "理工科", "电子工程"],
-  "经济学 (Economics)": ["经济", "文科", "社科"],
-  "心理学 (Psychology)": ["心理", "文科", "社科"],
-  "生物科学 (Biology)": ["生物", "医学", "科研"],
-  "艺术设计 (Art & Design)": ["艺术", "设计", "文科"],
-  "政治科学 (Political Science)": ["政治", "公共政策", "文科"],
-  "机械工程 (ME)": ["理工科", "机械", "工程"],
-  "数据科学 (Data Science)": ["CS", "数据", "统计"],
+  "Computer Science (CS)": ["CS", "Computer Science", "STEM", "Computer"],
+  "Business Analytics": ["Business", "Career Planning"],
+  "Electrical Engineering (EE)": ["EE", "STEM", "Electrical Engineering"],
+  "Economics": ["Economics", "Liberal Arts", "Social Sciences"],
+  "Psychology": ["Psychology", "Liberal Arts", "Social Sciences"],
+  "Biology": ["Biology", "Pre-Med", "Research"],
+  "Art & Design": ["Art", "Design", "Liberal Arts"],
+  "Political Science": ["Political", "Public Policy", "Liberal Arts"],
+  "Mechanical Engineering (ME)": ["STEM", "Mechanical", "Engineering"],
+  "Data Science": ["CS", "Data", "Statistics"],
 };
 
 // Budget to price range mapping
 const budgetToPrice: Record<string, [number, number]> = {
-  "$30以下": [0, 30],
+  "Under $30": [0, 30],
   "$30-50": [30, 50],
   "$50-80": [50, 80],
   "$80-100": [80, 100],
@@ -68,7 +68,7 @@ export function getRecommendations(
     const consultantPrice = consultant.services[0].price;
     if (consultantPrice >= minBudget && consultantPrice <= maxBudget) {
       score += 30;
-      reasons.push("符合预算");
+      reasons.push("Within budget");
     } else if (consultantPrice <= maxBudget + 20) {
       score += 15; // Partial match
     }
@@ -89,7 +89,7 @@ export function getRecommendations(
 
     if (matchedSpecialties.length > 0) {
       score += Math.min(40, matchedSpecialties.length * 15);
-      reasons.push(`擅长${matchedSpecialties.slice(0, 2).join("、")}`);
+      reasons.push(`Specializes in ${matchedSpecialties.slice(0, 2).join(", ")}`);
     }
 
     // 3. Target school match (20 points)
@@ -101,7 +101,7 @@ export function getRecommendations(
 
     if (matchedSchools) {
       score += 20;
-      reasons.push(`来自目标院校`);
+      reasons.push("From target school");
     }
 
     // 4. Rating bonus (10 points)
@@ -146,7 +146,7 @@ export function getRecommendedSchools(userProfile: UserProfile): string[] {
 
 function formGpaToNumber(gpa: string): number {
   const gpaMap: Record<string, number> = {
-    "3.0以下": 2.5,
+    "Below 3.0": 2.5,
     "3.0-3.5": 3.25,
     "3.5-3.8": 3.65,
     "3.8-4.0": 3.9,
