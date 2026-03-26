@@ -92,7 +92,14 @@ export async function POST(request: NextRequest) {
     // Simple text: { content: "..." }
     let aiContent: string | undefined;
 
-    if (Array.isArray(data.content)) {
+    // Direct message object: { role: "assistant", content: "..." or [...] }
+    if (data.role && data.content) {
+      if (typeof data.content === "string") {
+        aiContent = data.content;
+      } else if (Array.isArray(data.content)) {
+        aiContent = data.content[0]?.text ?? data.content[0]?.value ?? JSON.stringify(data.content[0]);
+      }
+    } else if (Array.isArray(data.content)) {
       aiContent = data.content[0]?.text;
     } else if (typeof data.content === "string") {
       aiContent = data.content;
