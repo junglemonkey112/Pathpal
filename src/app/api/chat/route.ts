@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const DASHSCOPE_BASE_URL = process.env.ANTHROPIC_BASE_URL || "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic";
-const DASHSCOPE_API_KEY = process.env.ANTHROPIC_AUTH_TOKEN;
-const DASHSCOPE_MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-20250514";
+const DASHSCOPE_BASE_URL = process.env.DASHSCOPE_BASE_URL || "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation";
+const DASHSCOPE_API_KEY = process.env.DASHSCOPE_API_KEY;
+const DASHSCOPE_MODEL = process.env.DASHSCOPE_MODEL || "MiniMax-M2.5";
 
 const SYSTEM_PROMPT = `You are PathPal AI, a friendly and knowledgeable college admissions advisor. You help students navigate US university applications.
 
@@ -25,7 +25,6 @@ Guidelines:
 - If you don't know something, say so honestly`;
 
 export async function POST(request: NextRequest) {
-  // Check if AI is configured
   if (!DASHSCOPE_API_KEY) {
     return NextResponse.json(
       { error: "AI service is not configured" },
@@ -43,7 +42,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Rate limit: max 20 messages per conversation
     if (messages.length > 20) {
       return NextResponse.json(
         { error: "Conversation too long. Please start a new chat." },
@@ -51,27 +49,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const response = await fetch(`${DASHSCOPE_BASE_URL}/v1/messages`, {
+    // Build messages array with system prompt as first message
+    const apiMessages = [
+      { role: "system", content: SYSTEM_PROMPT },
+      ...messages.map((m: { role: string; content: string }) => ({
+        role: m.role === "ai" ? "assistant" : m.role,
+        content: m.content,
+      })),
+    ];
+
+    const response = await fetch(DASHSCOPE_BASE_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": DASHSCOPE_API_KEY,
-        "anthropic-version": "2023-06-01",
+        "Authorization": `Bearer ${DASHSCOPE_API_KEY}`,
       },
       body: JSON.stringify({
         model: DASHSCOPE_MODEL,
-        max_tokens: 500,
-        system: SYSTEM_PROMPT,
-        messages: messages.map((m: { role: string; content: string }) => ({
-          role: m.role === "ai" ? "assistant" : m.role,
-          content: m.content,
-        })),
+        input: {
+          messages: apiMessages,
+        },
+        parameters: {
+          result_format: "message",
+          max_tokens: 500,
+        },
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("AI API error:", response.status, errorText);
+      console.error("DashScope API error:", response.status, errorText);
       return NextResponse.json(
         { error: "AI service temporarily unavailable" },
         { status: 502 }
@@ -79,7 +86,12 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-    const aiContent = data.content?.[0]?.text || "I'm sorry, I couldn't generate a response. Please try again.";
+
+    // DashScope native response format
+    const aiContent =
+      data.output?.choices?.[0]?.message?.content ||
+      data.output?.text ||
+      "I'm sorry, I couldn't generate a response. Please try again.";
 
     return NextResponse.json({ content: aiContent });
   } catch (error) {
