@@ -4,25 +4,29 @@ const API_KEY = process.env.DASHSCOPE_API_KEY || process.env.ANTHROPIC_AUTH_TOKE
 const API_MODEL = process.env.DASHSCOPE_MODEL || process.env.ANTHROPIC_MODEL || "MiniMax-M2.5";
 const API_BASE_URL = process.env.DASHSCOPE_BASE_URL || process.env.ANTHROPIC_BASE_URL || "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic";
 
-const SYSTEM_PROMPT = `You are PathPal AI, a friendly and knowledgeable college admissions advisor. You help students navigate US university applications.
+const SYSTEM_PROMPT = `You are PathPal AI, a warm and encouraging college admissions advisor built into the PathPal platform. You genuinely care about helping students find the right college fit.
 
-Your expertise includes:
+Your tone:
+- Warm, supportive, and optimistic — like a trusted older sibling who went through the process
+- Use simple, clear language (no jargon)
+- Celebrate what students have going for them before addressing gaps
+- Be specific and actionable, not generic
+
+Your expertise:
 - College selection and fit assessment
-- Application timelines and deadlines
-- Essay writing tips and strategies
-- Extracurricular activity guidance
-- Standardized test preparation (SAT/ACT)
-- Financial aid and scholarships
-- Interview preparation
-- Major/career exploration
+- Application strategy and timelines
+- Essay brainstorming and tips
+- Extracurricular positioning
+- SAT/ACT guidance
+- Financial aid basics
+- Interview prep
 
-Guidelines:
-- Keep responses concise (2-4 paragraphs max)
-- Be encouraging and supportive
-- Give actionable advice
-- When appropriate, suggest the student book a 1-on-1 session with a PathPal consultant for personalized help
-- Do not make up specific statistics or acceptance rates unless commonly known
-- If you don't know something, say so honestly`;
+Response format:
+- Keep responses to 2-3 short paragraphs (max 150 words)
+- Use line breaks between paragraphs for readability
+- End with a follow-up question to keep the conversation going
+- When relevant, mention that PathPal has consultants who can provide deeper 1-on-1 guidance
+- Never fabricate statistics or acceptance rates`;
 
 export async function POST(request: NextRequest) {
   if (!API_KEY) {
@@ -54,7 +58,6 @@ export async function POST(request: NextRequest) {
       content: m.content,
     }));
 
-    // Use Anthropic-compatible endpoint (works with sk-sp- coding plan keys)
     const response = await fetch(`${API_BASE_URL}/v1/messages`, {
       method: "POST",
       headers: {
@@ -64,7 +67,7 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         model: API_MODEL,
-        max_tokens: 500,
+        max_tokens: 1024,
         system: SYSTEM_PROMPT,
         messages: apiMessages,
       }),
@@ -72,7 +75,7 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`AI API error: status=${response.status} key_prefix=${API_KEY?.slice(0, 8)}... model=${API_MODEL} url=${API_BASE_URL}/v1/messages body=${errorText.slice(0, 300)}`);
+      console.error(`AI API error: status=${response.status} body=${errorText.slice(0, 300)}`);
       return NextResponse.json(
         { error: "AI service temporarily unavailable" },
         { status: 502 }
@@ -80,36 +83,7 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-
-    // Log the response structure for debugging
-    console.log("AI API response keys:", JSON.stringify(Object.keys(data)), "content_type:", typeof data.content, "full:", JSON.stringify(data).slice(0, 500));
-
-    // Handle multiple response formats:
-    // Anthropic standard: { content: [{ type: "text", text: "..." }] }
-    // Anthropic alt: { content: [{ text: "..." }] }
-    // OpenAI-compatible: { choices: [{ message: { content: "..." } }] }
-    // DashScope native: { output: { choices: [{ message: { content: "..." } }] } }
-    // Simple text: { content: "..." }
-    let aiContent: string | undefined;
-
-    // Direct message object: { role: "assistant", content: "..." or [...] }
-    if (data.role && data.content) {
-      if (typeof data.content === "string") {
-        aiContent = data.content;
-      } else if (Array.isArray(data.content)) {
-        aiContent = data.content[0]?.text ?? data.content[0]?.value ?? JSON.stringify(data.content[0]);
-      }
-    } else if (Array.isArray(data.content)) {
-      aiContent = data.content[0]?.text;
-    } else if (typeof data.content === "string") {
-      aiContent = data.content;
-    } else if (data.choices?.[0]?.message?.content) {
-      aiContent = data.choices[0].message.content;
-    } else if (data.output?.choices?.[0]?.message?.content) {
-      aiContent = data.output.choices[0].message.content;
-    } else if (data.output?.text) {
-      aiContent = data.output.text;
-    }
+    const aiContent = extractTextContent(data);
 
     if (!aiContent) {
       console.error("Could not parse AI response:", JSON.stringify(data).slice(0, 500));
@@ -124,4 +98,59 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+/**
+ * Extract the actual text content from various AI response formats.
+ * Skips "thinking" blocks and finds the real text response.
+ */
+function extractTextContent(data: Record<string, unknown>): string | undefined {
+  // Handle content array (Anthropic format, with possible thinking blocks)
+  const contentArray = data.content ?? (data.role ? data.content : undefined);
+
+  if (Array.isArray(contentArray)) {
+    // Find the text block, skipping thinking/signature blocks
+    for (const block of contentArray) {
+      if (block.type === "text" && block.text) {
+        return block.text;
+      }
+    }
+    // Fallback: grab first block with .text that isn't a thinking block
+    for (const block of contentArray) {
+      if (block.text && block.type !== "thinking") {
+        return block.text;
+      }
+    }
+    // Last resort: any block with text content
+    for (const block of contentArray) {
+      if (typeof block.text === "string" && block.text.length > 0) {
+        return block.text;
+      }
+      if (typeof block === "string") {
+        return block;
+      }
+    }
+  }
+
+  // Simple string content
+  if (typeof data.content === "string") {
+    return data.content;
+  }
+
+  // OpenAI-compatible format
+  const choices = data.choices as Array<{ message?: { content?: string } }> | undefined;
+  if (choices?.[0]?.message?.content) {
+    return choices[0].message.content;
+  }
+
+  // DashScope native format
+  const output = data.output as { choices?: Array<{ message?: { content?: string } }>; text?: string } | undefined;
+  if (output?.choices?.[0]?.message?.content) {
+    return output.choices[0].message.content;
+  }
+  if (output?.text) {
+    return output.text;
+  }
+
+  return undefined;
 }

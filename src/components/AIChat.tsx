@@ -132,7 +132,7 @@ export default function AIChat() {
   }
 
   return (
-    <div className="fixed bottom-0 right-0 w-full sm:bottom-6 sm:right-6 sm:w-96 bg-white sm:rounded-2xl shadow-2xl z-50 overflow-hidden">
+    <div className="fixed bottom-0 right-0 w-full sm:bottom-6 sm:right-6 sm:w-[28rem] md:w-[32rem] bg-white sm:rounded-2xl shadow-2xl z-50 overflow-hidden">
       <div className="bg-slate-900 text-white px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <GraduationCap className="w-5 h-5" />
@@ -149,7 +149,7 @@ export default function AIChat() {
         Free questions remaining: {Math.max(0, MAX_FREE_QUESTIONS - questionCount)}
       </div>
 
-      <div className="h-80 overflow-y-auto p-4 space-y-3">
+      <div className="h-96 overflow-y-auto p-4 space-y-3">
         {messages.map((msg, idx) => (
           <div
             key={idx}
