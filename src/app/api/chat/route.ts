@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const API_KEY = process.env.DASHSCOPE_API_KEY;
-const API_MODEL = process.env.DASHSCOPE_MODEL || "MiniMax-M2.5";
-const API_BASE_URL = process.env.DASHSCOPE_BASE_URL || "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic";
+const API_KEY = process.env.DASHSCOPE_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN;
+const API_MODEL = process.env.DASHSCOPE_MODEL || process.env.ANTHROPIC_MODEL || "MiniMax-M2.5";
+const API_BASE_URL = process.env.DASHSCOPE_BASE_URL || process.env.ANTHROPIC_BASE_URL || "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic";
 
 const SYSTEM_PROMPT = `You are PathPal AI, a friendly and knowledgeable college admissions advisor. You help students navigate US university applications.
 
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("AI API error:", response.status, errorText);
+      console.error(`AI API error: status=${response.status} key_prefix=${API_KEY?.slice(0, 8)}... model=${API_MODEL} url=${API_BASE_URL}/v1/messages body=${errorText.slice(0, 300)}`);
       return NextResponse.json(
         { error: "AI service temporarily unavailable" },
         { status: 502 }
