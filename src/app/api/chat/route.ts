@@ -80,7 +80,34 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-    const aiContent = data.content?.[0]?.text || "I'm sorry, I couldn't generate a response. Please try again.";
+
+    // Log the response structure for debugging
+    console.log("AI API response keys:", JSON.stringify(Object.keys(data)), "content_type:", typeof data.content, "full:", JSON.stringify(data).slice(0, 500));
+
+    // Handle multiple response formats:
+    // Anthropic standard: { content: [{ type: "text", text: "..." }] }
+    // Anthropic alt: { content: [{ text: "..." }] }
+    // OpenAI-compatible: { choices: [{ message: { content: "..." } }] }
+    // DashScope native: { output: { choices: [{ message: { content: "..." } }] } }
+    // Simple text: { content: "..." }
+    let aiContent: string | undefined;
+
+    if (Array.isArray(data.content)) {
+      aiContent = data.content[0]?.text;
+    } else if (typeof data.content === "string") {
+      aiContent = data.content;
+    } else if (data.choices?.[0]?.message?.content) {
+      aiContent = data.choices[0].message.content;
+    } else if (data.output?.choices?.[0]?.message?.content) {
+      aiContent = data.output.choices[0].message.content;
+    } else if (data.output?.text) {
+      aiContent = data.output.text;
+    }
+
+    if (!aiContent) {
+      console.error("Could not parse AI response:", JSON.stringify(data).slice(0, 500));
+      return NextResponse.json({ content: "I'm having trouble responding right now. Please try again." });
+    }
 
     return NextResponse.json({ content: aiContent });
   } catch (error) {
