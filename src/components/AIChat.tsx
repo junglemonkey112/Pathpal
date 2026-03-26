@@ -90,23 +90,24 @@ export default function AIChat() {
     const newMessages: Message[] = [...messages, { role: "user", content: userMessage }];
     setMessages(newMessages);
 
-    // After free questions, recommend consultants
-    if (questionCount >= MAX_FREE_QUESTIONS) {
-      const recommended = recommendConsultant();
+    const newCount = questionCount + 1;
+    setQuestionCount(newCount);
+
+    // On the last free question, get AI response then show recommendation
+    if (newCount >= MAX_FREE_QUESTIONS) {
       setIsTyping(true);
-      setTimeout(() => {
-        const recommendationText = `You've used your 3 free questions!\n\nBased on our conversation, I recommend these consultants for personalized guidance:\n\n${recommended.map((c, i) => {
-          const link = `/consultant/${c.id}`;
-          return `${i+1}. ${c.name} - ${c.school} ($${c.services[0].price}/session)\n   Specialties: ${c.specialties.slice(0, 2).join(", ")}\n   📅 Book: ${link}`;
-        }).join("\n\n")}\n\nReady to book a 1-on-1 session?`;
-        setMessages(prev => [...prev, { role: "ai", content: recommendationText }]);
-        setIsTyping(false);
-      }, AI_RESPONSE_DELAY_MS);
+      const response = await getAIResponse(userMessage, newMessages);
+      const recommended = recommendConsultant();
+      const recommendationText = `${response}\n\n---\n\nYou've used your ${MAX_FREE_QUESTIONS} free questions! For deeper, personalized guidance, I recommend booking a 1-on-1 session:\n\n${recommended.map((c, i) => {
+        const link = `/consultant/${c.id}`;
+        return `${i+1}. ${c.name} - ${c.school} ($${c.services[0].price}/session)\n   Specialties: ${c.specialties.slice(0, 2).join(", ")}\n   📅 Book: ${link}`;
+      }).join("\n\n")}`;
+      setMessages(prev => [...prev, { role: "ai", content: recommendationText }]);
+      setIsTyping(false);
       return;
     }
 
     setIsTyping(true);
-    setQuestionCount(prev => prev + 1);
     const response = await getAIResponse(userMessage, newMessages);
     setMessages(prev => [...prev, { role: "ai", content: response }]);
     setIsTyping(false);
@@ -190,33 +191,42 @@ export default function AIChat() {
       </div>
 
       <div className="border-t p-3">
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={isTyping ? "Waiting for response..." : "Ask your question..."}
-            disabled={isTyping}
-            className="flex-1 px-4 py-2 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
-          />
-          <button
-            onClick={handleSend}
-            disabled={!input.trim() || isTyping}
-            className="w-10 h-10 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-200 rounded-full flex items-center justify-center transition-colors"
-            aria-label="Send message"
-          >
-            <Send className="w-4 h-4 text-white" />
-          </button>
-        </div>
-        {questionCount >= MAX_FREE_QUESTIONS - 1 && (
-          <Link
-            href="/become-consultant"
-            onClick={() => setIsOpen(false)}
-            className="block text-center text-xs text-emerald-600 hover:text-emerald-700 mt-2"
-          >
-            Become a Consultant →
-          </Link>
+        {questionCount >= MAX_FREE_QUESTIONS ? (
+          <div className="text-center space-y-2">
+            <p className="text-xs text-slate-500">Free questions used. Get personalized help from a consultant.</p>
+            <Link
+              href="/"
+              onClick={() => setIsOpen(false)}
+              className="block w-full bg-emerald-500 text-white py-2.5 rounded-full text-sm font-medium hover:bg-emerald-600 transition-colors"
+            >
+              Browse Consultants
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={isTyping ? "Waiting for response..." : "Ask your question..."}
+                disabled={isTyping}
+                className="flex-1 px-4 py-2 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
+              />
+              <button
+                onClick={handleSend}
+                disabled={!input.trim() || isTyping}
+                className="w-10 h-10 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-200 rounded-full flex items-center justify-center transition-colors"
+                aria-label="Send message"
+              >
+                <Send className="w-4 h-4 text-white" />
+              </button>
+            </div>
+            {questionCount === MAX_FREE_QUESTIONS - 1 && (
+              <p className="text-center text-xs text-amber-600 mt-1.5">Last free question!</p>
+            )}
+          </>
         )}
       </div>
     </div>
