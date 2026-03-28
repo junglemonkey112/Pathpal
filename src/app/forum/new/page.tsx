@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, LogIn, ShieldCheck } from "lucide-react";
+import Navbar from "@/components/Navbar";
 import { createAuthUser, ForumCategory } from "@/data/forum";
 import { useUser } from "@/context/UserContext";
 import { useLanguage } from "@/context/LanguageContext";
@@ -77,16 +78,13 @@ export default function NewPostPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
-        <div className="max-w-2xl mx-auto px-4 h-14 flex items-center">
-          <Link href="/forum" className="flex items-center gap-2 text-slate-600 hover:text-slate-900">
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-medium">Back to Forum</span>
-          </Link>
-        </div>
-      </header>
+      <Navbar />
 
-      <main className="max-w-2xl mx-auto px-4 py-8">
+      <main className="max-w-2xl mx-auto px-4 py-6">
+        <Link href="/forum" className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 mb-5 transition-colors">
+          <ArrowLeft className="w-4 h-4" />
+          Back to Community
+        </Link>
         <div className="bg-white rounded-2xl border border-slate-200 p-6">
           <h1 className="text-xl font-bold text-slate-900 mb-5">{t("forum.newPost")}</h1>
 

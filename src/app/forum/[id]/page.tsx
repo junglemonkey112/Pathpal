@@ -3,11 +3,11 @@
 import { useState, useEffect, startTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { GraduationCap, ArrowLeft, Heart, MessageCircle, ShieldCheck, Send, Pin } from "lucide-react";
+import { ArrowLeft, Heart, MessageCircle, ShieldCheck, Send, Pin } from "lucide-react";
 import { Post, Comment, User, samplePosts, guestUser, createAuthUser, createComment } from "@/data/forum";
 import { clsx } from "clsx";
 import { useUser } from "@/context/UserContext";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
+import Navbar from "@/components/Navbar";
 
 function formatTimeAgo(date: Date): string {
   const now = new Date();
@@ -230,31 +230,17 @@ export default function PostDetailPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <header className="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-14">
-            <button
-              onClick={() => router.back()}
-              className="flex items-center gap-2 text-slate-600 hover:text-slate-900"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span className="text-sm font-medium">Back</span>
-            </button>
-            <div className="flex items-center gap-3">
-              <LanguageSwitcher />
-              <Link href="/" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
-                  <GraduationCap className="w-4 h-4 text-white" />
-                </div>
-                <span className="font-bold text-slate-900 hidden sm:block">PathPal</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
+        {/* Back breadcrumb */}
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 mb-5 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Community
+        </button>
         {/* Post */}
         <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 mb-6">
           {/* Author row */}

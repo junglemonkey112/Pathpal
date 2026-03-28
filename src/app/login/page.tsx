@@ -3,9 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { GraduationCap, Mail, Lock, ArrowLeft } from "lucide-react";
+import { GraduationCap, Mail, Lock, ArrowLeft, AlertCircle } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { isSupabaseConfigured } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,13 +35,18 @@ export default function LoginPage() {
     setOauthLoading("google");
     setError("");
     const { error } = await signInWithGoogle();
-    if (error) { setError(error); setOauthLoading(null); }
+    if (error) {
+      if (error.includes("provider is not enabled")) {
+        setError("Google sign-in is not enabled yet. Please enable the Google provider in your Supabase dashboard under Authentication → Providers.");
+      } else {
+        setError(error);
+      }
+      setOauthLoading(null);
+    }
   };
 
-  const handleWeChat = () => {
-    setOauthLoading("wechat");
-    signInWithWeChat();
-  };
+  // WeChat OAuth is not yet implemented — button is disabled
+  const handleWeChat = () => {};
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
@@ -57,9 +63,17 @@ export default function LoginPage() {
         </div>
 
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+          {!isSupabaseConfigured && (
+            <div className="flex gap-2 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-xl text-sm mb-4">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+              <span>Authentication is not configured. Add <code className="font-mono text-xs bg-amber-100 px-1 rounded">NEXT_PUBLIC_SUPABASE_URL</code> and <code className="font-mono text-xs bg-amber-100 px-1 rounded">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> to your environment variables.</span>
+            </div>
+          )}
+
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm mb-4">
-              {error}
+            <div className="flex gap-2 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm mb-4">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+              <span>{error}</span>
             </div>
           )}
 
@@ -79,17 +93,19 @@ export default function LoginPage() {
               {oauthLoading === "google" ? "Redirecting..." : t("auth.continueGoogle")}
             </button>
 
-            <button
-              onClick={handleWeChat}
-              disabled={oauthLoading !== null}
-              className="w-full flex items-center justify-center gap-3 py-3 border border-slate-200 rounded-xl text-slate-700 font-medium text-sm hover:bg-slate-50 transition-colors disabled:opacity-50"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
-                <path d="M9.5 4C5.91 4 3 6.69 3 10c0 1.89.95 3.56 2.44 4.67L5 17l2.5-1.25A8.3 8.3 0 0 0 9.5 16c.17 0 .34 0 .5-.01A5.5 5.5 0 0 1 10 15c0-3.04 2.69-5.5 6-5.5.17 0 .34 0 .5.01C16.02 6.72 13.04 4 9.5 4z" fill="#07C160"/>
-                <path d="M16 11c-2.76 0-5 1.79-5 4s2.24 4 5 4c.69 0 1.35-.12 1.94-.33L21 20l-.56-2.24C21.42 16.87 22 15.99 22 15c0-2.21-2.24-4-6-4z" fill="#07C160"/>
-              </svg>
-              {oauthLoading === "wechat" ? "Redirecting..." : t("auth.continueWeChat")}
-            </button>
+            <div className="relative">
+              <button
+                disabled
+                className="w-full flex items-center justify-center gap-3 py-3 border border-slate-100 rounded-xl text-slate-400 font-medium text-sm bg-slate-50 cursor-not-allowed"
+              >
+                <svg className="w-5 h-5 opacity-50" viewBox="0 0 24 24" fill="none">
+                  <path d="M9.5 4C5.91 4 3 6.69 3 10c0 1.89.95 3.56 2.44 4.67L5 17l2.5-1.25A8.3 8.3 0 0 0 9.5 16c.17 0 .34 0 .5-.01A5.5 5.5 0 0 1 10 15c0-3.04 2.69-5.5 6-5.5.17 0 .34 0 .5.01C16.02 6.72 13.04 4 9.5 4z" fill="#07C160"/>
+                  <path d="M16 11c-2.76 0-5 1.79-5 4s2.24 4 5 4c.69 0 1.35-.12 1.94-.33L21 20l-.56-2.24C21.42 16.87 22 15.99 22 15c0-2.21-2.24-4-6-4z" fill="#07C160"/>
+                </svg>
+                {t("auth.continueWeChat")}
+                <span className="ml-auto text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">Coming Soon</span>
+              </button>
+            </div>
           </div>
 
           {/* Divider */}

@@ -2,23 +2,24 @@
 
 import { useState, useEffect, startTransition } from "react";
 import Link from "next/link";
-import { Search, GraduationCap, Globe, ShieldCheck, Users, BookOpen, TrendingDown, ChevronRight, X, Menu, LogOut, User, Star } from "lucide-react";
+import { Search, GraduationCap, Globe, ShieldCheck, Users, BookOpen, TrendingDown, ChevronRight, Star } from "lucide-react";
 import { counsellors, Counsellor } from "@/data/counsellors";
 import { clsx } from "clsx";
 import AIChat from "@/components/AIChat";
 import CounsellorCard from "@/components/CounsellorCard";
 import ForumPreview from "@/components/ForumPreview";
+import Navbar from "@/components/Navbar";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { samplePosts, Post } from "@/data/forum";
 import { useUser } from "@/context/UserContext";
 import { useLanguage } from "@/context/LanguageContext";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const COUNTRIES = ["China", "South Korea", "Japan", "India", "All Countries"];
 const LANGUAGES = ["English", "Mandarin", "Korean", "Japanese", "Hindi", "All Languages"];
 const SPECIALTIES = ["STEM", "Pre-Medicine", "Business", "Liberal Arts", "Architecture", "All Specialties"];
 
 export default function Home() {
-  const { user, signOut } = useUser();
+  const { user } = useUser();
   const { t } = useLanguage();
 
   // Filter state
@@ -26,9 +27,6 @@ export default function Home() {
   const [selectedCountry, setSelectedCountry] = useState("All Countries");
   const [selectedLanguage, setSelectedLanguage] = useState("All Languages");
   const [selectedSpecialty, setSelectedSpecialty] = useState("All Specialties");
-
-  // Mobile menu
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Forum posts
   const [forumPosts, setForumPosts] = useState<Post[]>(samplePosts);
@@ -85,81 +83,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
-      {/* Header */}
-      <header className="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center">
-                <GraduationCap className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-slate-900">PathPal</span>
-            </Link>
-
-            <nav className="hidden md:flex items-center gap-7">
-              <a href="#counsellors" className="text-slate-600 hover:text-slate-900 font-medium text-sm">{t("nav.allCounsellors")}</a>
-              <Link href="/forum" className="text-slate-600 hover:text-slate-900 font-medium text-sm">{t("nav.community")}</Link>
-              <a href="#how-it-works" className="text-slate-600 hover:text-slate-900 font-medium text-sm">{t("nav.howItWorks")}</a>
-              <a href="#for-parents" className="text-slate-600 hover:text-slate-900 font-medium text-sm">{t("nav.successStories")}</a>
-            </nav>
-
-            <div className="hidden md:flex items-center gap-3">
-              <LanguageSwitcher />
-              {user ? (
-                <>
-                  <Link href="/become-counsellor" className="text-slate-600 hover:text-slate-900 font-medium text-sm">
-                    {t("nav.becomeCounsellor")}
-                  </Link>
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg">
-                    <User className="w-4 h-4 text-slate-600" />
-                    <span className="text-sm font-medium text-slate-700 max-w-[120px] truncate">
-                      {user.user_metadata?.full_name || user.email?.split("@")[0]}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => signOut()}
-                    className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
-                    title={t("nav.signOut")}
-                  >
-                    <LogOut className="w-4 h-4" />
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link href="/become-counsellor" className="text-slate-600 hover:text-slate-900 font-medium text-sm">
-                    {t("nav.becomeCounsellor")}
-                  </Link>
-                  <Link href="/login" className="text-slate-600 hover:text-slate-900 font-medium text-sm">{t("nav.signIn")}</Link>
-                  <Link href="/signup" className="bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm">
-                    {t("nav.signUp")}
-                  </Link>
-                </>
-              )}
-            </div>
-
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 text-slate-600">
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-3">
-            <LanguageSwitcher className="mb-2" />
-            <a href="#counsellors" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 font-medium py-1.5">{t("nav.allCounsellors")}</a>
-            <Link href="/forum" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 font-medium py-1.5">{t("nav.community")}</Link>
-            <Link href="/become-counsellor" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 font-medium py-1.5">{t("nav.becomeCounsellor")}</Link>
-            {user ? (
-              <button onClick={() => { signOut(); setMobileMenuOpen(false); }} className="block w-full text-left text-slate-600 font-medium py-1.5">{t("nav.signOut")}</button>
-            ) : (
-              <>
-                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 font-medium py-1.5">{t("nav.signIn")}</Link>
-                <Link href="/signup" onClick={() => setMobileMenuOpen(false)} className="block bg-slate-900 text-white px-4 py-2.5 rounded-lg font-medium text-sm text-center">{t("nav.signUp")}</Link>
-              </>
-            )}
-          </div>
-        )}
-      </header>
+      <Navbar homeLinks />
 
       {/* Hero */}
       <section className="bg-slate-900 text-white pt-16 pb-20 relative overflow-hidden">

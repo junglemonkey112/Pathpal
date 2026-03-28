@@ -2,11 +2,11 @@
 
 import { useState, useEffect, startTransition } from "react";
 import Link from "next/link";
-import { GraduationCap, MessageCircle, Heart, Plus, Search, Pin } from "lucide-react";
+import { MessageCircle, Heart, Plus, Search, Pin } from "lucide-react";
 import { samplePosts, Post, ForumCategory } from "@/data/forum";
 import { clsx } from "clsx";
 import { useLanguage } from "@/context/LanguageContext";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
+import Navbar from "@/components/Navbar";
 
 function formatTimeAgo(date: Date): string {
   const now = new Date();
@@ -75,25 +75,7 @@ export default function ForumPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <header className="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-14">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
-                <GraduationCap className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-bold text-slate-900">PathPal</span>
-            </Link>
-            <div className="flex items-center gap-3">
-              <LanguageSwitcher />
-              <Link href="/become-counsellor" className="hidden sm:block text-slate-600 hover:text-slate-900 text-sm font-medium">
-                {t("nav.becomeCounsellor")}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
         {/* Page header */}
