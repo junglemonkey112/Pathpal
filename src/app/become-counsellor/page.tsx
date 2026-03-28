@@ -10,6 +10,12 @@ type Step = 1 | 2 | 3 | 4;
 
 const COUNTRIES = ["China", "South Korea", "Japan", "India", "United States", "Canada", "Australia", "United Kingdom", "Singapore", "Other"];
 const LANGUAGES = ["English", "Mandarin", "Korean", "Japanese", "Hindi", "Spanish", "French", "Other"];
+const SESSION_TYPES = [
+  { id: "quickChat",     label: "Quick Chat",    duration: "30 min", price: "$25", desc: "Q&A, school selection, quick feedback" },
+  { id: "deepDive",      label: "Deep Dive",     duration: "60 min", price: "$40", desc: "Full strategy, essays, mock interviews" },
+  { id: "essayPackage",  label: "Essay Package", duration: "90 min", price: "$70", desc: "Complete essay review & personal statement" },
+];
+
 const SPECIALTIES = [
   "STEM Applications", "Computer Science", "Engineering", "Pre-Medicine",
   "Business & Economics", "Liberal Arts", "Architecture & Design",
@@ -33,7 +39,8 @@ export default function BecomeCounsellor() {
   const [year, setYear] = useState("");
   const [myStory, setMyStory] = useState("");
   const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
-  const [sessionPrice, setSessionPrice] = useState(35);
+  const [sessionPrice, setSessionPrice] = useState(40);
+  const [selectedSessionTypes, setSelectedSessionTypes] = useState<string[]>([]);
 
   // Step 3: Verification
   const [enrollmentFile, setEnrollmentFile] = useState<File | null>(null);
@@ -51,8 +58,14 @@ export default function BecomeCounsellor() {
     );
   };
 
+  const toggleSessionType = (type: string) => {
+    setSelectedSessionTypes(prev =>
+      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+    );
+  };
+
   const canProceedStep1 = name.trim() && email.trim() && country && selectedLanguages.length > 0;
-  const canProceedStep2 = school.trim() && major.trim() && year && myStory.trim().length >= 100 && selectedSpecialties.length >= 2;
+  const canProceedStep2 = school.trim() && major.trim() && year && myStory.trim().length >= 100 && selectedSpecialties.length >= 2 && selectedSessionTypes.length >= 1;
   const canProceedStep3 = enrollmentFile != null && idFile != null;
 
   const steps = [
@@ -259,20 +272,57 @@ export default function BecomeCounsellor() {
               </div>
 
               <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Session types you'll offer <span className="text-slate-400 font-normal">(select at least one)</span></label>
+                <div className="space-y-2">
+                  {SESSION_TYPES.map(type => {
+                    const selected = selectedSessionTypes.includes(type.id);
+                    return (
+                      <button
+                        key={type.id}
+                        type="button"
+                        onClick={() => toggleSessionType(type.id)}
+                        className={clsx(
+                          "w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all",
+                          selected
+                            ? "border-emerald-400 bg-emerald-50"
+                            : "border-slate-200 bg-white hover:border-slate-300"
+                        )}
+                      >
+                        <div className={clsx(
+                          "w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all",
+                          selected ? "border-emerald-500 bg-emerald-500" : "border-slate-300"
+                        )}>
+                          {selected && <Check className="w-3 h-3 text-white" />}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-sm text-slate-900">{type.label}</span>
+                            <span className="text-xs text-slate-400">{type.duration}</span>
+                            <span className="ml-auto text-sm font-bold text-emerald-600">{type.price}</span>
+                          </div>
+                          <p className="text-xs text-slate-500 mt-0.5">{type.desc}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
                   Starting price per 30-min session: <span className="text-emerald-600 font-bold">${sessionPrice}</span>
                 </label>
                 <input
                   type="range"
-                  min={15}
-                  max={65}
+                  min={20}
+                  max={70}
                   step={5}
                   value={sessionPrice}
                   onChange={e => setSessionPrice(Number(e.target.value))}
                   className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
                 />
                 <div className="flex justify-between text-xs text-slate-400 mt-1">
-                  <span>$15</span><span>$65</span>
+                  <span>$20</span><span>$70</span>
                 </div>
               </div>
             </div>
@@ -391,7 +441,7 @@ export default function BecomeCounsellor() {
               {[
                 "You'll receive an email when your verification is complete",
                 "Your profile will be visible to students immediately after approval",
-                "You can start earning from $20/session",
+                "You can start earning from $25/session",
                 "PathPal handles payments — you get paid weekly",
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3 text-sm text-slate-600">

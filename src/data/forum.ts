@@ -390,10 +390,10 @@ What documentation is most important? What questions do consulate officers typic
   {
     id: "post-8",
     author: student1,
-    title: "Is $35/session really worth it? Comparing PathPal to Korean hagwon college prep (입시컨설팅)",
+    title: "Is $40/session really worth it? Comparing PathPal to Korean hagwon college prep (입시컨설팅)",
     content: `My parents want me to use a Korean 입시컨설팅 (admissions consulting) agency. The packages cost ₩15,000,000–₩25,000,000 (about $11,000–$18,000 USD) for full service.
 
-I've been using PathPal sessions at $35 each instead. After 8 sessions (total $280) I feel like I've gotten more personalized advice than I did in the first month with the Korean agency.
+I've been using PathPal sessions at $40 each instead. After 8 sessions (total $320) I feel like I've gotten more personalized advice than I did in the first month with the Korean agency.
 
 The agency assigned me to a staff member who had never applied to a US university. PathPal connected me to a Korean student at Stanford who went through the exact same process I'm going through.
 

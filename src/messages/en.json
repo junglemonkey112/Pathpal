@@ -63,7 +63,7 @@
       },
       "worth": {
         "title": "Is it worth it?",
-        "desc": "From $35/session vs. $15,000–$25,000 for a traditional agency package. Same outcome, dramatically less cost."
+        "desc": "From $40/session vs. $15,000–$25,000 for a traditional agency package. Same outcome, dramatically less cost."
       },
       "effective": {
         "title": "Will it actually work?",
@@ -77,7 +77,7 @@
     "features": {
       "price": "Price per session",
       "priceTraditional": "$200–$500",
-      "pricePal": "From $35",
+      "pricePal": "From $40",
       "package": "Full package cost",
       "packageTraditional": "$15,000–$25,000",
       "packagePal": "Pay per session",
