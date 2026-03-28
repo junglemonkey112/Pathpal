@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 const WECHAT_APP_ID = process.env.WECHAT_APP_ID;
-const WECHAT_APP_SECRET = process.env.WECHAT_APP_SECRET;
+
+// Allowed redirect origins — only allow same-origin callbacks
+const ALLOWED_CALLBACK_PATH = "/api/auth/wechat/callback";
 
 /**
  * GET /api/auth/wechat
@@ -16,16 +19,26 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const { searchParams } = new URL(request.url);
-  const redirectUri = searchParams.get("redirect_uri") ?? `${new URL(request.url).origin}/api/auth/wechat/callback`;
+  const origin = new URL(request.url).origin;
+  const redirectUri = `${origin}${ALLOWED_CALLBACK_PATH}`;
 
-  // WeChat OAuth 2.0 authorization URL (for web/PC)
+  // Generate and store state for CSRF protection
+  const state = crypto.randomUUID();
+  const cookieStore = await cookies();
+  cookieStore.set("wechat_oauth_state", state, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    maxAge: 600, // 10 minutes
+    path: "/",
+  });
+
   const wechatAuthUrl = new URL("https://open.weixin.qq.com/connect/qrconnect");
   wechatAuthUrl.searchParams.set("appid", WECHAT_APP_ID);
   wechatAuthUrl.searchParams.set("redirect_uri", redirectUri);
   wechatAuthUrl.searchParams.set("response_type", "code");
   wechatAuthUrl.searchParams.set("scope", "snsapi_login");
-  wechatAuthUrl.searchParams.set("state", crypto.randomUUID());
+  wechatAuthUrl.searchParams.set("state", state);
 
   return NextResponse.redirect(wechatAuthUrl.toString() + "#wechat_redirect");
 }

@@ -42,7 +42,7 @@ export default function ForumPreview({ posts }: ForumPreviewProps) {
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {post.author.countryFlag && <span className="text-sm">{post.author.countryFlag}</span>}
                     <span className="font-medium text-slate-900 text-sm truncate">{post.author.name}</span>
-                    {post.author.isConsultant && (
+                    {post.author.isCounsellor && (
                       <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded-full flex-shrink-0">
                         <ShieldCheck className="w-2.5 h-2.5" />
                         Counsellor

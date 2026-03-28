@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 const WECHAT_APP_ID = process.env.WECHAT_APP_ID;
 const WECHAT_APP_SECRET = process.env.WECHAT_APP_SECRET;
@@ -18,6 +19,15 @@ export async function GET(request: NextRequest) {
 
   if (!code) {
     return NextResponse.redirect(`${origin}/login?error=wechat_denied`);
+  }
+
+  // Validate state parameter to prevent CSRF
+  const cookieStore = await cookies();
+  const storedState = cookieStore.get("wechat_oauth_state")?.value;
+  cookieStore.delete("wechat_oauth_state");
+
+  if (!state || !storedState || state !== storedState) {
+    return NextResponse.redirect(`${origin}/login?error=wechat_invalid_state`);
   }
 
   if (!WECHAT_APP_ID || !WECHAT_APP_SECRET) {
@@ -57,11 +67,10 @@ export async function GET(request: NextRequest) {
     // - Create a Supabase session token and set a cookie
     // - Redirect to home with the session
     //
-    // For now, redirect with the openid as a query param (demo only)
+    // For now, redirect to home (demo only — no user info leaked in URL)
     console.log("WeChat login successful:", { openid, nickname: userInfo.nickname });
 
-    // Redirect to home — in production this would set a session cookie
-    return NextResponse.redirect(`${origin}/?wechat_login=success&nickname=${encodeURIComponent(userInfo.nickname ?? "")}`);
+    return NextResponse.redirect(`${origin}/?wechat_login=success`);
 
   } catch (err) {
     console.error("WeChat callback error:", err);

@@ -5,7 +5,7 @@ import { GraduationCap, X, Send, MessageCircle, Sparkles, Loader2 } from "lucide
 import { counsellors } from "@/data/counsellors";
 import { clsx } from "clsx";
 import Link from "next/link";
-import { MAX_FREE_QUESTIONS, AI_RESPONSE_DELAY_MS } from "@/lib/constants";
+import { MAX_FREE_QUESTIONS } from "@/lib/constants";
 
 interface Message {
   role: "user" | "ai";

@@ -4,6 +4,30 @@ const API_KEY = process.env.DASHSCOPE_API_KEY || process.env.ANTHROPIC_AUTH_TOKE
 const API_MODEL = process.env.DASHSCOPE_MODEL || process.env.ANTHROPIC_MODEL || "MiniMax-M2.5";
 const API_BASE_URL = process.env.DASHSCOPE_BASE_URL || process.env.ANTHROPIC_BASE_URL || "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic";
 
+// Simple in-memory rate limiter: max 10 requests per minute per IP
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 10;
+const requestCounts = new Map<string, { count: number; resetAt: number }>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = requestCounts.get(ip);
+  if (!entry || now > entry.resetAt) {
+    requestCounts.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  entry.count++;
+  return entry.count > RATE_LIMIT_MAX;
+}
+
+// Clean up stale entries every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, entry] of requestCounts) {
+    if (now > entry.resetAt) requestCounts.delete(ip);
+  }
+}, 300_000);
+
 const SYSTEM_PROMPT = `You are PathPal AI, a warm and encouraging college admissions advisor specializing in helping international students navigate US university applications. You genuinely care about helping students find the right college fit.
 
 Your tone:
@@ -33,6 +57,15 @@ Response format:
 - If a student writes in Chinese, Korean, or Japanese, respond in that language`;
 
 export async function POST(request: NextRequest) {
+  // Rate limiting by IP
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { error: "Too many requests. Please wait a moment and try again." },
+      { status: 429 }
+    );
+  }
+
   if (!API_KEY) {
     return NextResponse.json(
       { error: "AI service is not configured" },
@@ -109,23 +142,19 @@ export async function POST(request: NextRequest) {
  * Skips "thinking" blocks and finds the real text response.
  */
 function extractTextContent(data: Record<string, unknown>): string | undefined {
-  // Handle content array (Anthropic format, with possible thinking blocks)
   const contentArray = data.content ?? (data.role ? data.content : undefined);
 
   if (Array.isArray(contentArray)) {
-    // Find the text block, skipping thinking/signature blocks
     for (const block of contentArray) {
       if (block.type === "text" && block.text) {
         return block.text;
       }
     }
-    // Fallback: grab first block with .text that isn't a thinking block
     for (const block of contentArray) {
       if (block.text && block.type !== "thinking") {
         return block.text;
       }
     }
-    // Last resort: any block with text content
     for (const block of contentArray) {
       if (typeof block.text === "string" && block.text.length > 0) {
         return block.text;
@@ -136,18 +165,15 @@ function extractTextContent(data: Record<string, unknown>): string | undefined {
     }
   }
 
-  // Simple string content
   if (typeof data.content === "string") {
     return data.content;
   }
 
-  // OpenAI-compatible format
   const choices = data.choices as Array<{ message?: { content?: string } }> | undefined;
   if (choices?.[0]?.message?.content) {
     return choices[0].message.content;
   }
 
-  // DashScope native format
   const output = data.output as { choices?: Array<{ message?: { content?: string } }>; text?: string } | undefined;
   if (output?.choices?.[0]?.message?.content) {
     return output.choices[0].message.content;

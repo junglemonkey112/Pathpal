@@ -10,7 +10,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { signIn, signInWithGoogle, signInWithWeChat } = useUser();
+  const { signIn, signInWithGoogle } = useUser();
   const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -44,9 +44,6 @@ export default function LoginPage() {
       setOauthLoading(null);
     }
   };
-
-  // WeChat OAuth is not yet implemented — button is disabled
-  const handleWeChat = () => {};
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">

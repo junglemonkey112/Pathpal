@@ -159,10 +159,10 @@ export default function ForumPage() {
                   <div className="flex items-center gap-3 text-xs text-slate-400 flex-wrap">
                     <div className="flex items-center gap-1">
                       {post.author.countryFlag && <span>{post.author.countryFlag}</span>}
-                      <span className={clsx("font-medium", post.author.isConsultant ? "text-emerald-600" : "text-slate-600")}>
+                      <span className={clsx("font-medium", post.author.isCounsellor ? "text-emerald-600" : "text-slate-600")}>
                         {post.author.name}
                       </span>
-                      {post.author.isConsultant && (
+                      {post.author.isCounsellor && (
                         <span className="bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded-full text-xs">Verified Counsellor</span>
                       )}
                     </div>

@@ -11,7 +11,7 @@ export interface User {
   id: string;
   name: string;
   avatar: string;
-  isConsultant: boolean;
+  isCounsellor: boolean;
   school?: string;
   country?: string;
   countryFlag?: string;
@@ -45,11 +45,11 @@ export const guestUser: User = {
   id: "guest",
   name: "Guest",
   avatar: "👤",
-  isConsultant: false,
+  isCounsellor: false,
 };
 
 export function createAuthUser(id: string, name: string): User {
-  return { id, name, avatar: "👤", isConsultant: false };
+  return { id, name, avatar: "👤", isCounsellor: false };
 }
 
 export function createComment(
@@ -75,7 +75,7 @@ const jessicaK: User = {
   id: "jessica-kim",
   name: "Jessica Kim",
   avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=jessica-kim&backgroundColor=b6e3f4",
-  isConsultant: true,
+  isCounsellor: true,
   school: "Stanford",
   country: "South Korea",
   countryFlag: "🇰🇷",
@@ -85,7 +85,7 @@ const marcusC: User = {
   id: "marcus-chen",
   name: "Marcus Chen",
   avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=marcus-chen&backgroundColor=c0aede",
-  isConsultant: true,
+  isCounsellor: true,
   school: "Harvard",
   country: "China",
   countryFlag: "🇨🇳",
@@ -95,7 +95,7 @@ const yukiT: User = {
   id: "yuki-tanaka",
   name: "Yuki Tanaka",
   avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=yuki-tanaka&backgroundColor=d1f4e0",
-  isConsultant: true,
+  isCounsellor: true,
   school: "MIT",
   country: "Japan",
   countryFlag: "🇯🇵",
@@ -105,7 +105,7 @@ const aikoN: User = {
   id: "aiko-nakamura",
   name: "Aiko Nakamura",
   avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=aiko-nakamura&backgroundColor=d1f4e0",
-  isConsultant: true,
+  isCounsellor: true,
   school: "Cornell",
   country: "Japan",
   countryFlag: "🇯🇵",
@@ -115,7 +115,7 @@ const weiZ: User = {
   id: "wei-zhang",
   name: "Wei Zhang",
   avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=wei-zhang&backgroundColor=c0aede",
-  isConsultant: true,
+  isCounsellor: true,
   school: "Duke",
   country: "China",
   countryFlag: "🇨🇳",
@@ -125,7 +125,7 @@ const student1: User = {
   id: "minjun-park",
   name: "Min-jun P.",
   avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=minjun",
-  isConsultant: false,
+  isCounsellor: false,
   country: "South Korea",
   countryFlag: "🇰🇷",
 };
@@ -134,7 +134,7 @@ const student2: User = {
   id: "yifan-zhao",
   name: "Yifan Z.",
   avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=yifan",
-  isConsultant: false,
+  isCounsellor: false,
   country: "China",
   countryFlag: "🇨🇳",
 };
@@ -143,7 +143,7 @@ const student3: User = {
   id: "haruto-sato",
   name: "Haruto S.",
   avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=haruto",
-  isConsultant: false,
+  isCounsellor: false,
   country: "Japan",
   countryFlag: "🇯🇵",
 };
@@ -152,7 +152,7 @@ const student4: User = {
   id: "rohan-mehta",
   name: "Rohan M.",
   avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=rohan",
-  isConsultant: false,
+  isCounsellor: false,
   country: "India",
   countryFlag: "🇮🇳",
 };

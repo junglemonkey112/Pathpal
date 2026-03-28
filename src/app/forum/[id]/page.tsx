@@ -70,7 +70,7 @@ function CommentItem({
               <span className="text-sm">{comment.author.countryFlag}</span>
             )}
             <span className="font-semibold text-slate-900 text-sm">{comment.author.name}</span>
-            {comment.author.isConsultant && (
+            {comment.author.isCounsellor && (
               <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded-full">
                 <ShieldCheck className="w-2.5 h-2.5" />
                 Verified Counsellor
@@ -250,7 +250,7 @@ export default function PostDetailPage() {
               <div className="flex items-center gap-2 flex-wrap">
                 {post.author.countryFlag && <span>{post.author.countryFlag}</span>}
                 <span className="font-semibold text-slate-900">{post.author.name}</span>
-                {post.author.isConsultant && (
+                {post.author.isCounsellor && (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded-full">
                     <ShieldCheck className="w-3 h-3" />
                     Verified Counsellor
