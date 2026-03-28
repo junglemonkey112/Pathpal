@@ -2,53 +2,37 @@
 
 import { useState, useEffect, startTransition } from "react";
 import Link from "next/link";
-import { Search, GraduationCap, ChevronRight, Sparkles, FileText, Calendar, Video, SlidersHorizontal, X, Menu, LogOut, User } from "lucide-react";
+import { Search, GraduationCap, Globe, ShieldCheck, Users, BookOpen, TrendingDown, ChevronRight, X, Menu, LogOut, User, Star } from "lucide-react";
 import { counsellors, Counsellor } from "@/data/counsellors";
 import { clsx } from "clsx";
 import AIChat from "@/components/AIChat";
-import ConsultantCard from "@/components/ConsultantCard";
+import CounsellorCard from "@/components/CounsellorCard";
 import ForumPreview from "@/components/ForumPreview";
 import { samplePosts, Post } from "@/data/forum";
-import { getRecommendedSchools, getRecommendedMajors } from "@/data/universities";
-import { INTERESTS, GRADE_LEVELS } from "@/lib/constants";
-import type { SortOption } from "@/lib/constants";
 import { useUser } from "@/context/UserContext";
+import { useLanguage } from "@/context/LanguageContext";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
-interface MatchedCounsellor {
-  counsellor: Counsellor;
-  score: number;
-  reasons: string[];
-}
+const COUNTRIES = ["China", "South Korea", "Japan", "India", "All Countries"];
+const LANGUAGES = ["English", "Mandarin", "Korean", "Japanese", "Hindi", "All Languages"];
+const SPECIALTIES = ["STEM", "Pre-Medicine", "Business", "Liberal Arts", "Architecture", "All Specialties"];
 
 export default function Home() {
-  const { user, signOut, isLoading: authLoading } = useUser();
+  const { user, signOut } = useUser();
+  const { t } = useLanguage();
 
-  // Quick finder state
-  const [grade, setGrade] = useState("");
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-  const [budget, setBudget] = useState<number>(100);
-  const [budgetUnlimited, setBudgetUnlimited] = useState(false);
-  const [currentSchool, setCurrentSchool] = useState("");
-  const [gpa, setGpa] = useState("");
-
-  // Deep match state
-  const [showDeepMatch, setShowDeepMatch] = useState(false);
-  const [targetMajor, setTargetMajor] = useState("");
-  const [targetSchools, setTargetSchools] = useState<string[]>([]);
-
-  // Search state
+  // Filter state
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSchool, setSelectedSchool] = useState("");
-  const [sortBy, setSortBy] = useState<SortOption>("rating");
-  const [showAllConsultants, setShowAllConsultants] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState("All Countries");
+  const [selectedLanguage, setSelectedLanguage] = useState("All Languages");
+  const [selectedSpecialty, setSelectedSpecialty] = useState("All Specialties");
 
-  // Mobile menu state
+  // Mobile menu
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Forum posts state
+  // Forum posts
   const [forumPosts, setForumPosts] = useState<Post[]>(samplePosts);
 
-  // Load forum posts from localStorage
   useEffect(() => {
     startTransition(() => {
       try {
@@ -57,160 +41,74 @@ export default function Home() {
           const storedPosts = JSON.parse(stored).map((p: Post) => ({
             ...p,
             createdAt: new Date(p.createdAt),
-            comments: (p.comments ?? []).map((c) => ({
+            comments: (p.comments ?? []).map((c: Post["comments"][0]) => ({
               ...c,
               createdAt: new Date(c.createdAt),
               replies: (c.replies ?? []).map((r) => ({
                 ...r,
-                createdAt: new Date(r.createdAt)
-              }))
-            }))
+                createdAt: new Date(r.createdAt),
+              })),
+            })),
           }));
-
-          const allPosts = [...storedPosts, ...samplePosts].sort((a: Post, b: Post) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          const allPosts = [...storedPosts, ...samplePosts].sort(
+            (a: Post, b: Post) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
           setForumPosts(allPosts);
         }
-      } catch (e) {
-        console.error("Failed to load forum posts:", e);
+      } catch {
+        // ignore localStorage errors
       }
     });
   }, []);
 
-  // Toggle interest
-  const toggleInterest = (id: string) => {
-    setSelectedInterests(prev =>
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
-    );
-  };
+  // Filtered counsellors
+  const filteredCounsellors = counsellors.filter((c: Counsellor) => {
+    const matchesSearch =
+      !searchQuery ||
+      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.school.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.major.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.specialties.some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()));
 
-  // Simple matching logic
-  const getMatchedConsultants = (): MatchedCounsellor[] => {
-    return counsellors.map(c => {
-      let score = 0;
-      const reasons: string[] = [];
+    const matchesCountry =
+      selectedCountry === "All Countries" || c.country === selectedCountry;
 
-      // Budget filter (using 60-min session price)
-      if (!budgetUnlimited && c.services[1].price > budget) {
-        return null;
-      }
+    const matchesLanguage =
+      selectedLanguage === "All Languages" || c.languages.includes(selectedLanguage);
 
-      // GPA filter
-      if (gpa && parseFloat(gpa) < c.minGPA) {
-        return null;
-      }
+    const matchesSpecialty =
+      selectedSpecialty === "All Specialties" ||
+      c.specialties.some((s) => s.toLowerCase().includes(selectedSpecialty.toLowerCase()));
 
-      // Interest match
-      const interestMatch = c.specialties.filter(s =>
-        selectedInterests.some(i =>
-          (i === "stem" && (s.includes("CS") || s.includes("Engineering") || s.includes("STEM") || s.includes("Math") || s.includes("Science"))) ||
-          (i === "business" && (s.includes("Business") || s.includes("Economics"))) ||
-          (i === "arts" && (s.includes("Arts") || s.includes("Creative") || s.includes("Film") || s.includes("Design"))) ||
-          (i === "social" && (s.includes("Social") || s.includes("Policy") || s.includes("International"))) ||
-          (i === "health" && (s.includes("Pre-Med") || s.includes("Medical") || s.includes("Biology") || s.includes("Neuroscience"))) ||
-          (i === "humanities" && (s.includes("Literature") || s.includes("History") || s.includes("Humanities") || s.includes("Philosophy")))
-        )
-      );
-
-      if (interestMatch.length > 0) {
-        score += interestMatch.length * 20;
-        reasons.push(interestMatch[0]);
-      }
-
-      // Deep match: target major
-      if (showDeepMatch && targetMajor) {
-        if (c.major.toLowerCase().includes(targetMajor.toLowerCase()) ||
-            c.specialties.some(s => s.toLowerCase().includes(targetMajor.toLowerCase()))) {
-          score += 30;
-          reasons.push("Matches target major");
-        }
-      }
-
-      // Deep match: target schools
-      if (showDeepMatch && targetSchools.length > 0) {
-        const schoolMatch = targetSchools.some(s =>
-          c.studentSuccess.some(ss => ss.toLowerCase().includes(s.toLowerCase()))
-        );
-        if (schoolMatch) {
-          score += 25;
-          reasons.push("Experience with target school");
-        }
-      }
-
-      // Current school boost (same school alumni)
-      if (currentSchool && c.school.toLowerCase().includes(currentSchool.toLowerCase())) {
-        score += 15;
-        reasons.push("Same school alumni");
-      }
-
-      return { counsellor: c, score, reasons: reasons.slice(0, 2) };
-    }).filter((item): item is MatchedCounsellor => item !== null)
-      .sort((a, b) => b.score - a.score);
-  };
-
-  const matchedConsultants = getMatchedConsultants();
-
-  const displayedConsultants: (MatchedCounsellor | Counsellor)[] = showAllConsultants
-    ? counsellors
-    : matchedConsultants.slice(0, 5);
-
-  const getConsultantData = (item: MatchedCounsellor | Counsellor) => {
-    if ("counsellor" in item) {
-      return { counsellor: item.counsellor, score: item.score, reasons: item.reasons };
-    }
-    return { counsellor: item, score: 0, reasons: [] as string[] };
-  };
-
-  const filteredConsultants = displayedConsultants
-    .filter((c) => {
-      const { counsellor } = getConsultantData(c);
-      const matchesSearch =
-        counsellor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        counsellor.school.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        counsellor.major.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        counsellor.specialties.some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()));
-      const matchesSchool = !selectedSchool || counsellor.school === selectedSchool;
-      return matchesSearch && matchesSchool;
-    })
-    .sort((a, b) => {
-      const dataA = getConsultantData(a);
-      const dataB = getConsultantData(b);
-
-      if (!showAllConsultants && sortBy === "rating") {
-        return dataB.score - dataA.score;
-      }
-      if (sortBy === "rating") return dataB.counsellor.rating - dataA.counsellor.rating;
-      if (sortBy === "price-asc") return dataA.counsellor.services[0].price - dataB.counsellor.services[0].price;
-      if (sortBy === "price-desc") return dataB.counsellor.services[0].price - dataA.counsellor.services[0].price;
-      return 0;
-    });
+    return matchesSearch && matchesCountry && matchesLanguage && matchesSpecialty;
+  });
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40">
+      <header className="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
-                <GraduationCap className="w-6 h-6 text-white" />
+              <div className="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center">
+                <GraduationCap className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-slate-900">PathPal</span>
             </Link>
 
-            <nav className="hidden md:flex items-center gap-8">
-              <button onClick={() => setShowAllConsultants(true)} className="text-slate-600 hover:text-slate-900 font-medium">All Consultants</button>
-              <Link href="/forum" className="text-slate-600 hover:text-slate-900 font-medium">Community</Link>
-              <a href="#how-it-works" className="text-slate-600 hover:text-slate-900 font-medium">How It Works</a>
-              <a href="#success-stories" className="text-slate-600 hover:text-slate-900 font-medium">Success Stories</a>
+            <nav className="hidden md:flex items-center gap-7">
+              <a href="#counsellors" className="text-slate-600 hover:text-slate-900 font-medium text-sm">{t("nav.allCounsellors")}</a>
+              <Link href="/forum" className="text-slate-600 hover:text-slate-900 font-medium text-sm">{t("nav.community")}</Link>
+              <a href="#how-it-works" className="text-slate-600 hover:text-slate-900 font-medium text-sm">{t("nav.howItWorks")}</a>
+              <a href="#for-parents" className="text-slate-600 hover:text-slate-900 font-medium text-sm">{t("nav.successStories")}</a>
             </nav>
 
             <div className="hidden md:flex items-center gap-3">
+              <LanguageSwitcher />
               {user ? (
                 <>
                   <Link href="/become-counsellor" className="text-slate-600 hover:text-slate-900 font-medium text-sm">
-                    Become a Counsellor
+                    {t("nav.becomeCounsellor")}
                   </Link>
                   <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg">
                     <User className="w-4 h-4 text-slate-600" />
@@ -220,8 +118,8 @@ export default function Home() {
                   </div>
                   <button
                     onClick={() => signOut()}
-                    className="text-slate-500 hover:text-slate-700 p-2 rounded-lg hover:bg-slate-100 transition-colors"
-                    title="Sign out"
+                    className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+                    title={t("nav.signOut")}
                   >
                     <LogOut className="w-4 h-4" />
                   </button>
@@ -229,22 +127,17 @@ export default function Home() {
               ) : (
                 <>
                   <Link href="/become-counsellor" className="text-slate-600 hover:text-slate-900 font-medium text-sm">
-                    Become a Counsellor
+                    {t("nav.becomeCounsellor")}
                   </Link>
-                  <Link href="/login" className="text-slate-600 hover:text-slate-900 font-medium text-sm">
-                    Sign In
-                  </Link>
-                  <Link href="/signup" className="bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm">
-                    Sign Up
+                  <Link href="/login" className="text-slate-600 hover:text-slate-900 font-medium text-sm">{t("nav.signIn")}</Link>
+                  <Link href="/signup" className="bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm">
+                    {t("nav.signUp")}
                   </Link>
                 </>
               )}
             </div>
 
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-slate-600"
-            >
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 text-slate-600">
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
@@ -252,303 +145,140 @@ export default function Home() {
 
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-3">
-            <button
-              onClick={() => { setShowAllConsultants(true); setMobileMenuOpen(false); }}
-              className="block w-full text-left text-slate-600 hover:text-slate-900 font-medium py-2"
-            >
-              All Consultants
-            </button>
-            <Link href="/forum" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">Community</Link>
-            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">How It Works</a>
-            <a href="#success-stories" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">Success Stories</a>
-            <Link href="/become-counsellor" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">
-              Become a Counsellor
-            </Link>
+            <LanguageSwitcher className="mb-2" />
+            <a href="#counsellors" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 font-medium py-1.5">{t("nav.allCounsellors")}</a>
+            <Link href="/forum" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 font-medium py-1.5">{t("nav.community")}</Link>
+            <Link href="/become-counsellor" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 font-medium py-1.5">{t("nav.becomeCounsellor")}</Link>
             {user ? (
-              <button
-                onClick={() => { signOut(); setMobileMenuOpen(false); }}
-                className="block w-full text-left text-slate-600 hover:text-slate-900 font-medium py-2"
-              >
-                Sign Out
-              </button>
+              <button onClick={() => { signOut(); setMobileMenuOpen(false); }} className="block w-full text-left text-slate-600 font-medium py-1.5">{t("nav.signOut")}</button>
             ) : (
               <>
-                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">Sign In</Link>
-                <Link href="/signup" onClick={() => setMobileMenuOpen(false)} className="block bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm text-center">Sign Up</Link>
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 font-medium py-1.5">{t("nav.signIn")}</Link>
+                <Link href="/signup" onClick={() => setMobileMenuOpen(false)} className="block bg-slate-900 text-white px-4 py-2.5 rounded-lg font-medium text-sm text-center">{t("nav.signUp")}</Link>
               </>
             )}
           </div>
         )}
       </header>
 
-      {/* Quick Finder Hero */}
-      <section className="bg-slate-900 text-white py-8 lg:py-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-6">
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">
-              Find Your Perfect <span className="text-emerald-400">College Counsellor</span>
-            </h1>
-            <p className="text-slate-400 text-sm md:text-base">
-              Answer a few questions to get matched with top college students
-            </p>
+      {/* Hero */}
+      <section className="bg-slate-900 text-white pt-16 pb-20 relative overflow-hidden">
+        {/* Subtle background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-8 left-[10%] text-7xl">🇰🇷</div>
+          <div className="absolute top-16 right-[8%] text-7xl">🇨🇳</div>
+          <div className="absolute bottom-12 left-[5%] text-7xl">🇯🇵</div>
+          <div className="absolute bottom-8 right-[12%] text-6xl">🇮🇳</div>
+        </div>
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative">
+          <div className="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full px-4 py-1.5 text-emerald-300 text-sm font-medium mb-6">
+            <ShieldCheck className="w-4 h-4" />
+            All counsellors verified with enrollment proof + government ID
           </div>
 
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 md:p-6 space-y-5">
-            {/* Grade + Interests */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Grade Level *</label>
-                <select
-                  value={grade}
-                  onChange={(e) => setGrade(e.target.value)}
-                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                >
-                  <option value="" className="text-slate-900">Select your grade</option>
-                  {GRADE_LEVELS.map(g => <option key={g} value={g} className="text-slate-900">{g}</option>)}
-                </select>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 leading-tight">
+            {t("hero.title")}
+          </h1>
+          <p className="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
+            {t("hero.subtitle")}
+          </p>
+
+          {/* Stats */}
+          <div className="flex items-center justify-center gap-8 sm:gap-12 mb-10 flex-wrap">
+            {[
+              { icon: Globe, label: t("hero.stats.countries") },
+              { icon: BookOpen, label: t("hero.stats.languages") },
+              { icon: Users, label: t("hero.stats.stories") },
+            ].map(({ icon: Icon, label }) => (
+              <div key={label} className="flex items-center gap-2">
+                <Icon className="w-5 h-5 text-emerald-400" />
+                <span className="font-semibold text-white">{label}</span>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Interests *</label>
-                <div className="flex flex-wrap gap-2">
-                  {INTERESTS.map(item => (
-                    <button
-                      key={item.id}
-                      onClick={() => toggleInterest(item.id)}
-                      className={clsx(
-                        "px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5",
-                        selectedInterests.includes(item.id)
-                          ? "bg-emerald-500 text-slate-900"
-                          : "bg-white/10 text-slate-300 hover:bg-white/20"
-                      )}
-                    >
-                      <span>{item.icon}</span>
-                      <span>{item.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
+            ))}
+          </div>
+
+          <a
+            href="#counsellors"
+            className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold px-8 py-3.5 rounded-xl transition-colors text-sm sm:text-base"
+          >
+            {t("hero.cta")} <ChevronRight className="w-5 h-5" />
+          </a>
+        </div>
+      </section>
+
+      {/* Counsellor Discovery */}
+      <section id="counsellors" className="py-12 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">{t("nav.allCounsellors")}</h2>
+            <p className="text-slate-500 text-sm">Filter by country, language, or specialty</p>
+          </div>
+
+          {/* Filters */}
+          <div className="flex flex-col sm:flex-row gap-3 mb-6">
+            {/* Search */}
+            <div className="relative flex-1">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder={t("hero.filters.search")}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+              />
             </div>
 
-            {/* Budget Slider */}
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Budget per session within
-                {budgetUnlimited ? <span className="text-emerald-400 ml-2">(No limit)</span> : <span className="ml-2">${budget}</span>}
-              </label>
-              <div className="flex items-center gap-4">
-                <input
-                  type="range"
-                  min="20"
-                  max="150"
-                  value={budgetUnlimited ? 150 : budget}
-                  onChange={(e) => {
-                    setBudgetUnlimited(false);
-                    setBudget(parseInt(e.target.value));
-                  }}
-                  disabled={budgetUnlimited}
-                  className="flex-1 h-2 bg-white/20 rounded-lg appearance-none cursor-pointer"
-                />
-                <button
-                  onClick={() => setBudgetUnlimited(!budgetUnlimited)}
-                  className={clsx(
-                    "px-3 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap",
-                    budgetUnlimited ? "bg-emerald-500 text-slate-900" : "bg-white/10 text-slate-400 hover:text-white"
-                  )}
-                >
-                  Any
-                </button>
-              </div>
-            </div>
-
-            {/* GPA */}
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                GPA <span className="text-slate-500">(Optional - helps filter target schools)</span>
-              </label>
-              <select
-                value={gpa}
-                onChange={(e) => setGpa(e.target.value)}
-                className="w-full md:w-1/2 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              >
-                <option value="" className="text-slate-900">Select GPA</option>
-                <option value="3.0" className="text-slate-900">Below 3.5</option>
-                <option value="3.5" className="text-slate-900">3.5 - 3.79</option>
-                <option value="3.8" className="text-slate-900">3.8 - 3.99</option>
-                <option value="4.0" className="text-slate-900">4.0+</option>
-              </select>
-            </div>
-
-            {/* Deep Match Toggle */}
-            <button
-              onClick={() => setShowDeepMatch(!showDeepMatch)}
-              className="flex items-center gap-2 text-slate-400 hover:text-white text-sm"
+            {/* Country filter */}
+            <select
+              value={selectedCountry}
+              onChange={(e) => setSelectedCountry(e.target.value)}
+              className="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
             >
-              <SlidersHorizontal className="w-4 h-4" />
-              {showDeepMatch ? "Hide" : "Show"} advanced options for better matching
-              <ChevronRight className={clsx("w-4 h-4 transition-transform", showDeepMatch && "rotate-90")} />
-            </button>
+              {COUNTRIES.map((c) => <option key={c}>{c}</option>)}
+            </select>
 
-            {showDeepMatch && (
-              <div className="bg-black/20 rounded-xl p-4 space-y-4 animate-in slide-in-from-top-2">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Current School (boosts matching with same-school mentors)</label>
-                  <input
-                    type="text"
-                    value={currentSchool}
-                    onChange={(e) => setCurrentSchool(e.target.value)}
-                    placeholder="e.g., Shanghai American School"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Target Major</label>
-                  <input
-                    type="text"
-                    value={targetMajor}
-                    onChange={(e) => setTargetMajor(e.target.value)}
-                    placeholder="e.g., Computer Science"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Target Schools (filter by specific schools)</label>
-                  <input
-                    type="text"
-                    value={targetSchools.join(", ")}
-                    onChange={(e) => setTargetSchools(e.target.value.split(",").map(s => s.trim()).filter(Boolean))}
-                    placeholder="e.g., Harvard, Stanford, MIT (comma separated)"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
-                  />
-                </div>
+            {/* Language filter */}
+            <select
+              value={selectedLanguage}
+              onChange={(e) => setSelectedLanguage(e.target.value)}
+              className="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+            >
+              {LANGUAGES.map((l) => <option key={l}>{l}</option>)}
+            </select>
+
+            {/* Specialty filter */}
+            <select
+              value={selectedSpecialty}
+              onChange={(e) => setSelectedSpecialty(e.target.value)}
+              className="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+            >
+              {SPECIALTIES.map((s) => <option key={s}>{s}</option>)}
+            </select>
+          </div>
+
+          {/* Results count */}
+          <p className="text-sm text-slate-500 mb-4">
+            {filteredCounsellors.length} counsellor{filteredCounsellors.length !== 1 ? "s" : ""} found
+          </p>
+
+          {/* Counsellor grid */}
+          <div className="grid gap-4">
+            {filteredCounsellors.map((c) => (
+              <CounsellorCard key={c.id} counsellor={c} />
+            ))}
+            {filteredCounsellors.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-slate-500">No counsellors match your filters.</p>
                 <button
-                  onClick={() => { setTargetMajor(""); setTargetSchools([]); }}
-                  className="text-xs text-slate-500 hover:text-slate-300"
+                  onClick={() => { setSearchQuery(""); setSelectedCountry("All Countries"); setSelectedLanguage("All Languages"); setSelectedSpecialty("All Specialties"); }}
+                  className="mt-3 text-emerald-600 hover:text-emerald-700 text-sm font-medium"
                 >
-                  Clear advanced options
+                  Clear filters
                 </button>
               </div>
             )}
           </div>
-        </div>
-      </section>
-
-      {/* Results */}
-      <section className="py-8 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Match Summary */}
-          {(selectedInterests.length > 0 || grade) && (
-            <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-4 md:p-6 mb-6 text-white">
-              <div className="flex items-center gap-2 mb-3">
-                <Sparkles className="w-5 h-5" />
-                <span className="font-semibold">Your Match Summary</span>
-              </div>
-              <div className="grid md:grid-cols-3 gap-4 text-sm">
-                <div>
-                  <span className="text-emerald-100">Recommended Majors</span>
-                  <div className="font-semibold text-lg">
-                    {getRecommendedMajors(selectedInterests).join(", ")}
-                  </div>
-                </div>
-                <div>
-                  <span className="text-emerald-100">Target Schools</span>
-                  <div className="font-semibold text-lg">
-                    {targetSchools.length > 0
-                      ? targetSchools.slice(0, 3).join(", ") + (targetSchools.length > 3 ? "..." : "")
-                      : targetMajor
-                        ? targetMajor
-                        : getRecommendedSchools(selectedInterests, gpa).join(", ")}
-                  </div>
-                </div>
-                <div>
-                  <span className="text-emerald-100">Matched Consultants</span>
-                  <div className="font-semibold text-lg">
-                    {matchedConsultants.length} available
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Results Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <Sparkles className="w-5 h-5 text-emerald-600" />
-              <h2 className="text-xl font-bold text-slate-900">
-                {showAllConsultants ? "All Consultants" : "Recommended for You"}
-              </h2>
-              {!showAllConsultants && matchedConsultants.length > 0 && (
-                <span className="text-sm text-slate-500">({matchedConsultants.length} matched)</span>
-              )}
-            </div>
-            <button
-              onClick={() => setShowAllConsultants(!showAllConsultants)}
-              className="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
-            >
-              {showAllConsultants ? "Show matched only" : "View all"}
-            </button>
-          </div>
-
-          {/* Search & Filter */}
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Search by name, school, major..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900"
-              />
-            </div>
-            <div className="flex gap-3">
-              <select
-                value={selectedSchool}
-                onChange={(e) => setSelectedSchool(e.target.value)}
-                className="px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900"
-              >
-                <option value="">All Schools</option>
-                {["Harvard", "Stanford", "MIT", "Yale", "Princeton", "Columbia", "Cornell", "Duke"].map((school) => (
-                  <option key={school} value={school}>{school}</option>
-                ))}
-              </select>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900"
-              >
-                <option value="rating">Top Rated</option>
-                <option value="price-asc">Price: Low → High</option>
-                <option value="price-desc">Price: High → Low</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Counsellor Grid */}
-          <div className="grid gap-4">
-            {filteredConsultants.map((item) => {
-              const { counsellor, score, reasons } = getConsultantData(item);
-              return (
-                <ConsultantCard
-                  key={counsellor.id}
-                  counsellor={counsellor}
-                  matchScore={score > 0 ? score : undefined}
-                  reasons={reasons}
-                />
-              );
-            })}
-          </div>
-
-          {filteredConsultants.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-slate-500 text-lg">No counsellors found</p>
-              <button
-                onClick={() => { setSearchQuery(""); setSelectedSchool(""); setBudget(150); setBudgetUnlimited(true); }}
-                className="mt-4 text-emerald-600 hover:text-emerald-700 font-medium"
-              >
-                Clear filters
-              </button>
-            </div>
-          )}
         </div>
       </section>
 
@@ -556,27 +286,110 @@ export default function Home() {
       <section id="how-it-works" className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">
-              How PathPal Works
-            </h2>
-            <p className="text-slate-600">
-              Get matched with perfect counsellors in minutes
-            </p>
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">{t("howItWorks.title")}</h2>
+            <p className="text-slate-500">{t("howItWorks.subtitle")}</p>
+          </div>
+          <div className="grid md:grid-cols-4 gap-6">
+            {(["browse", "match", "book", "start"] as const).map((key, i) => (
+              <div key={key} className="text-center">
+                <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center mx-auto mb-4 text-white font-bold text-lg">
+                  {i + 1}
+                </div>
+                <h3 className="font-semibold text-slate-900 mb-1">{t(`howItWorks.steps.${key}.title`)}</h3>
+                <p className="text-sm text-slate-500">{t(`howItWorks.steps.${key}.desc`)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* For Parents */}
+      <section id="for-parents" className="py-16 bg-slate-900 text-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-bold mb-3">{t("forParents.title")}</h2>
+            <p className="text-slate-400">{t("forParents.subtitle")}</p>
           </div>
 
-          <div className="grid md:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            {/* Traditional column */}
+            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+              <div className="flex items-center gap-2 mb-5">
+                <TrendingDown className="w-5 h-5 text-red-400" />
+                <h3 className="font-bold text-lg">{t("forParents.comparison.traditional")}</h3>
+              </div>
+              <div className="space-y-4">
+                {[
+                  [t("forParents.features.price"), t("forParents.features.priceTraditional")],
+                  [t("forParents.features.package"), t("forParents.features.packageTraditional")],
+                  [t("forParents.features.counsellor"), t("forParents.features.counsellorTraditional")],
+                  [t("forParents.features.perspective"), t("forParents.features.perspectiveTraditional")],
+                ].map(([label, value]) => (
+                  <div key={label} className="flex justify-between items-start gap-4">
+                    <span className="text-slate-400 text-sm">{label}</span>
+                    <span className="text-red-300 text-sm font-medium text-right">{value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* PathPal column */}
+            <div className="bg-emerald-500/10 rounded-2xl p-6 border border-emerald-500/30">
+              <div className="flex items-center gap-2 mb-5">
+                <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                <h3 className="font-bold text-lg text-emerald-300">{t("forParents.comparison.pathpal")}</h3>
+              </div>
+              <div className="space-y-4">
+                {[
+                  [t("forParents.features.price"), t("forParents.features.pricePal")],
+                  [t("forParents.features.package"), t("forParents.features.packagePal")],
+                  [t("forParents.features.counsellor"), t("forParents.features.counsellorPal")],
+                  [t("forParents.features.perspective"), t("forParents.features.perspectivePal")],
+                ].map(([label, value]) => (
+                  <div key={label} className="flex justify-between items-start gap-4">
+                    <span className="text-slate-300 text-sm">{label}</span>
+                    <span className="text-emerald-300 text-sm font-semibold text-right">{value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <p className="text-center text-slate-400 text-sm flex items-center justify-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            {t("forParents.trust")}
+          </p>
+        </div>
+      </section>
+
+      {/* Success Stories */}
+      <section id="success-stories" className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">{t("nav.successStories")}</h2>
+            <p className="text-slate-500">Students who made it to their dream schools</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
             {[
-              { step: "1", icon: FileText, title: "Answer Questions", desc: "Tell us your grade, interests, budget" },
-              { step: "2", icon: Sparkles, title: "Get Matched", desc: "AI finds counsellors who fit you" },
-              { step: "3", icon: Calendar, title: "Book a Time", desc: "Choose a slot that works" },
-              { step: "4", icon: Video, title: "Start Session", desc: "Video call with your counsellor" },
-            ].map((item, idx) => (
-              <div key={idx} className="text-center">
-                <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <item.icon className="w-6 h-6 text-white" />
+              { name: "Min-jun P.", flag: "🇰🇷", school: "CMU Computer Science", quote: "Jessica helped me reframe my olympiad experience as a personal story, not a trophy list. CMU said yes.", counsellor: "Jessica Kim" },
+              { name: "Xiaoyu W.", flag: "🇨🇳", school: "Yale University", quote: "Marcus showed me how to write authentically in English about growing up in Beijing. My essays finally felt like me.", counsellor: "Marcus Chen" },
+              { name: "Haruto S.", flag: "🇯🇵", school: "Caltech", quote: "Yuki understood my robotics background in a way no one else could. He helped me tell the story behind the trophies.", counsellor: "Yuki Tanaka" },
+            ].map((story) => (
+              <div key={story.name} className="bg-slate-50 rounded-2xl p-6 hover:shadow-md transition-shadow">
+                <div className="flex items-center gap-1 mb-3">
+                  {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />)}
                 </div>
-                <h3 className="font-semibold text-slate-900 mb-1">{item.title}</h3>
-                <p className="text-sm text-slate-600">{item.desc}</p>
+                <p className="text-slate-700 mb-4 text-sm leading-relaxed">&ldquo;{story.quote}&rdquo;</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-base">{story.flag}</span>
+                      <span className="font-semibold text-slate-900 text-sm">{story.name}</span>
+                    </div>
+                    <span className="text-emerald-600 text-xs font-medium">Accepted to {story.school}</span>
+                  </div>
+                  <span className="text-xs text-slate-400">via {story.counsellor}</span>
+                </div>
               </div>
             ))}
           </div>
@@ -586,46 +399,30 @@ export default function Home() {
       {/* Community Forum Preview */}
       <ForumPreview posts={forumPosts} />
 
-      {/* Success Stories */}
-      <section id="success-stories" className="py-16 bg-slate-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold mb-3">Success Stories</h2>
-            <p className="text-slate-400">
-              Students who got into their dream schools with PathPal
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { name: "Alex T.", school: "Harvard", quote: "My counsellor helped me craft a compelling narrative that stood out.", avatar: "👨🏿" },
-              { name: "Sarah M.", school: "Stanford", quote: "The mock interview sessions were incredibly helpful!", avatar: "👩🏻" },
-              { name: "James K.", school: "MIT", quote: "Got into MIT thanks to the resume guidance.", avatar: "👨🏻" },
-            ].map((story, idx) => (
-              <div key={idx} className="bg-white/5 rounded-2xl p-6 hover:bg-white/10 transition-colors">
-                <div className="text-4xl mb-4">{story.avatar}</div>
-                <p className="text-slate-300 mb-4">&ldquo;{story.quote}&rdquo;</p>
-                <div>
-                  <div className="font-semibold">{story.name}</div>
-                  <div className="text-emerald-400 text-sm">Accepted to {story.school}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
-      <footer className="bg-slate-50 border-t border-slate-200 py-8">
+      <footer className="bg-slate-900 text-slate-400 py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
-                <GraduationCap className="w-4 h-4 text-white" />
+          <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-8">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+                  <GraduationCap className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-white font-bold text-lg">PathPal</span>
               </div>
-              <span className="text-lg font-bold text-slate-900">PathPal</span>
+              <p className="text-sm max-w-xs">Every student deserves a guide who&apos;s been there.</p>
             </div>
-            <p className="text-slate-500 text-sm">&copy; 2026 PathPal. All rights reserved.</p>
+            <div className="flex flex-col items-start md:items-end gap-3">
+              <LanguageSwitcher />
+              <div className="flex gap-4 text-sm">
+                <Link href="/forum" className="hover:text-white transition-colors">{t("nav.community")}</Link>
+                <Link href="/become-counsellor" className="hover:text-white transition-colors">{t("nav.becomeCounsellor")}</Link>
+                <Link href="/login" className="hover:text-white transition-colors">{t("nav.signIn")}</Link>
+              </div>
+            </div>
+          </div>
+          <div className="border-t border-slate-800 pt-6 text-xs text-center">
+            &copy; 2026 PathPal. All rights reserved.
           </div>
         </div>
       </footer>
