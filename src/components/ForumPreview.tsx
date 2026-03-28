@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight, Heart, MessageCircle, Award, Plus } from "lucide-react";
+import { ChevronRight, Heart, MessageCircle, ShieldCheck, Plus } from "lucide-react";
 import { Post } from "@/data/forum";
 
 interface ForumPreviewProps {
@@ -13,7 +13,7 @@ export default function ForumPreview({ posts }: ForumPreviewProps) {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Community</h2>
-            <p className="text-slate-600">Connect with peers and consultants</p>
+            <p className="text-slate-600">Connect with peers and Student Counsellors</p>
           </div>
           <Link
             href="/forum"
@@ -31,15 +31,21 @@ export default function ForumPreview({ posts }: ForumPreviewProps) {
               className="bg-white rounded-xl border border-slate-200 p-4 hover:shadow-lg hover:border-slate-300 transition-all"
             >
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm">
-                  {post.author.avatar}
-                </div>
+                {post.author.avatar.startsWith("http") ? (
+                  <img src={post.author.avatar} alt={post.author.name} className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm flex-shrink-0">
+                    {post.author.avatar}
+                  </div>
+                )}
                 <div className="min-w-0">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {post.author.countryFlag && <span className="text-sm">{post.author.countryFlag}</span>}
                     <span className="font-medium text-slate-900 text-sm truncate">{post.author.name}</span>
                     {post.author.isConsultant && (
                       <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded-full flex-shrink-0">
-                        <Award className="w-2.5 h-2.5" />
+                        <ShieldCheck className="w-2.5 h-2.5" />
+                        Counsellor
                       </span>
                     )}
                   </div>
