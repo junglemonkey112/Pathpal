@@ -98,6 +98,15 @@ export function getGoogleCalendarUrl(event: CalendarEvent): string {
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
+/**
+ * Returns a data: URI that iOS Safari / macOS Safari intercepts and opens
+ * directly in Apple Calendar (shows "Add to Calendar" dialog).
+ * Also works as a download link on desktop browsers.
+ */
+export function getAppleCalendarUrl(icsContent: string): string {
+  return `data:text/calendar;charset=utf-8,${encodeURIComponent(icsContent)}`;
+}
+
 export function downloadICS(icsContent: string, filename = "pathpal-session.ics"): void {
   const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
   const url = URL.createObjectURL(blob);

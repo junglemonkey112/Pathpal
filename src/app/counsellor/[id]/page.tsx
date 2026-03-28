@@ -7,7 +7,7 @@ import { counsellors } from "@/data/counsellors";
 import { clsx } from "clsx";
 import { useUser } from "@/context/UserContext";
 import { useLanguage } from "@/context/LanguageContext";
-import { generateICS, getGoogleCalendarUrl, downloadICS, type CalendarEvent } from "@/utils/calendar";
+import { generateICS, getGoogleCalendarUrl, getAppleCalendarUrl, downloadICS, type CalendarEvent } from "@/utils/calendar";
 import Navbar from "@/components/Navbar";
 
 export default function CounsellorPage({ params }: { params: Promise<{ id: string }> }) {
@@ -23,6 +23,7 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
   const [googleCalendarUrl, setGoogleCalendarUrl] = useState("");
+  const [appleCalendarUrl, setAppleCalendarUrl] = useState("");
   const [icsContent, setIcsContent] = useState("");
 
   if (!counsellor) {
@@ -65,13 +66,11 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
       attendeeName: user?.user_metadata?.full_name ?? user?.email ?? "Student",
     };
 
-    // Build Google Calendar URL
+    // Build calendar URLs — no auto-download, user picks their preferred method
     setGoogleCalendarUrl(getGoogleCalendarUrl(calEvent));
-
-    // Auto-download .ics
     const ics = generateICS(calEvent);
     setIcsContent(ics);
-    downloadICS(ics, `pathpal-${counsellor.name.toLowerCase().replace(/\s+/g, "-")}-${slot.date}.ics`);
+    setAppleCalendarUrl(getAppleCalendarUrl(ics));
 
     // Send confirmation email (non-blocking)
     if (user?.email) {
@@ -227,6 +226,7 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
                     </p>
                   </div>
                   <div className="space-y-2">
+                    {/* Google Calendar — best for Android and desktop Chrome */}
                     {googleCalendarUrl && (
                       <a
                         href={googleCalendarUrl}
@@ -240,16 +240,29 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
                           <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                           <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                         </svg>
-                        Add to Google Calendar
+                        Google Calendar
                       </a>
                     )}
+                    {/* Apple Calendar — data: URI that iOS Safari opens directly in Calendar app */}
+                    {appleCalendarUrl && (
+                      <a
+                        href={appleCalendarUrl}
+                        className="flex items-center justify-center gap-2 w-full py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                      >
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                        </svg>
+                        Apple Calendar (iPhone / Mac)
+                      </a>
+                    )}
+                    {/* .ics download — for Outlook on desktop */}
                     {icsContent && (
                       <button
                         onClick={() => downloadICS(icsContent)}
-                        className="flex items-center justify-center gap-2 w-full py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                        className="flex items-center justify-center gap-2 w-full py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-500 hover:bg-slate-50 transition-colors"
                       >
                         <Download className="w-4 h-4" />
-                        Download .ics (Apple / Outlook)
+                        Download .ics (Outlook)
                       </button>
                     )}
                   </div>
