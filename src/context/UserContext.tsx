@@ -85,7 +85,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: name } },
+      options: {
+        data: { full_name: name },
+        emailRedirectTo: `${window.location.origin}/`,
+      },
     });
     return { error: error?.message ?? null };
   };
