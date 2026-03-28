@@ -1,0 +1,132 @@
+{
+  "nav": {
+    "allCounsellors": "All Counsellors",
+    "community": "Community",
+    "howItWorks": "How It Works",
+    "successStories": "Success Stories",
+    "becomeCounsellor": "Become a Counsellor",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out"
+  },
+  "hero": {
+    "title": "Every student deserves a guide who's been there",
+    "subtitle": "Connect with verified student counsellors from Harvard, Stanford, MIT and more — people who navigated the same journey from your country.",
+    "stats": {
+      "countries": "12 Countries",
+      "languages": "4 Languages",
+      "stories": "500+ Success Stories"
+    },
+    "cta": "Find Your Counsellor",
+    "filters": {
+      "country": "Country",
+      "language": "Language",
+      "specialty": "Specialty",
+      "search": "Search counsellors...",
+      "allCountries": "All Countries",
+      "allLanguages": "All Languages",
+      "allSpecialties": "All Specialties"
+    }
+  },
+  "howItWorks": {
+    "title": "How PathPal Works",
+    "subtitle": "Get matched with the right counsellor in minutes",
+    "steps": {
+      "browse": { "title": "Browse & Filter", "desc": "Filter by country, language, and specialty to find counsellors who understand your background" },
+      "match": { "title": "Read Their Story", "desc": "Every counsellor shares their personal journey — find someone whose path resonates with yours" },
+      "book": { "title": "Book a Session", "desc": "Choose a time that works for your timezone" },
+      "start": { "title": "Start Your Journey", "desc": "Video session with your counsellor — guidance from someone who's been there" }
+    }
+  },
+  "forParents": {
+    "title": "For Parents",
+    "subtitle": "World-class guidance at a fraction of traditional costs",
+    "comparison": {
+      "traditional": "Traditional Agency",
+      "pathpal": "PathPal"
+    },
+    "features": {
+      "price": "Price per session",
+      "priceTraditional": "$200–$500",
+      "pricePal": "From $20",
+      "package": "Full package cost",
+      "packageTraditional": "$15,000–$25,000",
+      "packagePal": "Pay per session",
+      "counsellor": "Your counsellor",
+      "counsellorTraditional": "Unknown staff",
+      "counsellorPal": "Verified top-university student",
+      "perspective": "International perspective",
+      "perspectiveTraditional": "Rarely",
+      "perspectivePal": "Always — same journey"
+    },
+    "trust": "All counsellors are verified with enrollment proof and government ID."
+  },
+  "counsellor": {
+    "verified": "Verified",
+    "verifiedTitle": "Verified Student Counsellor",
+    "myStory": "My Story",
+    "specialties": "Specialties",
+    "studentSuccess": "Student Success",
+    "services": "Services",
+    "bookSession": "Book a Session",
+    "from": "from",
+    "session": "/ session",
+    "languages": "Languages",
+    "viewProfile": "View Profile",
+    "speaksLabel": "Speaks"
+  },
+  "forum": {
+    "title": "Community Forum",
+    "subtitle": "Questions, stories and advice from international applicants worldwide",
+    "newPost": "New Post",
+    "categories": {
+      "all": "All Posts",
+      "applications": "Applications",
+      "essays": "Essays",
+      "financialAid": "Financial Aid",
+      "visas": "Visas & F-1",
+      "decisions": "Decisions",
+      "international": "International Students"
+    },
+    "verificationNotice": "You need to be a verified counsellor to post. ",
+    "learnMore": "Learn more",
+    "upvote": "Upvote",
+    "reply": "Reply",
+    "postedBy": "Posted by",
+    "searchPlaceholder": "Search posts..."
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full Name",
+    "continueGoogle": "Continue with Google",
+    "continueWeChat": "Continue with WeChat",
+    "or": "or",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "forgotPassword": "Forgot password?"
+  },
+  "onboarding": {
+    "title": "Tell us about yourself",
+    "grade": "What grade are you in?",
+    "gpa": "What's your GPA?",
+    "interests": "What are your interests?",
+    "country": "Which country are you applying from?",
+    "targetSchools": "Any target schools?",
+    "budget": "Budget per session",
+    "next": "Next",
+    "skip": "Skip",
+    "done": "Done"
+  },
+  "chat": {
+    "title": "Ask PathPal AI",
+    "subtitle": "Free college admissions guidance",
+    "placeholder": "Ask about applications, essays, deadlines...",
+    "send": "Send",
+    "limitReached": "You've used your 3 free questions.",
+    "browseCounsellors": "Browse Counsellors",
+    "thinking": "Thinking..."
+  }
+}

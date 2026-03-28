@@ -1,0 +1,132 @@
+{
+  "nav": {
+    "allCounsellors": "全カウンセラー",
+    "community": "コミュニティ",
+    "howItWorks": "使い方",
+    "successStories": "成功事例",
+    "becomeCounsellor": "カウンセラーになる",
+    "signIn": "ログイン",
+    "signUp": "新規登録",
+    "signOut": "ログアウト"
+  },
+  "hero": {
+    "title": "すべての学生は、同じ道を歩んだ案内人に出会う権利がある",
+    "subtitle": "ハーバード、スタンフォード、MITなどの認定学生カウンセラーとつながりましょう。日本から米国大学受験を経験した人たちです。",
+    "stats": {
+      "countries": "12カ国",
+      "languages": "4言語",
+      "stories": "500以上の成功事例"
+    },
+    "cta": "カウンセラーを探す",
+    "filters": {
+      "country": "国",
+      "language": "言語",
+      "specialty": "専門分野",
+      "search": "カウンセラーを検索...",
+      "allCountries": "すべての国",
+      "allLanguages": "すべての言語",
+      "allSpecialties": "すべての分野"
+    }
+  },
+  "howItWorks": {
+    "title": "PathPalの使い方",
+    "subtitle": "数分で最適なカウンセラーを見つけましょう",
+    "steps": {
+      "browse": { "title": "検索・フィルター", "desc": "国、言語、専門分野でフィルタリングして、あなたの背景を理解するカウンセラーを探しましょう" },
+      "match": { "title": "ストーリーを読む", "desc": "すべてのカウンセラーが自分の受験体験を共有しています。共感できる経験を持つ人を見つけましょう" },
+      "book": { "title": "セッションを予約", "desc": "あなたのタイムゾーンに合った時間を選択してください" },
+      "start": { "title": "旅を始める", "desc": "カウンセラーとビデオセッション — 同じ道を歩んだ先輩からのリアルなアドバイス" }
+    }
+  },
+  "forParents": {
+    "title": "保護者の方へ",
+    "subtitle": "一流の受験指導を従来のコストの何分の一かで",
+    "comparison": {
+      "traditional": "従来の留学エージェント",
+      "pathpal": "PathPal"
+    },
+    "features": {
+      "price": "セッション単価",
+      "priceTraditional": "¥30,000–¥80,000",
+      "pricePal": "¥3,000から",
+      "package": "全体費用",
+      "packageTraditional": "¥2,000,000–¥4,000,000",
+      "packagePal": "セッションごとの支払い",
+      "counsellor": "担当カウンセラー",
+      "counsellorTraditional": "名前も知らないスタッフ",
+      "counsellorPal": "認定トップ大学在学生",
+      "perspective": "国際的視点",
+      "perspectiveTraditional": "まれに",
+      "perspectivePal": "常に — 同じ経験を持つ"
+    },
+    "trust": "すべてのカウンセラーは在学証明書と政府発行の身分証明書で認証されています。"
+  },
+  "counsellor": {
+    "verified": "認証済み",
+    "verifiedTitle": "認定学生カウンセラー",
+    "myStory": "私のストーリー",
+    "specialties": "専門分野",
+    "studentSuccess": "生徒の合格実績",
+    "services": "サービス",
+    "bookSession": "セッションを予約",
+    "from": "から",
+    "session": "/ セッション",
+    "languages": "言語",
+    "viewProfile": "プロフィールを見る",
+    "speaksLabel": "対応言語"
+  },
+  "forum": {
+    "title": "コミュニティフォーラム",
+    "subtitle": "世界中の国際受験生からの質問・体験談・アドバイス",
+    "newPost": "投稿する",
+    "categories": {
+      "all": "すべて",
+      "applications": "出願",
+      "essays": "エッセイ",
+      "financialAid": "奨学金",
+      "visas": "ビザ・F-1",
+      "decisions": "合否発表",
+      "international": "留学生"
+    },
+    "verificationNotice": "投稿するには認定カウンセラーである必要があります。",
+    "learnMore": "詳しく見る",
+    "upvote": "いいね",
+    "reply": "返信",
+    "postedBy": "投稿者",
+    "searchPlaceholder": "投稿を検索..."
+  },
+  "auth": {
+    "signIn": "ログイン",
+    "signUp": "新規登録",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "fullName": "氏名",
+    "continueGoogle": "Googleで続ける",
+    "continueWeChat": "WeChatで続ける",
+    "or": "または",
+    "noAccount": "アカウントをお持ちでないですか？",
+    "haveAccount": "すでにアカウントをお持ちですか？",
+    "forgotPassword": "パスワードをお忘れですか？"
+  },
+  "onboarding": {
+    "title": "あなたについて教えてください",
+    "grade": "今何年生ですか？",
+    "gpa": "GPAはいくつですか？",
+    "interests": "興味のある分野は何ですか？",
+    "country": "どの国から出願しますか？",
+    "targetSchools": "志望校はありますか？",
+    "budget": "セッションごとの予算",
+    "next": "次へ",
+    "skip": "スキップ",
+    "done": "完了"
+  },
+  "chat": {
+    "title": "PathPal AIに相談",
+    "subtitle": "無料の大学受験ガイダンス",
+    "placeholder": "出願・エッセイ・締め切りについて質問してください...",
+    "send": "送信",
+    "limitReached": "無料の3回の質問を使い切りました。",
+    "browseCounsellors": "カウンセラーを見る",
+    "thinking": "考え中..."
+  }
+}

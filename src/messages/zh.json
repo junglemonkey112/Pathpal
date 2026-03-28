@@ -1,0 +1,132 @@
+{
+  "nav": {
+    "allCounsellors": "所有顾问",
+    "community": "社区",
+    "howItWorks": "如何运作",
+    "successStories": "成功案例",
+    "becomeCounsellor": "成为顾问",
+    "signIn": "登录",
+    "signUp": "注册",
+    "signOut": "退出登录"
+  },
+  "hero": {
+    "title": "每一位学生都值得拥有一位走过相同道路的引路人",
+    "subtitle": "与来自哈佛、斯坦福、麻省理工等顶尖大学的认证学生顾问联系——他们和你一样，也经历过从中国申请美国大学的旅程。",
+    "stats": {
+      "countries": "12个国家",
+      "languages": "4种语言",
+      "stories": "500+成功案例"
+    },
+    "cta": "找到我的顾问",
+    "filters": {
+      "country": "国家",
+      "language": "语言",
+      "specialty": "专业方向",
+      "search": "搜索顾问...",
+      "allCountries": "所有国家",
+      "allLanguages": "所有语言",
+      "allSpecialties": "所有专业"
+    }
+  },
+  "howItWorks": {
+    "title": "PathPal 如何运作",
+    "subtitle": "几分钟内找到最适合你的顾问",
+    "steps": {
+      "browse": { "title": "浏览筛选", "desc": "按国家、语言和专业方向筛选，找到了解你背景的顾问" },
+      "match": { "title": "阅读他们的故事", "desc": "每位顾问都分享了自己的申请历程——找到与你经历相似的人" },
+      "book": { "title": "预约课程", "desc": "选择适合你时区的时间" },
+      "start": { "title": "开启你的旅程", "desc": "与顾问进行视频通话——获得过来人的真实建议" }
+    }
+  },
+  "forParents": {
+    "title": "致家长",
+    "subtitle": "顶级升学指导，费用仅为传统机构的一小部分",
+    "comparison": {
+      "traditional": "传统留学机构",
+      "pathpal": "PathPal"
+    },
+    "features": {
+      "price": "每节课费用",
+      "priceTraditional": "¥1,500–¥3,500",
+      "pricePal": "最低¥150",
+      "package": "全程费用",
+      "packageTraditional": "¥100,000–¥200,000",
+      "packagePal": "按课付费",
+      "counsellor": "你的顾问",
+      "counsellorTraditional": "不知名工作人员",
+      "counsellorPal": "认证顶尖大学在读生",
+      "perspective": "国际视角",
+      "perspectiveTraditional": "很少",
+      "perspectivePal": "始终如一——相同经历"
+    },
+    "trust": "所有顾问均通过在读证明和政府身份证件认证。"
+  },
+  "counsellor": {
+    "verified": "已认证",
+    "verifiedTitle": "认证学生顾问",
+    "myStory": "我的故事",
+    "specialties": "专业方向",
+    "studentSuccess": "学生成功案例",
+    "services": "服务项目",
+    "bookSession": "预约课程",
+    "from": "起",
+    "session": "/ 节",
+    "languages": "语言",
+    "viewProfile": "查看详情",
+    "speaksLabel": "会说"
+  },
+  "forum": {
+    "title": "社区论坛",
+    "subtitle": "来自全球国际申请者的问题、故事与建议",
+    "newPost": "发帖",
+    "categories": {
+      "all": "全部",
+      "applications": "申请",
+      "essays": "文书",
+      "financialAid": "奖学金",
+      "visas": "签证 & F-1",
+      "decisions": "录取结果",
+      "international": "国际学生"
+    },
+    "verificationNotice": "需要认证顾问身份才能发帖。",
+    "learnMore": "了解更多",
+    "upvote": "点赞",
+    "reply": "回复",
+    "postedBy": "发布者",
+    "searchPlaceholder": "搜索帖子..."
+  },
+  "auth": {
+    "signIn": "登录",
+    "signUp": "注册",
+    "email": "邮箱",
+    "password": "密码",
+    "fullName": "全名",
+    "continueGoogle": "使用 Google 继续",
+    "continueWeChat": "使用微信继续",
+    "or": "或",
+    "noAccount": "还没有账号？",
+    "haveAccount": "已有账号？",
+    "forgotPassword": "忘记密码？"
+  },
+  "onboarding": {
+    "title": "告诉我们关于你的情况",
+    "grade": "你现在几年级？",
+    "gpa": "你的GPA是多少？",
+    "interests": "你的兴趣是什么？",
+    "country": "你从哪个国家申请？",
+    "targetSchools": "有目标学校吗？",
+    "budget": "每节课预算",
+    "next": "下一步",
+    "skip": "跳过",
+    "done": "完成"
+  },
+  "chat": {
+    "title": "咨询 PathPal AI",
+    "subtitle": "免费升学申请指导",
+    "placeholder": "询问申请、文书、截止日期...",
+    "send": "发送",
+    "limitReached": "您已使用完3次免费提问。",
+    "browseCounsellors": "浏览顾问",
+    "thinking": "思考中..."
+  }
+}

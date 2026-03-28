@@ -1,24 +1,25 @@
 import type { Metadata } from "next";
 import { UserProvider } from "@/context/UserContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "PathPal – US College Admissions Consulting",
-  description: "PathPal connects students with experienced college consultants to navigate US university admissions. Get personalized guidance on essays, school selection, and more.",
+  title: "PathPal – International Student Counselling",
+  description: "PathPal connects international students with verified student counsellors from top US universities. Peer guidance for college admissions in 4 languages.",
   openGraph: {
-    title: "PathPal – US College Admissions Consulting",
-    description: "Connect with affordable college consultants. AI-powered matching, peer community, and expert guidance from $30/hr.",
+    title: "PathPal – International Student Counselling",
+    description: "Connect with verified student counsellors from Harvard, Stanford, MIT and more. Peer guidance from $20/session.",
     type: "website",
     siteName: "PathPal",
   },
   twitter: {
     card: "summary_large_image",
-    title: "PathPal – US College Admissions Consulting",
-    description: "Connect with affordable college consultants. AI-powered matching, peer community, and expert guidance from $30/hr.",
+    title: "PathPal – International Student Counselling",
+    description: "Connect with verified student counsellors from Harvard, Stanford, MIT and more. Peer guidance from $20/session.",
   },
-  keywords: ["college admissions", "college consulting", "university applications", "SAT prep", "essay editing", "college mentor"],
+  keywords: ["college admissions", "international students", "student counsellor", "university applications", "study abroad", "US college", "Harvard", "Stanford"],
 };
 
 export default function RootLayout({
@@ -30,9 +31,11 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased font-sans">
         <ErrorBoundary>
-          <UserProvider>
-            {children}
-          </UserProvider>
+          <LanguageProvider>
+            <UserProvider>
+              {children}
+            </UserProvider>
+          </LanguageProvider>
         </ErrorBoundary>
         <Analytics />
       </body>
