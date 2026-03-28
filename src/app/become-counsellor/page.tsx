@@ -14,6 +14,13 @@ const SESSION_TYPES = [
   { id: "quickChat",     label: "Quick Chat",    duration: "30 min", price: "$25", desc: "Q&A, school selection, quick feedback" },
   { id: "deepDive",      label: "Deep Dive",     duration: "60 min", price: "$40", desc: "Full strategy, essays, mock interviews" },
   { id: "essayPackage",  label: "Essay Package", duration: "90 min", price: "$70", desc: "Complete essay review & personal statement" },
+  { id: "academic",      label: "Academic",      duration: "60 min", price: "$40", desc: "Subject tutoring — Math, Sciences, English, test prep" },
+];
+
+const ACADEMIC_SUBJECTS = [
+  "Mathematics", "Chemistry", "Physics", "Biology",
+  "English", "History", "Economics",
+  "SAT", "ACT", "TOEFL", "IELTS", "AP Courses",
 ];
 
 const SPECIALTIES = [
@@ -41,6 +48,7 @@ export default function BecomeCounsellor() {
   const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
   const [sessionPrice, setSessionPrice] = useState(40);
   const [selectedSessionTypes, setSelectedSessionTypes] = useState<string[]>([]);
+  const [selectedAcademicSubjects, setSelectedAcademicSubjects] = useState<string[]>([]);
 
   // Step 3: Verification
   const [enrollmentFile, setEnrollmentFile] = useState<File | null>(null);
@@ -62,10 +70,21 @@ export default function BecomeCounsellor() {
     setSelectedSessionTypes(prev =>
       prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
     );
+    // Clear subject selections when deselecting Academic
+    if (type === "academic" && selectedSessionTypes.includes("academic")) {
+      setSelectedAcademicSubjects([]);
+    }
+  };
+
+  const toggleAcademicSubject = (subject: string) => {
+    setSelectedAcademicSubjects(prev =>
+      prev.includes(subject) ? prev.filter(s => s !== subject) : [...prev, subject]
+    );
   };
 
   const canProceedStep1 = name.trim() && email.trim() && country && selectedLanguages.length > 0;
-  const canProceedStep2 = school.trim() && major.trim() && year && myStory.trim().length >= 100 && selectedSpecialties.length >= 2 && selectedSessionTypes.length >= 1;
+  const academicSelected = selectedSessionTypes.includes("academic");
+  const canProceedStep2 = school.trim() && major.trim() && year && myStory.trim().length >= 100 && selectedSpecialties.length >= 2 && selectedSessionTypes.length >= 1 && (!academicSelected || selectedAcademicSubjects.length >= 1);
   const canProceedStep3 = enrollmentFile != null && idFile != null;
 
   const steps = [
@@ -277,32 +296,62 @@ export default function BecomeCounsellor() {
                   {SESSION_TYPES.map(type => {
                     const selected = selectedSessionTypes.includes(type.id);
                     return (
-                      <button
-                        key={type.id}
-                        type="button"
-                        onClick={() => toggleSessionType(type.id)}
-                        className={clsx(
-                          "w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all",
-                          selected
-                            ? "border-emerald-400 bg-emerald-50"
-                            : "border-slate-200 bg-white hover:border-slate-300"
-                        )}
-                      >
-                        <div className={clsx(
-                          "w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all",
-                          selected ? "border-emerald-500 bg-emerald-500" : "border-slate-300"
-                        )}>
-                          {selected && <Check className="w-3 h-3 text-white" />}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-sm text-slate-900">{type.label}</span>
-                            <span className="text-xs text-slate-400">{type.duration}</span>
-                            <span className="ml-auto text-sm font-bold text-emerald-600">{type.price}</span>
+                      <div key={type.id}>
+                        <button
+                          type="button"
+                          onClick={() => toggleSessionType(type.id)}
+                          className={clsx(
+                            "w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all",
+                            selected
+                              ? "border-emerald-400 bg-emerald-50"
+                              : "border-slate-200 bg-white hover:border-slate-300"
+                          )}
+                        >
+                          <div className={clsx(
+                            "w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all",
+                            selected ? "border-emerald-500 bg-emerald-500" : "border-slate-300"
+                          )}>
+                            {selected && <Check className="w-3 h-3 text-white" />}
                           </div>
-                          <p className="text-xs text-slate-500 mt-0.5">{type.desc}</p>
-                        </div>
-                      </button>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-sm text-slate-900">{type.label}</span>
+                              <span className="text-xs text-slate-400">{type.duration}</span>
+                              <span className="ml-auto text-sm font-bold text-emerald-600">{type.price}</span>
+                            </div>
+                            <p className="text-xs text-slate-500 mt-0.5">{type.desc}</p>
+                          </div>
+                        </button>
+                        {/* Subject picker — shown only when Academic is selected */}
+                        {type.id === "academic" && selected && (
+                          <div className="mt-2 ml-8 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <p className="text-xs font-medium text-slate-600 mb-2">Subjects you can teach <span className="text-slate-400 font-normal">(select all that apply)</span></p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {ACADEMIC_SUBJECTS.map(subject => {
+                                const subSelected = selectedAcademicSubjects.includes(subject);
+                                return (
+                                  <button
+                                    key={subject}
+                                    type="button"
+                                    onClick={() => toggleAcademicSubject(subject)}
+                                    className={clsx(
+                                      "px-2.5 py-1 rounded-lg text-xs font-medium transition-all",
+                                      subSelected
+                                        ? "bg-emerald-500 text-white"
+                                        : "bg-white border border-slate-200 text-slate-600 hover:border-emerald-300"
+                                    )}
+                                  >
+                                    {subject}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                            {selectedAcademicSubjects.length === 0 && (
+                              <p className="text-xs text-amber-600 mt-2">Select at least one subject to continue.</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     );
                   })}
                 </div>

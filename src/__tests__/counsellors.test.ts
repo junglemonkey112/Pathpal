@@ -26,13 +26,17 @@ describe("counsellors data integrity", () => {
     }
   });
 
-  it("all counsellors have exactly 3 service tiers", () => {
+  it("all counsellors have at least 3 service tiers with valid fields", () => {
     for (const c of counsellors) {
-      expect(c.services).toHaveLength(3);
+      expect(c.services.length).toBeGreaterThanOrEqual(3);
       for (const s of c.services) {
         expect(s.price).toBeGreaterThan(0);
         expect(s.duration).toBeGreaterThan(0);
         expect(s.name).toBeTruthy();
+        // Academic tiers must specify at least one subject
+        if (s.name === "Academic") {
+          expect(s.subjects?.length).toBeGreaterThan(0);
+        }
       }
     }
   });
@@ -43,10 +47,11 @@ describe("counsellors data integrity", () => {
     }
   });
 
-  it("service prices are in ascending order", () => {
+  it("non-Academic service prices are in ascending order", () => {
     for (const c of counsellors) {
-      for (let i = 1; i < c.services.length; i++) {
-        expect(c.services[i].price).toBeGreaterThan(c.services[i - 1].price);
+      const admissionServices = c.services.filter(s => s.name !== "Academic");
+      for (let i = 1; i < admissionServices.length; i++) {
+        expect(admissionServices[i].price).toBeGreaterThan(admissionServices[i - 1].price);
       }
     }
   });

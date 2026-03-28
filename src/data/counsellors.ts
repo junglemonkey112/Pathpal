@@ -18,6 +18,7 @@ export interface ServiceTier {
   duration: number; // minutes
   price: number;    // USD
   description: string;
+  subjects?: string[]; // for Academic sessions only
 }
 
 export interface Counsellor {
@@ -61,6 +62,7 @@ export const counsellors: Counsellor[] = [
       { name: "Quick Chat", duration: 30, price: 25, description: "30-min Q&A — school selection, timeline, quick essay feedback" },
       { name: "Deep Dive", duration: 60, price: 40, description: "60-min session — full application strategy, essay brainstorming, mock interviews" },
       { name: "Essay Package", duration: 90, price: 70, description: "90-min intensive — complete essay review, personal statement polish, supplementals" },
+      { name: "Academic", duration: 60, price: 40, description: "60-min subject tutoring — Math, SAT, TOEFL prep for Korean students", subjects: ["Mathematics", "SAT", "TOEFL", "Physics"] },
     ],
     rating: 4.9,
     reviewCount: 47,
@@ -201,6 +203,7 @@ export const counsellors: Counsellor[] = [
       { name: "Quick Chat", duration: 30, price: 25, description: "30-min Q&A — pre-med school selection, research strategy, timeline" },
       { name: "Deep Dive", duration: 60, price: 40, description: "60-min strategy session — complete pre-med application approach" },
       { name: "Research Strategy", duration: 90, price: 70, description: "90-min intensive — research opportunity finding, lab email templates, CV building" },
+      { name: "Academic", duration: 60, price: 40, description: "60-min subject tutoring — Biology, Chemistry, SAT/ACT science prep", subjects: ["Biology", "Chemistry", "SAT", "ACT", "AP Courses"] },
     ],
     rating: 4.7,
     reviewCount: 31,

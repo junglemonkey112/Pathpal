@@ -287,6 +287,13 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
                           <span className="text-emerald-600 font-bold">${service.price}</span>
                         </div>
                         <p className="text-xs text-slate-500 mt-0.5">{service.duration} min · {service.description}</p>
+                        {service.subjects && service.subjects.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-1.5">
+                            {service.subjects.map(s => (
+                              <span key={s} className="px-1.5 py-0.5 bg-blue-50 text-blue-600 text-xs rounded-md">{s}</span>
+                            ))}
+                          </div>
+                        )}
                       </button>
                     ))}
                   </div>
