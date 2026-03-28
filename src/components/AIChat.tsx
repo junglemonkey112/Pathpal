@@ -24,7 +24,7 @@ const knowledgeBase = [
   { keywords: ["recommendation", "recommender", "teacher"], response: "Recommendation Tips:\n\nAsk teachers who:\n- Taught you core subjects\n- Can give specific examples\n- Know your growth\n\nRequest at least 2 months in advance." },
 ];
 
-const defaultFallback = "Great question! Want to dive deeper? I can recommend a professional consultant. Which school or major interests you?";
+const defaultFallback = "Great question! Want to dive deeper? I can recommend a Student Counsellor who's been through the process themselves. Which school or major interests you?";
 
 const getFallbackResponse = (userMessage: string): string => {
   const lowerMessage = userMessage.toLowerCase();
@@ -43,7 +43,7 @@ const recommendConsultant = () => {
 export default function AIChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: "ai", content: "Hi! I'm PathPal AI Assistant 🎓\n\nAsk me anything about US college admissions. I'll answer 3 questions for free, then recommend the best matching consultants." }
+    { role: "ai", content: "Hi! I'm PathPal AI Assistant 🎓\n\nAsk me anything about US college admissions — international grading systems, financial aid, essays, visas, and more. I'll answer 3 questions for free, then connect you with a Student Counsellor who's been through the process." }
   ]);
   const [input, setInput] = useState("");
   const [questionCount, setQuestionCount] = useState(0);
@@ -98,9 +98,9 @@ export default function AIChat() {
       setIsTyping(true);
       const response = await getAIResponse(userMessage, newMessages);
       const recommended = recommendConsultant();
-      const recommendationText = `${response}\n\n---\n\nYou've used your ${MAX_FREE_QUESTIONS} free questions! For deeper, personalized guidance, I recommend booking a 1-on-1 session:\n\n${recommended.map((c, i) => {
-        const link = `/consultant/${c.id}`;
-        return `${i+1}. ${c.name} - ${c.school} ($${c.services[0].price}/session)\n   Specialties: ${c.specialties.slice(0, 2).join(", ")}\n   📅 Book: ${link}`;
+      const recommendationText = `${response}\n\n---\n\nYou've used your ${MAX_FREE_QUESTIONS} free questions! For deeper, personalized guidance, I recommend booking a 1-on-1 session with a Student Counsellor:\n\n${recommended.map((c, i) => {
+        const link = `/counsellor/${c.id}`;
+        return `${i+1}. ${c.name} ${c.countryFlag ?? ""} - ${c.school} ($${c.services[0].price}/session)\n   Specialties: ${c.specialties.slice(0, 2).join(", ")}\n   📅 Book: ${link}`;
       }).join("\n\n")}`;
       setMessages(prev => [...prev, { role: "ai", content: recommendationText }]);
       setIsTyping(false);
@@ -162,8 +162,8 @@ export default function AIChat() {
             )}
           >
             <p className="text-sm whitespace-pre-line">
-              {msg.content.split(/(📅 Book: \/consultant\/\d+)/).map((part, i) => {
-                const linkMatch = part.match(/📅 Book: (\/consultant\/\d+)/);
+              {msg.content.split(/(📅 Book: \/counsellor\/[^\s\n]+)/).map((part, i) => {
+                const linkMatch = part.match(/📅 Book: (\/counsellor\/[^\s\n]+)/);
                 if (linkMatch) {
                   return (
                     <span key={i}>
@@ -193,13 +193,13 @@ export default function AIChat() {
       <div className="border-t p-3">
         {questionCount >= MAX_FREE_QUESTIONS ? (
           <div className="text-center space-y-2">
-            <p className="text-xs text-slate-500">Free questions used. Get personalized help from a consultant.</p>
+            <p className="text-xs text-slate-500">Free questions used. Get personalized help from a Student Counsellor.</p>
             <Link
               href="/"
               onClick={() => setIsOpen(false)}
               className="block w-full bg-emerald-500 text-white py-2.5 rounded-full text-sm font-medium hover:bg-emerald-600 transition-colors"
             >
-              Browse Consultants
+              Browse Student Counsellors
             </Link>
           </div>
         ) : (
