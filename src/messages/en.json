@@ -4,6 +4,7 @@
     "community": "Community",
     "howItWorks": "How It Works",
     "successStories": "Success Stories",
+    "forParents": "For Parents",
     "becomeCounsellor": "Become a Counsellor",
     "signIn": "Sign In",
     "signUp": "Sign Up",
@@ -41,6 +42,21 @@
   "forParents": {
     "title": "For Parents",
     "subtitle": "World-class guidance at a fraction of traditional costs",
+    "insight": "The most relevant advice comes from students already inside your child's dream school — not career advisors who graduated 20 years ago.",
+    "concerns": {
+      "safe": {
+        "title": "Is it safe?",
+        "desc": "Every counsellor is verified with enrollment proof and government ID before their first session. You see exactly who is guiding your child."
+      },
+      "worth": {
+        "title": "Is it worth it?",
+        "desc": "From $35/session vs. $15,000–$25,000 for a traditional agency package. Same outcome, dramatically less cost."
+      },
+      "effective": {
+        "title": "Will it actually work?",
+        "desc": "Our counsellors got into Harvard, Stanford, and MIT as international students — the exact same journey your child is on."
+      }
+    },
     "comparison": {
       "traditional": "Traditional Agency",
       "pathpal": "PathPal"
@@ -48,7 +64,7 @@
     "features": {
       "price": "Price per session",
       "priceTraditional": "$200–$500",
-      "pricePal": "From $20",
+      "pricePal": "From $35",
       "package": "Full package cost",
       "packageTraditional": "$15,000–$25,000",
       "packagePal": "Pay per session",
@@ -59,7 +75,8 @@
       "perspectiveTraditional": "Rarely",
       "perspectivePal": "Always — same journey"
     },
-    "trust": "All counsellors are verified with enrollment proof and government ID."
+    "trust": "All counsellors are verified with enrollment proof and government ID.",
+    "cta": "See Counsellor Profiles"
   },
   "counsellor": {
     "verified": "Verified",

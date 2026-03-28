@@ -2,7 +2,7 @@
 
 import { useState, useEffect, startTransition } from "react";
 import Link from "next/link";
-import { Search, GraduationCap, Globe, ShieldCheck, Users, BookOpen, TrendingDown, ChevronRight, Star } from "lucide-react";
+import { Search, GraduationCap, Globe, ShieldCheck, Users, BookOpen, TrendingDown, ChevronRight, Star, Lock, DollarSign, Trophy } from "lucide-react";
 import { counsellors, Counsellor } from "@/data/counsellors";
 import { clsx } from "clsx";
 import AIChat from "@/components/AIChat";
@@ -230,59 +230,90 @@ export default function Home() {
       {/* For Parents */}
       <section id="for-parents" className="py-16 bg-slate-900 text-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* Header */}
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-bold mb-3">{t("forParents.title")}</h2>
-            <p className="text-slate-400">{t("forParents.subtitle")}</p>
+            <div className="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full px-4 py-1.5 text-emerald-300 text-sm font-medium mb-4">
+              <Users className="w-4 h-4" />
+              {t("forParents.title")}
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold mb-3">{t("forParents.subtitle")}</h2>
+            <p className="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+              {t("forParents.insight")}
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            {/* Traditional column */}
+          {/* Three parent concerns */}
+          <div className="grid sm:grid-cols-3 gap-4 mb-10">
+            {([
+              { icon: Lock, color: "text-blue-400", bg: "bg-blue-500/10 border-blue-500/20", titleKey: "forParents.concerns.safe.title", descKey: "forParents.concerns.safe.desc" },
+              { icon: DollarSign, color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/20", titleKey: "forParents.concerns.worth.title", descKey: "forParents.concerns.worth.desc" },
+              { icon: Trophy, color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20", titleKey: "forParents.concerns.effective.title", descKey: "forParents.concerns.effective.desc" },
+            ] as const).map(({ icon: Icon, color, bg, titleKey, descKey }) => (
+              <div key={titleKey} className={`rounded-2xl p-5 border ${bg}`}>
+                <Icon className={`w-6 h-6 ${color} mb-3`} />
+                <h3 className="font-bold text-white mb-2">{t(titleKey)}</h3>
+                <p className="text-slate-400 text-sm leading-relaxed">{t(descKey)}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Comparison table */}
+          <div className="grid md:grid-cols-2 gap-4 mb-8">
             <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
               <div className="flex items-center gap-2 mb-5">
                 <TrendingDown className="w-5 h-5 text-red-400" />
                 <h3 className="font-bold text-lg">{t("forParents.comparison.traditional")}</h3>
               </div>
               <div className="space-y-4">
-                {[
-                  [t("forParents.features.price"), t("forParents.features.priceTraditional")],
-                  [t("forParents.features.package"), t("forParents.features.packageTraditional")],
-                  [t("forParents.features.counsellor"), t("forParents.features.counsellorTraditional")],
-                  [t("forParents.features.perspective"), t("forParents.features.perspectiveTraditional")],
-                ].map(([label, value]) => (
-                  <div key={label} className="flex justify-between items-start gap-4">
-                    <span className="text-slate-400 text-sm">{label}</span>
-                    <span className="text-red-300 text-sm font-medium text-right">{value}</span>
+                {([
+                  ["forParents.features.price", "forParents.features.priceTraditional"],
+                  ["forParents.features.package", "forParents.features.packageTraditional"],
+                  ["forParents.features.counsellor", "forParents.features.counsellorTraditional"],
+                  ["forParents.features.perspective", "forParents.features.perspectiveTraditional"],
+                ] as const).map(([labelKey, valueKey]) => (
+                  <div key={labelKey} className="flex justify-between items-start gap-4">
+                    <span className="text-slate-400 text-sm">{t(labelKey)}</span>
+                    <span className="text-red-300 text-sm font-medium text-right">{t(valueKey)}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* PathPal column */}
             <div className="bg-emerald-500/10 rounded-2xl p-6 border border-emerald-500/30">
               <div className="flex items-center gap-2 mb-5">
                 <ShieldCheck className="w-5 h-5 text-emerald-400" />
                 <h3 className="font-bold text-lg text-emerald-300">{t("forParents.comparison.pathpal")}</h3>
               </div>
               <div className="space-y-4">
-                {[
-                  [t("forParents.features.price"), t("forParents.features.pricePal")],
-                  [t("forParents.features.package"), t("forParents.features.packagePal")],
-                  [t("forParents.features.counsellor"), t("forParents.features.counsellorPal")],
-                  [t("forParents.features.perspective"), t("forParents.features.perspectivePal")],
-                ].map(([label, value]) => (
-                  <div key={label} className="flex justify-between items-start gap-4">
-                    <span className="text-slate-300 text-sm">{label}</span>
-                    <span className="text-emerald-300 text-sm font-semibold text-right">{value}</span>
+                {([
+                  ["forParents.features.price", "forParents.features.pricePal"],
+                  ["forParents.features.package", "forParents.features.packagePal"],
+                  ["forParents.features.counsellor", "forParents.features.counsellorPal"],
+                  ["forParents.features.perspective", "forParents.features.perspectivePal"],
+                ] as const).map(([labelKey, valueKey]) => (
+                  <div key={labelKey} className="flex justify-between items-start gap-4">
+                    <span className="text-slate-300 text-sm">{t(labelKey)}</span>
+                    <span className="text-emerald-300 text-sm font-semibold text-right">{t(valueKey)}</span>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          <p className="text-center text-slate-400 text-sm flex items-center justify-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            {t("forParents.trust")}
-          </p>
+          {/* Trust line + CTA */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-slate-400 text-sm flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+              {t("forParents.trust")}
+            </p>
+            <a
+              href="#counsellors"
+              className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors whitespace-nowrap"
+            >
+              {t("forParents.cta")} <ChevronRight className="w-4 h-4" />
+            </a>
+          </div>
         </div>
       </section>
 

@@ -23,7 +23,8 @@ export default function Navbar({ homeLinks = false }: { homeLinks?: boolean }) {
     { label: t("nav.allCounsellors"), href: `${prefix}#counsellors` },
     { label: t("nav.community"),      href: "/forum" },
     { label: t("nav.howItWorks"),     href: `${prefix}#how-it-works` },
-    { label: t("nav.successStories"), href: `${prefix}#for-parents` },
+    { label: t("nav.forParents"),     href: `${prefix}#for-parents` },
+    { label: t("nav.successStories"), href: `${prefix}#success-stories` },
   ];
 
   return (

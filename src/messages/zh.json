@@ -4,6 +4,7 @@
     "community": "社区",
     "howItWorks": "如何运作",
     "successStories": "成功案例",
+    "forParents": "致家长",
     "becomeCounsellor": "成为顾问",
     "signIn": "登录",
     "signUp": "注册",
@@ -41,6 +42,21 @@
   "forParents": {
     "title": "致家长",
     "subtitle": "顶级升学指导，费用仅为传统机构的一小部分",
+    "insight": "最有价值的建议，来自已就读于您孩子梦想学校的在读学生——而非20年前毕业的职业顾问。",
+    "concerns": {
+      "safe": {
+        "title": "安全吗？",
+        "desc": "每位顾问在接受预约前均须提供在读证明和政府身份证件完成实名认证。您可以清楚地了解是谁在指导您的孩子。"
+      },
+      "worth": {
+        "title": "值得吗？",
+        "desc": "每节课最低¥250起——相比传统留学机构套餐¥100,000–¥200,000，大幅节省费用。"
+      },
+      "effective": {
+        "title": "真的有效吗？",
+        "desc": "我们的顾问以国际生身份考入哈佛、斯坦福、麻省理工——和您的孩子走的是完全相同的路。"
+      }
+    },
     "comparison": {
       "traditional": "传统留学机构",
       "pathpal": "PathPal"
@@ -48,7 +64,7 @@
     "features": {
       "price": "每节课费用",
       "priceTraditional": "¥1,500–¥3,500",
-      "pricePal": "最低¥150",
+      "pricePal": "最低¥250",
       "package": "全程费用",
       "packageTraditional": "¥100,000–¥200,000",
       "packagePal": "按课付费",
@@ -59,7 +75,8 @@
       "perspectiveTraditional": "很少",
       "perspectivePal": "始终如一——相同经历"
     },
-    "trust": "所有顾问均通过在读证明和政府身份证件认证。"
+    "trust": "所有顾问均通过在读证明和政府身份证件认证。",
+    "cta": "查看顾问档案"
   },
   "counsellor": {
     "verified": "已认证",

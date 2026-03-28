@@ -4,6 +4,7 @@
     "community": "커뮤니티",
     "howItWorks": "이용 방법",
     "successStories": "성공 사례",
+    "forParents": "학부모께",
     "becomeCounsellor": "상담사 되기",
     "signIn": "로그인",
     "signUp": "회원가입",
@@ -41,6 +42,21 @@
   "forParents": {
     "title": "학부모께",
     "subtitle": "최고의 입시 지도를 기존 비용의 일부로",
+    "insight": "가장 관련성 높은 조언은 자녀가 꿈꾸는 대학에 이미 재학 중인 학생들에게서 나옵니다 — 20년 전 졸업한 직업 상담사가 아닌.",
+    "concerns": {
+      "safe": {
+        "title": "안전한가요?",
+        "desc": "모든 상담사는 첫 세션 전에 재학 증명서와 정부 신분증으로 신원이 확인됩니다. 자녀를 지도하는 사람이 누구인지 정확히 알 수 있습니다."
+      },
+      "worth": {
+        "title": "그만한 가치가 있나요?",
+        "desc": "세션당 ₩45,000부터 — 기존 유학원 패키지 ₩15,000,000–₩30,000,000 대비 월등히 저렴합니다."
+      },
+      "effective": {
+        "title": "실제로 효과가 있나요?",
+        "desc": "저희 상담사들은 하버드, 스탠퍼드, MIT에 국제 학생 신분으로 합격했습니다 — 자녀와 똑같은 여정을 걸어온 사람들입니다."
+      }
+    },
     "comparison": {
       "traditional": "기존 유학원",
       "pathpal": "PathPal"
@@ -48,7 +64,7 @@
     "features": {
       "price": "세션당 비용",
       "priceTraditional": "₩250,000–₩600,000",
-      "pricePal": "₩25,000부터",
+      "pricePal": "₩45,000부터",
       "package": "전체 패키지 비용",
       "packageTraditional": "₩15,000,000–₩30,000,000",
       "packagePal": "세션별 결제",
@@ -59,7 +75,8 @@
       "perspectiveTraditional": "드물게",
       "perspectivePal": "항상 — 같은 경험"
     },
-    "trust": "모든 상담사는 재학 증명서와 정부 신분증으로 인증됩니다."
+    "trust": "모든 상담사는 재학 증명서와 정부 신분증으로 인증됩니다.",
+    "cta": "상담사 프로필 보기"
   },
   "counsellor": {
     "verified": "인증됨",
