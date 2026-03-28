@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { GraduationCap, X, Send, MessageCircle, Sparkles, Loader2 } from "lucide-react";
-import { consultants } from "@/data/consultants";
+import { counsellors } from "@/data/counsellors";
 import { clsx } from "clsx";
 import Link from "next/link";
 import { MAX_FREE_QUESTIONS, AI_RESPONSE_DELAY_MS } from "@/lib/constants";
@@ -37,7 +37,7 @@ const getFallbackResponse = (userMessage: string): string => {
 };
 
 const recommendConsultant = () => {
-  return [...consultants].sort((a, b) => b.rating - a.rating).slice(0, 2);
+  return [...counsellors].sort((a, b) => b.rating - a.rating).slice(0, 2);
 };
 
 export default function AIChat() {

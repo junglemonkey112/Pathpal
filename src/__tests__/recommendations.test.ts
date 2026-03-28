@@ -1,38 +1,43 @@
 import { describe, it, expect } from "vitest";
 import { getRecommendations, getRecommendedSchools } from "@/utils/recommendations";
-import type { Consultant } from "@/data/consultants";
+import type { Counsellor } from "@/data/counsellors";
 
-const mockConsultant = (overrides: Partial<Consultant> = {}): Consultant => ({
+const mockCounsellor = (overrides: Partial<Counsellor> = {}): Counsellor => ({
   id: "test-1",
-  name: "Test Consultant",
+  name: "Test Counsellor",
   avatar: "",
   school: "Harvard",
   major: "Computer Science",
-  gpa: "3.9",
+  year: "Junior",
+  country: "South Korea",
+  countryFlag: "🇰🇷",
+  languages: ["English", "Korean"],
   minGPA: 3.5,
   bio: "Test bio",
+  myStory: "Test story",
   specialties: ["CS", "STEM"],
   services: [
-    { duration: 30, price: 50 },
-    { duration: 60, price: 80 },
+    { name: "Quick Chat", duration: 30, price: 50, description: "30 min" },
+    { name: "Deep Dive", duration: 60, price: 80, description: "60 min" },
+    { name: "Intensive", duration: 90, price: 120, description: "90 min" },
   ],
   rating: 4.8,
   reviewCount: 10,
   reviews: [],
   availableSlots: [],
   studentSuccess: ["MIT", "Stanford"],
-  year: "Junior",
+  verificationStatus: "verified",
   ...overrides,
 });
 
 describe("getRecommendations", () => {
   it("returns results sorted by match score descending", () => {
-    const consultants = [
-      mockConsultant({ id: "1", rating: 4.5, specialties: ["Business"] }),
-      mockConsultant({ id: "2", rating: 4.9, specialties: ["CS", "STEM", "Research"] }),
+    const counsellors = [
+      mockCounsellor({ id: "1", rating: 4.5, specialties: ["Business"] }),
+      mockCounsellor({ id: "2", rating: 4.9, specialties: ["CS", "STEM", "Research"] }),
     ];
 
-    const results = getRecommendations(consultants, {
+    const results = getRecommendations(counsellors, {
       grade: "Grade 11",
       gpa: "3.5-3.8",
       interests: ["cs"],
@@ -43,17 +48,17 @@ describe("getRecommendations", () => {
     });
 
     expect(results.length).toBeGreaterThan(0);
-    expect(results[0].consultant.id).toBe("2");
+    expect(results[0].counsellor.id).toBe("2");
     expect(results[0].matchScore).toBeGreaterThan(0);
   });
 
-  it("gives higher score to budget-matching consultants", () => {
-    const consultants = [
-      mockConsultant({ id: "cheap", rating: 4.0, services: [{ duration: 30, price: 25 }, { duration: 60, price: 40 }] }),
-      mockConsultant({ id: "expensive", rating: 4.0, services: [{ duration: 30, price: 150 }, { duration: 60, price: 250 }] }),
+  it("gives higher score to budget-matching counsellors", () => {
+    const counsellors = [
+      mockCounsellor({ id: "cheap", rating: 4.0, services: [{ name: "Q", duration: 30, price: 25, description: "" }, { name: "D", duration: 60, price: 40, description: "" }, { name: "I", duration: 90, price: 60, description: "" }] }),
+      mockCounsellor({ id: "expensive", rating: 4.0, services: [{ name: "Q", duration: 30, price: 150, description: "" }, { name: "D", duration: 60, price: 250, description: "" }, { name: "I", duration: 90, price: 350, description: "" }] }),
     ];
 
-    const results = getRecommendations(consultants, {
+    const results = getRecommendations(counsellors, {
       grade: "Grade 11",
       gpa: "",
       interests: [],
@@ -63,19 +68,19 @@ describe("getRecommendations", () => {
       hasSAT: false,
     });
 
-    const cheap = results.find(r => r.consultant.id === "cheap");
-    const expensive = results.find(r => r.consultant.id === "expensive");
+    const cheap = results.find(r => r.counsellor.id === "cheap");
+    const expensive = results.find(r => r.counsellor.id === "expensive");
     expect(cheap).toBeDefined();
     expect(cheap!.matchScore).toBeGreaterThan(expensive?.matchScore ?? 0);
   });
 
   it("scores specialty matches", () => {
-    const consultants = [
-      mockConsultant({ id: "cs-expert", specialties: ["CS", "Computer Science", "STEM"] }),
-      mockConsultant({ id: "arts-expert", specialties: ["Art & Design", "Liberal Arts"] }),
+    const counsellors = [
+      mockCounsellor({ id: "cs-expert", specialties: ["CS", "Computer Science", "STEM"] }),
+      mockCounsellor({ id: "arts-expert", specialties: ["Art & Design", "Liberal Arts"] }),
     ];
 
-    const results = getRecommendations(consultants, {
+    const results = getRecommendations(counsellors, {
       grade: "Grade 12",
       gpa: "",
       interests: ["cs"],
@@ -85,17 +90,17 @@ describe("getRecommendations", () => {
       hasSAT: false,
     });
 
-    expect(results[0].consultant.id).toBe("cs-expert");
+    expect(results[0].counsellor.id).toBe("cs-expert");
     expect(results[0].matchScore).toBeGreaterThan(results[1]?.matchScore ?? 0);
   });
 
   it("gives bonus for target school match", () => {
-    const consultants = [
-      mockConsultant({ id: "1", school: "Harvard", rating: 4.5 }),
-      mockConsultant({ id: "2", school: "Community College", rating: 4.5 }),
+    const counsellors = [
+      mockCounsellor({ id: "1", school: "Harvard", rating: 4.5 }),
+      mockCounsellor({ id: "2", school: "Community College", rating: 4.5 }),
     ];
 
-    const results = getRecommendations(consultants, {
+    const results = getRecommendations(counsellors, {
       grade: "Grade 11",
       gpa: "",
       interests: [],
@@ -105,19 +110,19 @@ describe("getRecommendations", () => {
       hasSAT: false,
     });
 
-    const harvard = results.find(r => r.consultant.id === "1");
-    const other = results.find(r => r.consultant.id === "2");
+    const harvard = results.find(r => r.counsellor.id === "1");
+    const other = results.find(r => r.counsellor.id === "2");
     expect(harvard).toBeDefined();
     expect(harvard!.matchScore).toBeGreaterThanOrEqual(other?.matchScore ?? 0);
   });
 
-  it("gives rating bonus for highly rated consultants", () => {
-    const consultants = [
-      mockConsultant({ id: "high", rating: 4.9, specialties: [] }),
-      mockConsultant({ id: "low", rating: 3.5, specialties: [] }),
+  it("gives rating bonus for highly rated counsellors", () => {
+    const counsellors = [
+      mockCounsellor({ id: "high", rating: 4.9, specialties: [] }),
+      mockCounsellor({ id: "low", rating: 3.5, specialties: [] }),
     ];
 
-    const results = getRecommendations(consultants, {
+    const results = getRecommendations(counsellors, {
       grade: "Grade 11",
       gpa: "",
       interests: [],
@@ -127,7 +132,7 @@ describe("getRecommendations", () => {
       hasSAT: false,
     });
 
-    const high = results.find(r => r.consultant.id === "high");
+    const high = results.find(r => r.counsellor.id === "high");
     expect(high).toBeDefined();
     expect(high!.matchScore).toBeGreaterThan(0);
   });

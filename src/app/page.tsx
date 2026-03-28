@@ -3,7 +3,7 @@
 import { useState, useEffect, startTransition } from "react";
 import Link from "next/link";
 import { Search, GraduationCap, ChevronRight, Sparkles, FileText, Calendar, Video, SlidersHorizontal, X, Menu, LogOut, User } from "lucide-react";
-import { consultants, Consultant } from "@/data/consultants";
+import { counsellors, Counsellor } from "@/data/counsellors";
 import { clsx } from "clsx";
 import AIChat from "@/components/AIChat";
 import ConsultantCard from "@/components/ConsultantCard";
@@ -14,8 +14,8 @@ import { INTERESTS, GRADE_LEVELS } from "@/lib/constants";
 import type { SortOption } from "@/lib/constants";
 import { useUser } from "@/context/UserContext";
 
-interface MatchedConsultant {
-  consultant: Consultant;
+interface MatchedCounsellor {
+  counsellor: Counsellor;
   score: number;
   reasons: string[];
 }
@@ -86,8 +86,8 @@ export default function Home() {
   };
 
   // Simple matching logic
-  const getMatchedConsultants = (): MatchedConsultant[] => {
-    return consultants.map(c => {
+  const getMatchedConsultants = (): MatchedCounsellor[] => {
+    return counsellors.map(c => {
       let score = 0;
       const reasons: string[] = [];
 
@@ -144,33 +144,33 @@ export default function Home() {
         reasons.push("Same school alumni");
       }
 
-      return { consultant: c, score, reasons: reasons.slice(0, 2) };
-    }).filter((item): item is MatchedConsultant => item !== null)
+      return { counsellor: c, score, reasons: reasons.slice(0, 2) };
+    }).filter((item): item is MatchedCounsellor => item !== null)
       .sort((a, b) => b.score - a.score);
   };
 
   const matchedConsultants = getMatchedConsultants();
 
-  const displayedConsultants: (MatchedConsultant | Consultant)[] = showAllConsultants
-    ? consultants
+  const displayedConsultants: (MatchedCounsellor | Counsellor)[] = showAllConsultants
+    ? counsellors
     : matchedConsultants.slice(0, 5);
 
-  const getConsultantData = (item: MatchedConsultant | Consultant) => {
-    if ("consultant" in item) {
-      return { consultant: item.consultant, score: item.score, reasons: item.reasons };
+  const getConsultantData = (item: MatchedCounsellor | Counsellor) => {
+    if ("counsellor" in item) {
+      return { counsellor: item.counsellor, score: item.score, reasons: item.reasons };
     }
-    return { consultant: item, score: 0, reasons: [] as string[] };
+    return { counsellor: item, score: 0, reasons: [] as string[] };
   };
 
   const filteredConsultants = displayedConsultants
     .filter((c) => {
-      const { consultant } = getConsultantData(c);
+      const { counsellor } = getConsultantData(c);
       const matchesSearch =
-        consultant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        consultant.school.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        consultant.major.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        consultant.specialties.some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()));
-      const matchesSchool = !selectedSchool || consultant.school === selectedSchool;
+        counsellor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        counsellor.school.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        counsellor.major.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        counsellor.specialties.some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()));
+      const matchesSchool = !selectedSchool || counsellor.school === selectedSchool;
       return matchesSearch && matchesSchool;
     })
     .sort((a, b) => {
@@ -180,9 +180,9 @@ export default function Home() {
       if (!showAllConsultants && sortBy === "rating") {
         return dataB.score - dataA.score;
       }
-      if (sortBy === "rating") return dataB.consultant.rating - dataA.consultant.rating;
-      if (sortBy === "price-asc") return dataA.consultant.services[0].price - dataB.consultant.services[0].price;
-      if (sortBy === "price-desc") return dataB.consultant.services[0].price - dataA.consultant.services[0].price;
+      if (sortBy === "rating") return dataB.counsellor.rating - dataA.counsellor.rating;
+      if (sortBy === "price-asc") return dataA.counsellor.services[0].price - dataB.counsellor.services[0].price;
+      if (sortBy === "price-desc") return dataB.counsellor.services[0].price - dataA.counsellor.services[0].price;
       return 0;
     });
 
@@ -209,8 +209,8 @@ export default function Home() {
             <div className="hidden md:flex items-center gap-3">
               {user ? (
                 <>
-                  <Link href="/become-consultant" className="text-slate-600 hover:text-slate-900 font-medium text-sm">
-                    Become a Consultant
+                  <Link href="/become-counsellor" className="text-slate-600 hover:text-slate-900 font-medium text-sm">
+                    Become a Counsellor
                   </Link>
                   <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg">
                     <User className="w-4 h-4 text-slate-600" />
@@ -228,8 +228,8 @@ export default function Home() {
                 </>
               ) : (
                 <>
-                  <Link href="/become-consultant" className="text-slate-600 hover:text-slate-900 font-medium text-sm">
-                    Become a Consultant
+                  <Link href="/become-counsellor" className="text-slate-600 hover:text-slate-900 font-medium text-sm">
+                    Become a Counsellor
                   </Link>
                   <Link href="/login" className="text-slate-600 hover:text-slate-900 font-medium text-sm">
                     Sign In
@@ -261,8 +261,8 @@ export default function Home() {
             <Link href="/forum" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">Community</Link>
             <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">How It Works</a>
             <a href="#success-stories" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">Success Stories</a>
-            <Link href="/become-consultant" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">
-              Become a Consultant
+            <Link href="/become-counsellor" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">
+              Become a Counsellor
             </Link>
             {user ? (
               <button
@@ -286,7 +286,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-6">
             <h1 className="text-2xl md:text-3xl font-bold mb-2">
-              Find Your Perfect <span className="text-emerald-400">College Consultant</span>
+              Find Your Perfect <span className="text-emerald-400">College Counsellor</span>
             </h1>
             <p className="text-slate-400 text-sm md:text-base">
               Answer a few questions to get matched with top college students
@@ -523,14 +523,14 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Consultant Grid */}
+          {/* Counsellor Grid */}
           <div className="grid gap-4">
             {filteredConsultants.map((item) => {
-              const { consultant, score, reasons } = getConsultantData(item);
+              const { counsellor, score, reasons } = getConsultantData(item);
               return (
                 <ConsultantCard
-                  key={consultant.id}
-                  consultant={consultant}
+                  key={counsellor.id}
+                  counsellor={counsellor}
                   matchScore={score > 0 ? score : undefined}
                   reasons={reasons}
                 />
@@ -540,7 +540,7 @@ export default function Home() {
 
           {filteredConsultants.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-slate-500 text-lg">No consultants found</p>
+              <p className="text-slate-500 text-lg">No counsellors found</p>
               <button
                 onClick={() => { setSearchQuery(""); setSelectedSchool(""); setBudget(150); setBudgetUnlimited(true); }}
                 className="mt-4 text-emerald-600 hover:text-emerald-700 font-medium"
@@ -560,16 +560,16 @@ export default function Home() {
               How PathPal Works
             </h2>
             <p className="text-slate-600">
-              Get matched with perfect consultants in minutes
+              Get matched with perfect counsellors in minutes
             </p>
           </div>
 
           <div className="grid md:grid-cols-4 gap-6 md:gap-8">
             {[
               { step: "1", icon: FileText, title: "Answer Questions", desc: "Tell us your grade, interests, budget" },
-              { step: "2", icon: Sparkles, title: "Get Matched", desc: "AI finds consultants who fit you" },
+              { step: "2", icon: Sparkles, title: "Get Matched", desc: "AI finds counsellors who fit you" },
               { step: "3", icon: Calendar, title: "Book a Time", desc: "Choose a slot that works" },
-              { step: "4", icon: Video, title: "Start Session", desc: "Video call with your consultant" },
+              { step: "4", icon: Video, title: "Start Session", desc: "Video call with your counsellor" },
             ].map((item, idx) => (
               <div key={idx} className="text-center">
                 <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -598,7 +598,7 @@ export default function Home() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { name: "Alex T.", school: "Harvard", quote: "My consultant helped me craft a compelling narrative that stood out.", avatar: "👨🏿" },
+              { name: "Alex T.", school: "Harvard", quote: "My counsellor helped me craft a compelling narrative that stood out.", avatar: "👨🏿" },
               { name: "Sarah M.", school: "Stanford", quote: "The mock interview sessions were incredibly helpful!", avatar: "👩🏻" },
               { name: "James K.", school: "MIT", quote: "Got into MIT thanks to the resume guidance.", avatar: "👨🏻" },
             ].map((story, idx) => (

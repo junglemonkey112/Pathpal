@@ -1,4 +1,4 @@
-import { Consultant } from "../data/consultants";
+import { Counsellor } from "../data/counsellors";
 
 interface UserProfile {
   grade: string;
@@ -12,7 +12,7 @@ interface UserProfile {
 }
 
 interface RecommendationResult {
-  consultant: Consultant;
+  counsellor: Counsellor;
   matchScore: number;
   reasons: string[];
 }
@@ -53,23 +53,23 @@ const budgetToPrice: Record<string, [number, number]> = {
 };
 
 export function getRecommendations(
-  consultants: Consultant[],
+  counsellors: Counsellor[],
   userProfile: UserProfile
 ): RecommendationResult[] {
   const results: RecommendationResult[] = [];
 
   const [minBudget, maxBudget] = budgetToPrice[userProfile.budget] || [0, 200];
 
-  for (const consultant of consultants) {
+  for (const counsellor of counsellors) {
     let score = 0;
     const reasons: string[] = [];
 
     // 1. Price match (30 points)
-    const consultantPrice = consultant.services[0].price;
-    if (consultantPrice >= minBudget && consultantPrice <= maxBudget) {
+    const price = counsellor.services[0].price;
+    if (price >= minBudget && price <= maxBudget) {
       score += 30;
       reasons.push("Within budget");
-    } else if (consultantPrice <= maxBudget + 20) {
+    } else if (price <= maxBudget + 20) {
       score += 15; // Partial match
     }
 
@@ -81,7 +81,7 @@ export function getRecommendations(
 
     const allKeywords = [...userInterests, ...userMajorKeywords];
 
-    const matchedSpecialties = consultant.specialties.filter((s) =>
+    const matchedSpecialties = counsellor.specialties.filter((s) =>
       allKeywords.some(
         (k) => s.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(s.toLowerCase())
       )
@@ -93,9 +93,9 @@ export function getRecommendations(
     }
 
     // 3. Target school match (20 points)
-    const matchedSchools = consultant.school
+    const matchedSchools = counsellor.school
       ? userProfile.targetSchools.some((s) =>
-          consultant.school.toLowerCase().includes(s.toLowerCase().replace(" University", ""))
+          counsellor.school.toLowerCase().includes(s.toLowerCase().replace(" University", ""))
         )
       : false;
 
@@ -105,16 +105,16 @@ export function getRecommendations(
     }
 
     // 4. Rating bonus (10 points)
-    if (consultant.rating >= 4.8) {
+    if (counsellor.rating >= 4.8) {
       score += 10;
-    } else if (consultant.rating >= 4.5) {
+    } else if (counsellor.rating >= 4.5) {
       score += 5;
     }
 
-    // Only include consultants with some relevance
+    // Only include counsellors with some relevance
     if (score > 0) {
       results.push({
-        consultant,
+        counsellor,
         matchScore: Math.min(100, score),
         reasons,
       });

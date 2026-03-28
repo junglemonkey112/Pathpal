@@ -1,11 +1,11 @@
 import { MetadataRoute } from "next";
-import { consultants } from "@/data/consultants";
+import { counsellors } from "@/data/counsellors";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://pathpal.co";
 
-  const consultantPages = consultants.map((c) => ({
-    url: `${baseUrl}/consultant/${c.id}`,
+  const counsellorPages = counsellors.map((c) => ({
+    url: `${baseUrl}/counsellor/${c.id}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.8,
@@ -25,7 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/become-consultant`,
+      url: `${baseUrl}/become-counsellor`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
@@ -42,6 +42,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.3,
     },
-    ...consultantPages,
+    ...counsellorPages,
   ];
 }
