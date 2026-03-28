@@ -2,11 +2,13 @@
 
 import { use, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Star, ShieldCheck, Globe, Calendar, Video, Check, LogIn, BookOpen, Trophy } from "lucide-react";
+import { ArrowLeft, Star, ShieldCheck, Globe, Calendar, Video, Check, LogIn, BookOpen, Trophy, Download } from "lucide-react";
 import { counsellors } from "@/data/counsellors";
 import { clsx } from "clsx";
 import { useUser } from "@/context/UserContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { generateICS, getGoogleCalendarUrl, downloadICS, type CalendarEvent } from "@/utils/calendar";
+import Navbar from "@/components/Navbar";
 
 export default function CounsellorPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -20,6 +22,8 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
+  const [googleCalendarUrl, setGoogleCalendarUrl] = useState("");
+  const [icsContent, setIcsContent] = useState("");
 
   if (!counsellor) {
     return (
@@ -40,24 +44,61 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
     }
   };
 
-  const handleConfirmBooking = () => {
+  const handleConfirmBooking = async () => {
     setShowBookingModal(false);
+
+    const slot = counsellor.availableSlots.find(
+      (s) => `${s.date}-${s.time}` === selectedSlot
+    );
+    if (!slot) { setBookingConfirmed(true); return; }
+
+    const service = counsellor.services[selectedService];
+    const calEvent: CalendarEvent = {
+      title: `PathPal Session with ${counsellor.name}`,
+      description: `Your ${service.duration}-minute ${service.name} session with ${counsellor.name} (${counsellor.school}).\n\nA Zoom link will be sent 30 minutes before your session.`,
+      date: slot.date,
+      time: slot.time,
+      timezone: slot.timezone,
+      durationMinutes: service.duration,
+      organizerName: counsellor.name,
+      attendeeEmail: user?.email ?? "",
+      attendeeName: user?.user_metadata?.full_name ?? user?.email ?? "Student",
+    };
+
+    // Build Google Calendar URL
+    setGoogleCalendarUrl(getGoogleCalendarUrl(calEvent));
+
+    // Auto-download .ics
+    const ics = generateICS(calEvent);
+    setIcsContent(ics);
+    downloadICS(ics, `pathpal-${counsellor.name.toLowerCase().replace(/\s+/g, "-")}-${slot.date}.ics`);
+
+    // Send confirmation email (non-blocking)
+    if (user?.email) {
+      fetch("/api/booking/confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userEmail: user.email,
+          userName: user.user_metadata?.full_name ?? user.email,
+          counsellorName: counsellor.name,
+          counsellorSchool: counsellor.school,
+          serviceName: service.name,
+          serviceDuration: service.duration,
+          servicePrice: service.price,
+          date: slot.date,
+          time: slot.time,
+          timezone: slot.timezone,
+        }),
+      }).catch(() => {/* silent fail */});
+    }
+
     setBookingConfirmed(true);
   };
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-slate-600 hover:text-slate-900">
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-medium">Back</span>
-          </Link>
-          <span className="font-bold text-slate-900">PathPal</span>
-          <div className="w-16" />
-        </div>
-      </header>
+      <Navbar />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid lg:grid-cols-3 gap-8">
@@ -175,12 +216,43 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
               <h2 className="text-lg font-bold text-slate-900 mb-4">{t("counsellor.bookSession")}</h2>
 
               {bookingConfirmed ? (
-                <div className="text-center py-6">
-                  <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Check className="w-6 h-6 text-emerald-600" />
+                <div className="py-4">
+                  <div className="text-center mb-5">
+                    <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Check className="w-6 h-6 text-emerald-600" />
+                    </div>
+                    <p className="font-semibold text-slate-900 mb-1">Booking Confirmed!</p>
+                    <p className="text-sm text-slate-500">
+                      {user?.email ? `Confirmation email sent to ${user.email}` : "Your session is booked."}
+                    </p>
                   </div>
-                  <p className="font-semibold text-slate-900 mb-1">Booking Confirmed!</p>
-                  <p className="text-sm text-slate-500">You'll receive a calendar invite shortly.</p>
+                  <div className="space-y-2">
+                    {googleCalendarUrl && (
+                      <a
+                        href={googleCalendarUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 w-full py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                      >
+                        <svg className="w-4 h-4" viewBox="0 0 24 24">
+                          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        Add to Google Calendar
+                      </a>
+                    )}
+                    {icsContent && (
+                      <button
+                        onClick={() => downloadICS(icsContent)}
+                        className="flex items-center justify-center gap-2 w-full py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                      >
+                        <Download className="w-4 h-4" />
+                        Download .ics (Apple / Outlook)
+                      </button>
+                    )}
+                  </div>
                 </div>
               ) : (
                 <>
