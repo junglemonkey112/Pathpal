@@ -21,6 +21,8 @@ interface UserContextType {
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signUp: (email: string, password: string, name: string) => Promise<{ error: string | null }>;
+  signInWithGoogle: () => Promise<{ error: string | null }>;
+  signInWithWeChat: () => void;
   signOut: () => Promise<void>;
   // Profile
   profile: UserProfile | null;
@@ -87,6 +89,22 @@ export function UserProvider({ children }: { children: ReactNode }) {
     return { error: error?.message ?? null };
   };
 
+  const signInWithGoogle = async () => {
+    const supabase = createClient();
+    if (!supabase) return { error: "Authentication is not configured" };
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/` },
+    });
+    return { error: error?.message ?? null };
+  };
+
+  const signInWithWeChat = () => {
+    // WeChat OAuth: redirect to custom API route which handles the WeChat flow
+    const redirectUri = encodeURIComponent(`${window.location.origin}/api/auth/wechat/callback`);
+    window.location.href = `/api/auth/wechat?redirect_uri=${redirectUri}`;
+  };
+
   const signOut = async () => {
     const supabase = createClient();
     if (!supabase) return;
@@ -101,6 +119,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
         isLoading,
         signIn,
         signUp,
+        signInWithGoogle,
+        signInWithWeChat,
         signOut,
         profile,
         setProfile,
