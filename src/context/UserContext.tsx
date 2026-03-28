@@ -13,6 +13,7 @@ export interface UserProfile {
   budget: string;
   hasSAT: boolean;
   satScore?: string;
+  country?: string;
 }
 
 interface UserContextType {

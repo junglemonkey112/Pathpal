@@ -48,6 +48,18 @@ const schools = [
 ];
 const budgets = ["Under $30", "$30-50", "$50-80", "$80-100", "$100+"];
 
+const countries = [
+  { flag: "🇰🇷", name: "South Korea" },
+  { flag: "🇨🇳", name: "China" },
+  { flag: "🇯🇵", name: "Japan" },
+  { flag: "🇮🇳", name: "India" },
+  { flag: "🇺🇸", name: "United States" },
+  { flag: "🇨🇦", name: "Canada" },
+  { flag: "🇬🇧", name: "United Kingdom" },
+  { flag: "🇦🇺", name: "Australia" },
+  { flag: "🌍", name: "Other" },
+];
+
 export default function OnboardingModal() {
   const { showOnboarding, setShowOnboarding, setProfile, setIsOnboarded } = useUser();
   const [step, setStep] = useState(1);
@@ -60,6 +72,7 @@ export default function OnboardingModal() {
     budget: "",
     hasSAT: false,
     satScore: "",
+    country: "",
   });
 
   const totalSteps = 4;
@@ -141,8 +154,28 @@ export default function OnboardingModal() {
                 <div className="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <GraduationCap className="w-7 h-7 text-indigo-600" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900">Your Grade & GPA</h3>
-                <p className="text-sm text-gray-500">Help us understand your background</p>
+                <h3 className="text-lg font-semibold text-gray-900">Your Background</h3>
+                <p className="text-sm text-gray-500">Help us match you with the right counsellor</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Your Country</label>
+                <div className="flex flex-wrap gap-2">
+                  {countries.map((c) => (
+                    <button
+                      key={c.name}
+                      onClick={() => setFormData((prev) => ({ ...prev, country: c.name }))}
+                      className={clsx(
+                        "px-3 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-1.5",
+                        formData.country === c.name
+                          ? "bg-indigo-600 text-white shadow-lg"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      )}
+                    >
+                      <span>{c.flag}</span> {c.name}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div>
@@ -304,7 +337,7 @@ export default function OnboardingModal() {
               <div className="bg-indigo-50 rounded-2xl p-4 mt-6">
                 <h4 className="font-semibold text-indigo-900 mb-2">You&apos;re All Set!</h4>
                 <p className="text-sm text-indigo-700">
-                  We&apos;ll match you with the best consultants based on your profile.
+                  We&apos;ll match you with Student Counsellors who speak your language and know your journey.
                 </p>
               </div>
             </div>
@@ -346,7 +379,7 @@ export default function OnboardingModal() {
                   : "bg-gray-200 text-gray-400 cursor-not-allowed"
               )}
             >
-              Find My Consultants
+              Find My Counsellors
             </button>
           )}
         </div>
