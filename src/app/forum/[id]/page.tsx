@@ -187,16 +187,37 @@ export default function PostDetailPage() {
     }
   }, [postId]);
 
+  /** Persist the updated post to localStorage so changes survive page refresh */
+  const persistPost = (updated: Post) => {
+    try {
+      const stored = localStorage.getItem("forum_posts");
+      const storedPosts: Post[] = stored ? JSON.parse(stored) : [];
+      const idx = storedPosts.findIndex(p => p.id === updated.id);
+      if (idx >= 0) {
+        storedPosts[idx] = updated;
+      } else {
+        storedPosts.push(updated);
+      }
+      localStorage.setItem("forum_posts", JSON.stringify(storedPosts));
+    } catch {
+      // localStorage unavailable — changes will be in-memory only
+    }
+  };
+
   const handleLike = () => {
     if (!post) return;
+    const updated = { ...post, likes: liked ? post.likes - 1 : post.likes + 1 };
     setLiked(!liked);
-    setPost({ ...post, likes: liked ? post.likes - 1 : post.likes + 1 });
+    setPost(updated);
+    persistPost(updated);
   };
 
   const handleAddComment = () => {
     if (!newComment.trim() || !post) return;
     const comment = createComment(`comment-${Date.now()}`, currentAuthor, newComment);
-    setPost({ ...post, comments: [...post.comments, comment] });
+    const updated = { ...post, comments: [...post.comments, comment] };
+    setPost(updated);
+    persistPost(updated);
     setNewComment("");
   };
 
@@ -212,7 +233,9 @@ export default function PostDetailPage() {
         }
         return c.replies.length > 0 ? { ...c, replies: addReply(c.replies) } : c;
       });
-    setPost({ ...post, comments: addReply(post.comments) });
+    const updated = { ...post, comments: addReply(post.comments) };
+    setPost(updated);
+    persistPost(updated);
   };
 
   if (!post) {

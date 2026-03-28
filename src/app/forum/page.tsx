@@ -51,7 +51,13 @@ export default function ForumPage() {
       try {
         const stored = localStorage.getItem("forum_posts");
         const storedPosts = stored ? parsePosts(JSON.parse(stored)) : [];
-        const allPosts = [...storedPosts, ...samplePosts].sort((a, b) => {
+        const storedIds = new Set(storedPosts.map(p => p.id));
+        // Merge: stored posts take priority (they may have updated comments/likes),
+        // then add sample posts that aren't already in localStorage
+        const allPosts = [
+          ...storedPosts,
+          ...samplePosts.filter(p => !storedIds.has(p.id)),
+        ].sort((a, b) => {
           if (a.pinned && !b.pinned) return -1;
           if (!a.pinned && b.pinned) return 1;
           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
