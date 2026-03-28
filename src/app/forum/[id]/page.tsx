@@ -7,16 +7,17 @@ import { ArrowLeft, Heart, MessageCircle, ShieldCheck, Send, Pin } from "lucide-
 import { Post, Comment, User, samplePosts, guestUser, createAuthUser, createComment } from "@/data/forum";
 import { clsx } from "clsx";
 import { useUser } from "@/context/UserContext";
+import { useLanguage } from "@/context/LanguageContext";
 import Navbar from "@/components/Navbar";
 
-function formatTimeAgo(date: Date): string {
+function formatTimeAgo(date: Date, justNowLabel = "Just now"): string {
   const now = new Date();
   const diff = now.getTime() - date.getTime();
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(diff / 86400000);
   if (days > 0) return `${days}d ago`;
   if (hours > 0) return `${hours}h ago`;
-  return "Just now";
+  return justNowLabel;
 }
 
 function Avatar({ user, size = "md" }: { user: User; size?: "sm" | "md" | "lg" }) {
@@ -39,6 +40,7 @@ function CommentItem({
   onReply: (parentId: string, content: string) => void;
   depth?: number;
 }) {
+  const { t } = useLanguage();
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(comment.likes);
   const [showReplyInput, setShowReplyInput] = useState(false);
@@ -73,10 +75,10 @@ function CommentItem({
             {comment.author.isCounsellor && (
               <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded-full">
                 <ShieldCheck className="w-2.5 h-2.5" />
-                Verified Counsellor
+                {t("forum.verifiedCounsellor")}
               </span>
             )}
-            <span className="text-slate-400 text-xs">· {formatTimeAgo(comment.createdAt)}</span>
+            <span className="text-slate-400 text-xs">· {formatTimeAgo(comment.createdAt, t("forum.justNow"))}</span>
           </div>
 
           <p className="text-slate-700 text-sm mb-2 whitespace-pre-line">{comment.content}</p>
@@ -98,7 +100,7 @@ function CommentItem({
                 className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700"
               >
                 <MessageCircle className="w-3.5 h-3.5" />
-                Reply
+                {t("forum.reply")}
               </button>
             )}
           </div>
@@ -147,6 +149,7 @@ export default function PostDetailPage() {
   const router = useRouter();
   const postId = params.id as string;
 
+  const { t } = useLanguage();
   const [post, setPost] = useState<Post | null>(null);
   const [newComment, setNewComment] = useState("");
   const [liked, setLiked] = useState(false);
@@ -242,9 +245,9 @@ export default function PostDetailPage() {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-slate-500 mb-4">Post not found</p>
+          <p className="text-slate-500 mb-4">{t("forum.postNotFound")}</p>
           <Link href="/forum" className="text-emerald-600 hover:text-emerald-700">
-            ← Back to Forum
+            ← {t("forum.backToCommunity")}
           </Link>
         </div>
       </div>
@@ -262,7 +265,7 @@ export default function PostDetailPage() {
           className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 mb-5 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Community
+          {t("forum.backToCommunity")}
         </button>
         {/* Post */}
         <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 mb-6">
@@ -276,12 +279,12 @@ export default function PostDetailPage() {
                 {post.author.isCounsellor && (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded-full">
                     <ShieldCheck className="w-3 h-3" />
-                    Verified Counsellor
+                    {t("forum.verifiedCounsellor")}
                   </span>
                 )}
               </div>
               <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
-                <span>{formatTimeAgo(post.createdAt)}</span>
+                <span>{formatTimeAgo(post.createdAt, t("forum.justNow"))}</span>
                 <span>·</span>
                 <span className="capitalize bg-slate-100 px-2 py-0.5 rounded-full text-slate-600">{post.category}</span>
                 {post.pinned && (
@@ -328,7 +331,7 @@ export default function PostDetailPage() {
         {/* Comments */}
         <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6">
           <h2 className="text-base font-semibold text-slate-900 mb-4">
-            {post.comments.length > 0 ? `${post.comments.length} Comments` : "Comments"}
+            {post.comments.length > 0 ? `${post.comments.length} ${t("forum.commentsLabel")}` : t("forum.commentsLabel")}
           </h2>
 
           {/* Comment input */}
@@ -339,7 +342,7 @@ export default function PostDetailPage() {
                 type="text"
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
-                placeholder={user ? "Add a comment..." : "Sign in to comment"}
+                placeholder={user ? t("forum.addComment") : t("forum.signInToComment")}
                 disabled={!user}
                 className="flex-1 px-4 py-2.5 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 disabled:bg-slate-50 disabled:text-slate-400"
                 onKeyDown={(e) => e.key === "Enter" && handleAddComment()}
@@ -356,8 +359,8 @@ export default function PostDetailPage() {
 
           {!user && (
             <div className="mb-4 text-center text-sm text-slate-500">
-              <Link href="/login" className="text-emerald-600 hover:underline font-medium">Sign in</Link>
-              {" "}to join the conversation
+              <Link href="/login" className="text-emerald-600 hover:underline font-medium">{t("forum.signInToComment")}</Link>
+              {" "}{t("forum.joinConversation")}
             </div>
           )}
 
@@ -373,7 +376,7 @@ export default function PostDetailPage() {
               ))
             ) : (
               <p className="text-center text-slate-400 py-8 text-sm">
-                No comments yet. Be the first to share your thoughts!
+                {t("forum.noComments")}
               </p>
             )}
           </div>

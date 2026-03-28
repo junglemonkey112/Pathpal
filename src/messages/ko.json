@@ -29,6 +29,18 @@
       "allSpecialties": "전체 분야"
     }
   },
+  "counsellors": {
+    "filterSubtitle": "국가, 언어, 전공별로 필터링",
+    "noResults": "필터에 맞는 상담사가 없습니다.",
+    "clearFilters": "필터 초기화",
+    "found": "명의 상담사"
+  },
+  "successStories": {
+    "subtitle": "꿈의 학교에 합격한 학생들"
+  },
+  "footer": {
+    "tagline": "모든 학생에게는 그 길을 걸어온 가이드가 필요합니다."
+  },
   "howItWorks": {
     "title": "PathPal 이용 방법",
     "subtitle": "몇 분 안에 맞는 상담사를 찾아보세요",
@@ -40,6 +52,7 @@
     }
   },
   "forParents": {
+    "verifiedBadge": "모든 상담사는 재학 증명서와 정부 신분증으로 인증됩니다",
     "title": "학부모께",
     "subtitle": "최고의 입시 지도를 기존 비용의 일부로",
     "insight": "가장 관련성 높은 조언은 자녀가 꿈꾸는 대학에 이미 재학 중인 학생들에게서 나옵니다 — 20년 전 졸업한 직업 상담사가 아닌.",
@@ -90,7 +103,26 @@
     "session": "/ 세션",
     "languages": "언어",
     "viewProfile": "프로필 보기",
-    "speaksLabel": "구사 언어"
+    "speaksLabel": "구사 언어",
+    "notFound": "상담사를 찾을 수 없습니다",
+    "reviews": "리뷰",
+    "availableTimes": "가능한 시간",
+    "bookingConfirmed": "예약이 확정되었습니다!",
+    "confirmationEmailSent": "확인 이메일이 발송되었습니다:",
+    "sessionBooked": "세션이 예약되었습니다.",
+    "addGoogleCalendar": "Google 캘린더에 추가",
+    "appleCalendar": "Apple 캘린더",
+    "safariOnly": "(Safari 전용)",
+    "downloadIcs": ".ics 다운로드 (Outlook)",
+    "signInToBook": "로그인하여 예약",
+    "signInToBookDesc": "무료 계정을 만들어 세션을 예약하세요:",
+    "createFreeAccount": "무료 계정 만들기",
+    "alreadyHaveAccount": "이미 계정이 있으신가요?",
+    "confirmBookingTitle": "예약 확인",
+    "minSession": "분 세션",
+    "confirmAndPay": "확인 및 결제",
+    "cancel": "취소",
+    "promptedSignIn": "로그인이 필요합니다"
   },
   "forum": {
     "title": "커뮤니티 포럼",
@@ -110,7 +142,31 @@
     "upvote": "추천",
     "reply": "댓글",
     "postedBy": "작성자",
-    "searchPlaceholder": "게시물 검색..."
+    "searchPlaceholder": "게시물 검색...",
+    "noResults": "게시글이 없습니다.",
+    "clearSearch": "검색 초기화",
+    "justNow": "방금 전",
+    "verifiedCounsellor": "인증 상담사",
+    "counsellorBadge": "상담사",
+    "noComments": "아직 댓글이 없습니다. 첫 번째로 의견을 남겨보세요!",
+    "addComment": "댓글 달기...",
+    "signInToComment": "로그인",
+    "joinConversation": "하여 대화에 참여하기",
+    "postNotFound": "게시글을 찾을 수 없습니다",
+    "backToCommunity": "커뮤니티로 돌아가기",
+    "signInToPost": "로그인하여 게시하기",
+    "signInRequired": "게시글을 작성하려면 계정이 필요합니다.",
+    "categoryLabel": "카테고리",
+    "titleLabel": "제목",
+    "titlePlaceholder": "질문이나 주제를 입력하세요",
+    "contentLabel": "내용",
+    "contentPlaceholder": "상황, 시도해본 것, 필요한 도움을 자세히 공유해 주세요...",
+    "cancel": "취소",
+    "posting": "게시 중...",
+    "commentsLabel": "댓글",
+    "previewSubtitle": "또래 학생 및 Student Counsellor와 소통하세요",
+    "viewAll": "전체 보기",
+    "startDiscussion": "토론 시작하기"
   },
   "auth": {
     "signIn": "로그인",
@@ -123,7 +179,20 @@
     "or": "또는",
     "noAccount": "계정이 없으신가요?",
     "haveAccount": "이미 계정이 있으신가요?",
-    "forgotPassword": "비밀번호를 잊으셨나요?"
+    "forgotPassword": "비밀번호를 잊으셨나요?",
+    "welcomeBack": "다시 오셨군요",
+    "signInSubtitle": "에 로그인하세요",
+    "redirecting": "이동 중...",
+    "signingIn": "로그인 중...",
+    "creatingAccount": "계정 만드는 중...",
+    "comingSoon": "출시 예정",
+    "backToHome": "홈으로 돌아가기",
+    "createAccount": "계정 만들기",
+    "createAccountSubtitle": "대학 입시 여정을 시작하세요",
+    "checkEmail": "이메일을 확인하세요",
+    "checkEmailSent": "확인 링크를 보냈습니다:",
+    "checkEmailAction": "링크를 클릭하여 계정을 활성화하세요.",
+    "goToSignIn": "로그인 페이지로 이동"
   },
   "onboarding": {
     "title": "나에 대해 알려주세요",

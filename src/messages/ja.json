@@ -29,6 +29,18 @@
       "allSpecialties": "すべての分野"
     }
   },
+  "counsellors": {
+    "filterSubtitle": "国・言語・専門分野でフィルター",
+    "noResults": "該当するカウンセラーが見つかりません。",
+    "clearFilters": "フィルターをクリア",
+    "found": "人のカウンセラー"
+  },
+  "successStories": {
+    "subtitle": "夢の学校に合格した学生たち"
+  },
+  "footer": {
+    "tagline": "すべての学生に、同じ道を歩んだガイドを。"
+  },
   "howItWorks": {
     "title": "PathPalの使い方",
     "subtitle": "数分で最適なカウンセラーを見つけましょう",
@@ -90,7 +102,26 @@
     "session": "/ セッション",
     "languages": "言語",
     "viewProfile": "プロフィールを見る",
-    "speaksLabel": "対応言語"
+    "speaksLabel": "対応言語",
+    "notFound": "カウンセラーが見つかりません",
+    "reviews": "レビュー",
+    "availableTimes": "予約可能な時間",
+    "bookingConfirmed": "予約が確定しました！",
+    "confirmationEmailSent": "確認メールを送信しました：",
+    "sessionBooked": "セッションが予約されました。",
+    "addGoogleCalendar": "Googleカレンダーに追加",
+    "appleCalendar": "Appleカレンダー",
+    "safariOnly": "（Safariのみ）",
+    "downloadIcs": ".icsをダウンロード（Outlook）",
+    "signInToBook": "サインインして予約",
+    "signInToBookDesc": "無料アカウントを作成してセッションを予約：",
+    "createFreeAccount": "無料アカウントを作成",
+    "alreadyHaveAccount": "すでにアカウントをお持ちですか？",
+    "confirmBookingTitle": "予約を確認",
+    "minSession": "分セッション",
+    "confirmAndPay": "確認して支払う",
+    "cancel": "キャンセル",
+    "promptedSignIn": "サインインが必要です"
   },
   "forum": {
     "title": "コミュニティフォーラム",
@@ -110,7 +141,31 @@
     "upvote": "いいね",
     "reply": "返信",
     "postedBy": "投稿者",
-    "searchPlaceholder": "投稿を検索..."
+    "searchPlaceholder": "投稿を検索...",
+    "noResults": "投稿が見つかりません。",
+    "clearSearch": "検索をクリア",
+    "justNow": "たった今",
+    "verifiedCounsellor": "認定カウンセラー",
+    "counsellorBadge": "カウンセラー",
+    "noComments": "まだコメントはありません。最初に意見を共有しましょう！",
+    "addComment": "コメントを追加...",
+    "signInToComment": "サインイン",
+    "joinConversation": "して会話に参加",
+    "postNotFound": "投稿が見つかりません",
+    "backToCommunity": "コミュニティに戻る",
+    "signInToPost": "投稿するにはサインイン",
+    "signInRequired": "投稿するにはアカウントが必要です。",
+    "categoryLabel": "カテゴリー",
+    "titleLabel": "タイトル",
+    "titlePlaceholder": "質問やトピックは何ですか？",
+    "contentLabel": "内容",
+    "contentPlaceholder": "状況、試したこと、必要なサポートを詳しく共有してください...",
+    "cancel": "キャンセル",
+    "posting": "投稿中...",
+    "commentsLabel": "コメント",
+    "previewSubtitle": "仲間のStudent Counsellorsとつながろう",
+    "viewAll": "すべて見る",
+    "startDiscussion": "ディスカッションを始める"
   },
   "auth": {
     "signIn": "ログイン",
@@ -123,7 +178,20 @@
     "or": "または",
     "noAccount": "アカウントをお持ちでないですか？",
     "haveAccount": "すでにアカウントをお持ちですか？",
-    "forgotPassword": "パスワードをお忘れですか？"
+    "forgotPassword": "パスワードをお忘れですか？",
+    "welcomeBack": "おかえりなさい",
+    "signInSubtitle": "アカウントにサインイン",
+    "redirecting": "リダイレクト中...",
+    "signingIn": "サインイン中...",
+    "creatingAccount": "アカウント作成中...",
+    "comingSoon": "近日公開",
+    "backToHome": "ホームに戻る",
+    "createAccount": "アカウント作成",
+    "createAccountSubtitle": "大学受験の旅を始めましょう",
+    "checkEmail": "メールをご確認ください",
+    "checkEmailSent": "確認リンクを送信しました：",
+    "checkEmailAction": "リンクをクリックしてアカウントを有効化してください。",
+    "goToSignIn": "サインインページへ"
   },
   "onboarding": {
     "title": "あなたについて教えてください",

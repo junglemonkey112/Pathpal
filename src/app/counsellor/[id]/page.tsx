@@ -30,8 +30,8 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">Counsellor not found</h1>
-          <Link href="/" className="text-emerald-600 hover:underline">Back to home</Link>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">{t("counsellor.notFound")}</h1>
+          <Link href="/" className="text-emerald-600 hover:underline">{t("auth.backToHome")}</Link>
         </div>
       </div>
     );
@@ -186,7 +186,7 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
 
             {/* Reviews */}
             <div className="bg-white rounded-2xl border border-slate-200 p-6">
-              <h2 className="text-lg font-bold text-slate-900 mb-4">Reviews</h2>
+              <h2 className="text-lg font-bold text-slate-900 mb-4">{t("counsellor.reviews")}</h2>
               <div className="space-y-4">
                 {counsellor.reviews.map((review) => (
                   <div key={review.id} className="pb-4 border-b border-slate-100 last:border-0">
@@ -220,9 +220,9 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
                     <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
                       <Check className="w-6 h-6 text-emerald-600" />
                     </div>
-                    <p className="font-semibold text-slate-900 mb-1">Booking Confirmed!</p>
+                    <p className="font-semibold text-slate-900 mb-1">{t("counsellor.bookingConfirmed")}</p>
                     <p className="text-sm text-slate-500">
-                      {user?.email ? `Confirmation email sent to ${user.email}` : "Your session is booked."}
+                      {user?.email ? `${t("counsellor.confirmationEmailSent")} ${user.email}` : t("counsellor.sessionBooked")}
                     </p>
                   </div>
                   <div className="space-y-2">
@@ -240,7 +240,7 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
                           <path fill="white" fillOpacity=".6" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                           <path fill="white" fillOpacity=".85" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                         </svg>
-                        Add to Google Calendar
+                        {t("counsellor.addGoogleCalendar")}
                       </a>
                     )}
                     {/* Apple Calendar — data: URI, iOS Safari only */}
@@ -252,7 +252,7 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                         </svg>
-                        Apple Calendar <span className="text-slate-400 font-normal">(Safari only)</span>
+                        {t("counsellor.appleCalendar")} <span className="text-slate-400 font-normal">{t("counsellor.safariOnly")}</span>
                       </a>
                     )}
                     {/* .ics download — for Outlook on desktop */}
@@ -262,7 +262,7 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
                         className="flex items-center justify-center gap-2 w-full py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-500 hover:bg-slate-50 transition-colors"
                       >
                         <Download className="w-4 h-4" />
-                        Download .ics (Outlook)
+                        {t("counsellor.downloadIcs")}
                       </button>
                     )}
                   </div>
@@ -294,7 +294,7 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
                   {/* Available slots */}
                   <div className="mb-5">
                     <p className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-1">
-                      <Calendar className="w-4 h-4" /> Available Times
+                      <Calendar className="w-4 h-4" /> {t("counsellor.availableTimes")}
                     </p>
                     <div className="grid grid-cols-2 gap-2">
                       {counsellor.availableSlots.map((slot, idx) => {
@@ -335,7 +335,7 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
 
                   {!user && (
                     <p className="text-xs text-slate-500 text-center mt-2">
-                      You&apos;ll be prompted to sign in
+                      {t("counsellor.promptedSignIn")}
                     </p>
                   )}
                 </>
@@ -351,18 +351,18 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full">
             <div className="text-center mb-4">
               <LogIn className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-              <h3 className="text-lg font-bold text-slate-900">Sign in to book</h3>
-              <p className="text-slate-500 text-sm mt-1">Create a free account to book sessions with {counsellor.name}</p>
+              <h3 className="text-lg font-bold text-slate-900">{t("counsellor.signInToBook")}</h3>
+              <p className="text-slate-500 text-sm mt-1">{t("counsellor.signInToBookDesc")} {counsellor.name}</p>
             </div>
             <div className="space-y-2">
               <Link href="/signup" className="block w-full bg-slate-900 text-white text-center py-2.5 rounded-xl font-medium text-sm hover:bg-slate-800 transition-colors">
-                Create Free Account
+                {t("counsellor.createFreeAccount")}
               </Link>
               <Link href="/login" className="block w-full text-center py-2.5 text-slate-600 text-sm hover:text-slate-900">
-                Already have an account? Sign in
+                {t("counsellor.alreadyHaveAccount")} {t("auth.signIn")}
               </Link>
             </div>
-            <button onClick={() => setShowAuthPrompt(false)} className="mt-3 w-full text-center text-slate-400 text-xs hover:text-slate-600">Cancel</button>
+            <button onClick={() => setShowAuthPrompt(false)} className="mt-3 w-full text-center text-slate-400 text-xs hover:text-slate-600">{t("counsellor.cancel")}</button>
           </div>
         </div>
       )}
@@ -371,12 +371,12 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
       {showBookingModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full">
-            <h3 className="text-lg font-bold text-slate-900 mb-1">Confirm Booking</h3>
+            <h3 className="text-lg font-bold text-slate-900 mb-1">{t("counsellor.confirmBookingTitle")}</h3>
             <p className="text-slate-500 text-sm mb-4">
               {counsellor.services[selectedService].name} with {counsellor.name} · {selectedSlot?.replace("-", " at ").replace(/-/g, "/")}
             </p>
             <div className="flex justify-between items-center p-3 bg-slate-50 rounded-xl mb-4">
-              <span className="text-slate-700 font-medium">{counsellor.services[selectedService].duration} min session</span>
+              <span className="text-slate-700 font-medium">{counsellor.services[selectedService].duration} {t("counsellor.minSession")}</span>
               <span className="text-xl font-bold text-slate-900">${counsellor.services[selectedService].price}</span>
             </div>
             <div className="flex gap-3">
@@ -384,13 +384,13 @@ export default function CounsellorPage({ params }: { params: Promise<{ id: strin
                 onClick={() => setShowBookingModal(false)}
                 className="flex-1 py-2.5 border border-slate-200 rounded-xl text-slate-600 text-sm font-medium hover:bg-slate-50"
               >
-                Cancel
+                {t("counsellor.cancel")}
               </button>
               <button
                 onClick={handleConfirmBooking}
                 className="flex-1 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700"
               >
-                Confirm &amp; Pay
+                {t("counsellor.confirmAndPay")}
               </button>
             </div>
           </div>

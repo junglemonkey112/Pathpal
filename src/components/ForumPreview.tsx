@@ -1,25 +1,29 @@
+"use client";
+
 import Link from "next/link";
 import { ChevronRight, Heart, MessageCircle, ShieldCheck, Plus } from "lucide-react";
 import { Post } from "@/data/forum";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ForumPreviewProps {
   posts: Post[];
 }
 
 export default function ForumPreview({ posts }: ForumPreviewProps) {
+  const { t } = useLanguage();
   return (
     <section className="py-12 bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Community</h2>
-            <p className="text-slate-600">Connect with peers and Student Counsellors</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">{t("forum.title")}</h2>
+            <p className="text-slate-600">{t("forum.previewSubtitle")}</p>
           </div>
           <Link
             href="/forum"
             className="text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1"
           >
-            View All <ChevronRight className="w-4 h-4" />
+            {t("forum.viewAll")} <ChevronRight className="w-4 h-4" />
           </Link>
         </div>
 
@@ -45,7 +49,7 @@ export default function ForumPreview({ posts }: ForumPreviewProps) {
                     {post.author.isCounsellor && (
                       <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded-full flex-shrink-0">
                         <ShieldCheck className="w-2.5 h-2.5" />
-                        Counsellor
+                        {t("forum.counsellorBadge")}
                       </span>
                     )}
                   </div>
@@ -73,7 +77,7 @@ export default function ForumPreview({ posts }: ForumPreviewProps) {
             className="inline-flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm"
           >
             <Plus className="w-4 h-4" />
-            Start a Discussion
+            {t("forum.startDiscussion")}
           </Link>
         </div>
       </div>

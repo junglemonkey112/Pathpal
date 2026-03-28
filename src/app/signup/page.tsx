@@ -53,12 +53,12 @@ export default function SignupPage() {
           <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Mail className="w-8 h-8 text-emerald-600" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">Check your email</h1>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">{t("auth.checkEmail")}</h1>
           <p className="text-slate-600 mb-6">
-            We sent a confirmation link to <strong>{email}</strong>. Click the link to activate your account.
+            {t("auth.checkEmailSent")} <strong>{email}</strong>. {t("auth.checkEmailAction")}
           </p>
           <Link href="/login" className="inline-block bg-slate-900 text-white px-6 py-3 rounded-xl hover:bg-slate-800 transition-colors font-medium">
-            Go to Sign In
+            {t("auth.goToSignIn")}
           </Link>
         </div>
       </div>
@@ -75,8 +75,8 @@ export default function SignupPage() {
             </div>
             <span className="text-2xl font-bold text-slate-900">PathPal</span>
           </Link>
-          <h1 className="text-2xl font-bold text-slate-900">Create your account</h1>
-          <p className="text-slate-600 mt-1">Start your college admissions journey</p>
+          <h1 className="text-2xl font-bold text-slate-900">{t("auth.createAccount")}</h1>
+          <p className="text-slate-600 mt-1">{t("auth.createAccountSubtitle")}</p>
         </div>
 
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
@@ -107,7 +107,7 @@ export default function SignupPage() {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              {oauthLoading === "google" ? "Redirecting..." : t("auth.continueGoogle")}
+              {oauthLoading === "google" ? t("auth.redirecting") : t("auth.continueGoogle")}
             </button>
 
             <div className="relative">
@@ -120,7 +120,7 @@ export default function SignupPage() {
                   <path d="M16 11c-2.76 0-5 1.79-5 4s2.24 4 5 4c.69 0 1.35-.12 1.94-.33L21 20l-.56-2.24C21.42 16.87 22 15.99 22 15c0-2.21-2.24-4-6-4z" fill="#07C160"/>
                 </svg>
                 {t("auth.continueWeChat")}
-                <span className="ml-auto text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">Coming Soon</span>
+                <span className="ml-auto text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">{t("auth.comingSoon")}</span>
               </button>
             </div>
           </div>
@@ -182,7 +182,7 @@ export default function SignupPage() {
               disabled={isLoading}
               className="w-full bg-slate-900 text-white py-3 rounded-xl hover:bg-slate-800 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Creating account..." : t("auth.signUp")}
+              {isLoading ? t("auth.creatingAccount") : t("auth.signUp")}
             </button>
           </form>
 
@@ -197,7 +197,7 @@ export default function SignupPage() {
         <div className="mt-4 text-center">
           <Link href="/" className="text-sm text-slate-500 hover:text-slate-700 inline-flex items-center gap-1">
             <ArrowLeft className="w-4 h-4" />
-            Back to home
+            {t("auth.backToHome")}
           </Link>
         </div>
       </div>

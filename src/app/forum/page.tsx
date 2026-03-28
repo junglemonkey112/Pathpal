@@ -8,14 +8,14 @@ import { clsx } from "clsx";
 import { useLanguage } from "@/context/LanguageContext";
 import Navbar from "@/components/Navbar";
 
-function formatTimeAgo(date: Date): string {
+function formatTimeAgo(date: Date, justNowLabel = "Just now"): string {
   const now = new Date();
   const diff = now.getTime() - date.getTime();
   const days = Math.floor(diff / 86400000);
   const hours = Math.floor(diff / 3600000);
   if (days > 0) return `${days}d ago`;
   if (hours > 0) return `${hours}h ago`;
-  return "Just now";
+  return justNowLabel;
 }
 
 function parsePosts(posts: Post[]): Post[] {
@@ -169,11 +169,11 @@ export default function ForumPage() {
                         {post.author.name}
                       </span>
                       {post.author.isCounsellor && (
-                        <span className="bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded-full text-xs">Verified Counsellor</span>
+                        <span className="bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded-full text-xs">{t("forum.verifiedCounsellor")}</span>
                       )}
                     </div>
                     <span>·</span>
-                    <span>{formatTimeAgo(post.createdAt)}</span>
+                    <span>{formatTimeAgo(post.createdAt, t("forum.justNow"))}</span>
                     <span>·</span>
                     <span className="capitalize">{post.category}</span>
                     <span className="ml-auto flex items-center gap-3">
@@ -192,9 +192,9 @@ export default function ForumPage() {
 
           {filtered.length === 0 && (
             <div className="text-center py-12 text-slate-400">
-              <p>No posts found.</p>
+              <p>{t("forum.noResults")}</p>
               {searchQuery && (
-                <button onClick={() => setSearchQuery("")} className="mt-2 text-emerald-600 text-sm">Clear search</button>
+                <button onClick={() => setSearchQuery("")} className="mt-2 text-emerald-600 text-sm">{t("forum.clearSearch")}</button>
               )}
             </div>
           )}

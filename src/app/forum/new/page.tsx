@@ -9,13 +9,13 @@ import { createAuthUser, ForumCategory } from "@/data/forum";
 import { useUser } from "@/context/UserContext";
 import { useLanguage } from "@/context/LanguageContext";
 
-const CATEGORIES: { id: ForumCategory; emoji: string; label: string }[] = [
-  { id: "applications", emoji: "📝", label: "Applications" },
-  { id: "essays", emoji: "✍️", label: "Essays" },
-  { id: "financialAid", emoji: "💰", label: "Financial Aid" },
-  { id: "visas", emoji: "🛂", label: "Visas & F-1" },
-  { id: "decisions", emoji: "🎉", label: "Decisions" },
-  { id: "international", emoji: "🌏", label: "International Students" },
+const CATEGORIES: { id: ForumCategory; emoji: string; labelKey: string }[] = [
+  { id: "applications", emoji: "📝", labelKey: "forum.categories.applications" },
+  { id: "essays", emoji: "✍️", labelKey: "forum.categories.essays" },
+  { id: "financialAid", emoji: "💰", labelKey: "forum.categories.financialAid" },
+  { id: "visas", emoji: "🛂", labelKey: "forum.categories.visas" },
+  { id: "decisions", emoji: "🎉", labelKey: "forum.categories.decisions" },
+  { id: "international", emoji: "🌏", labelKey: "forum.categories.international" },
 ];
 
 export default function NewPostPage() {
@@ -33,15 +33,15 @@ export default function NewPostPage() {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
         <div className="text-center max-w-sm">
           <LogIn className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-slate-900 mb-2">Sign in to post</h2>
-          <p className="text-slate-600 mb-4 text-sm">You need an account to create forum posts.</p>
+          <h2 className="text-xl font-bold text-slate-900 mb-2">{t("forum.signInToPost")}</h2>
+          <p className="text-slate-600 mb-4 text-sm">{t("forum.signInRequired")}</p>
           <div className="bg-slate-50 rounded-xl p-3 flex items-start gap-2 mb-5 text-left">
             <ShieldCheck className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
             <p className="text-xs text-slate-500">{t("forum.verificationNotice")}</p>
           </div>
           <div className="flex gap-3 justify-center">
-            <Link href="/login" className="bg-slate-900 text-white px-5 py-2.5 rounded-xl font-medium text-sm hover:bg-slate-800">Sign In</Link>
-            <Link href="/signup" className="border border-slate-200 text-slate-700 px-5 py-2.5 rounded-xl font-medium text-sm hover:bg-slate-50">Sign Up</Link>
+            <Link href="/login" className="bg-slate-900 text-white px-5 py-2.5 rounded-xl font-medium text-sm hover:bg-slate-800">{t("auth.signIn")}</Link>
+            <Link href="/signup" className="border border-slate-200 text-slate-700 px-5 py-2.5 rounded-xl font-medium text-sm hover:bg-slate-50">{t("auth.signUp")}</Link>
           </div>
         </div>
       </div>
@@ -83,7 +83,7 @@ export default function NewPostPage() {
       <main className="max-w-2xl mx-auto px-4 py-6">
         <Link href="/forum" className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 mb-5 transition-colors">
           <ArrowLeft className="w-4 h-4" />
-          Back to Community
+          {t("forum.backToCommunity")}
         </Link>
         <div className="bg-white rounded-2xl border border-slate-200 p-6">
           <h1 className="text-xl font-bold text-slate-900 mb-5">{t("forum.newPost")}</h1>
@@ -91,7 +91,7 @@ export default function NewPostPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Category */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Category</label>
+              <label className="block text-sm font-medium text-slate-700 mb-2">{t("forum.categoryLabel")}</label>
               <div className="flex flex-wrap gap-2">
                 {CATEGORIES.map((cat) => (
                   <button
@@ -104,7 +104,7 @@ export default function NewPostPage() {
                         : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                     }`}
                   >
-                    <span>{cat.emoji}</span> {cat.label}
+                    <span>{cat.emoji}</span> {t(cat.labelKey)}
                   </button>
                 ))}
               </div>
@@ -112,12 +112,12 @@ export default function NewPostPage() {
 
             {/* Title */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Title</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t("forum.titleLabel")}</label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="What's your question or topic?"
+                placeholder={t("forum.titlePlaceholder")}
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
                 required
               />
@@ -125,11 +125,11 @@ export default function NewPostPage() {
 
             {/* Content */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Content</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t("forum.contentLabel")}</label>
               <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder="Share details about your situation, what you've already tried, and what specific help you need..."
+                placeholder={t("forum.contentPlaceholder")}
                 rows={6}
                 className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 resize-none"
                 required
@@ -137,13 +137,13 @@ export default function NewPostPage() {
             </div>
 
             <div className="flex justify-end gap-3 pt-2 border-t border-slate-100">
-              <Link href="/forum" className="px-5 py-2.5 text-slate-500 hover:text-slate-700 text-sm font-medium">Cancel</Link>
+              <Link href="/forum" className="px-5 py-2.5 text-slate-500 hover:text-slate-700 text-sm font-medium">{t("forum.cancel")}</Link>
               <button
                 type="submit"
                 disabled={isSubmitting || !title.trim() || !content.trim()}
                 className="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? "Posting..." : t("forum.newPost")}
+                {isSubmitting ? t("forum.posting") : t("forum.newPost")}
               </button>
             </div>
           </form>

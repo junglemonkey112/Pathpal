@@ -13,6 +13,7 @@
   "hero": {
     "title": "Every student deserves a guide who's been there",
     "subtitle": "Connect with verified student counsellors from Harvard, Stanford, MIT and more — people who navigated the same journey from your country.",
+    "verifiedBadge": "All counsellors verified with enrollment proof + government ID",
     "stats": {
       "countries": "12 Countries",
       "languages": "4 Languages",
@@ -28,6 +29,18 @@
       "allLanguages": "All Languages",
       "allSpecialties": "All Specialties"
     }
+  },
+  "counsellors": {
+    "filterSubtitle": "Filter by country, language, or specialty",
+    "noResults": "No counsellors match your filters.",
+    "clearFilters": "Clear filters",
+    "found": "counsellors found"
+  },
+  "successStories": {
+    "subtitle": "Students who made it to their dream schools"
+  },
+  "footer": {
+    "tagline": "Every student deserves a guide who's been there."
   },
   "howItWorks": {
     "title": "How PathPal Works",
@@ -90,7 +103,26 @@
     "session": "/ session",
     "languages": "Languages",
     "viewProfile": "View Profile",
-    "speaksLabel": "Speaks"
+    "speaksLabel": "Speaks",
+    "notFound": "Counsellor not found",
+    "reviews": "Reviews",
+    "availableTimes": "Available Times",
+    "bookingConfirmed": "Booking Confirmed!",
+    "confirmationEmailSent": "Confirmation email sent to",
+    "sessionBooked": "Your session is booked.",
+    "addGoogleCalendar": "Add to Google Calendar",
+    "appleCalendar": "Apple Calendar",
+    "safariOnly": "(Safari only)",
+    "downloadIcs": "Download .ics (Outlook)",
+    "signInToBook": "Sign in to book",
+    "signInToBookDesc": "Create a free account to book sessions with",
+    "createFreeAccount": "Create Free Account",
+    "alreadyHaveAccount": "Already have an account?",
+    "confirmBookingTitle": "Confirm Booking",
+    "minSession": "min session",
+    "confirmAndPay": "Confirm & Pay",
+    "cancel": "Cancel",
+    "promptedSignIn": "You'll be prompted to sign in"
   },
   "forum": {
     "title": "Community Forum",
@@ -110,7 +142,31 @@
     "upvote": "Upvote",
     "reply": "Reply",
     "postedBy": "Posted by",
-    "searchPlaceholder": "Search posts..."
+    "searchPlaceholder": "Search posts...",
+    "noResults": "No posts found.",
+    "clearSearch": "Clear search",
+    "justNow": "Just now",
+    "verifiedCounsellor": "Verified Counsellor",
+    "counsellorBadge": "Counsellor",
+    "noComments": "No comments yet. Be the first to share your thoughts!",
+    "addComment": "Add a comment...",
+    "signInToComment": "Sign in",
+    "joinConversation": "to join the conversation",
+    "postNotFound": "Post not found",
+    "backToCommunity": "Back to Community",
+    "signInToPost": "Sign in to post",
+    "signInRequired": "You need an account to create forum posts.",
+    "categoryLabel": "Category",
+    "titleLabel": "Title",
+    "titlePlaceholder": "What's your question or topic?",
+    "contentLabel": "Content",
+    "contentPlaceholder": "Share details about your situation, what you've already tried, and what specific help you need...",
+    "cancel": "Cancel",
+    "posting": "Posting...",
+    "commentsLabel": "Comments",
+    "previewSubtitle": "Connect with peers and Student Counsellors",
+    "viewAll": "View All",
+    "startDiscussion": "Start a Discussion"
   },
   "auth": {
     "signIn": "Sign In",
@@ -123,7 +179,20 @@
     "or": "or",
     "noAccount": "Don't have an account?",
     "haveAccount": "Already have an account?",
-    "forgotPassword": "Forgot password?"
+    "forgotPassword": "Forgot password?",
+    "welcomeBack": "Welcome back",
+    "signInSubtitle": "to your account",
+    "redirecting": "Redirecting...",
+    "signingIn": "Signing in...",
+    "creatingAccount": "Creating account...",
+    "comingSoon": "Coming Soon",
+    "backToHome": "Back to home",
+    "createAccount": "Create your account",
+    "createAccountSubtitle": "Start your college admissions journey",
+    "checkEmail": "Check your email",
+    "checkEmailSent": "We sent a confirmation link to",
+    "checkEmailAction": "Click the link to activate your account.",
+    "goToSignIn": "Go to Sign In"
   },
   "onboarding": {
     "title": "Tell us about yourself",

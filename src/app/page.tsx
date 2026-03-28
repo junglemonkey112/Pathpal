@@ -98,7 +98,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative">
           <div className="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full px-4 py-1.5 text-emerald-300 text-sm font-medium mb-6">
             <ShieldCheck className="w-4 h-4" />
-            All counsellors verified with enrollment proof + government ID
+            {t("hero.verifiedBadge")}
           </div>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 leading-tight">
@@ -136,7 +136,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-slate-900 mb-2">{t("nav.allCounsellors")}</h2>
-            <p className="text-slate-500 text-sm">Filter by country, language, or specialty</p>
+            <p className="text-slate-500 text-sm">{t("counsellors.filterSubtitle")}</p>
           </div>
 
           {/* Filters */}
@@ -183,7 +183,7 @@ export default function Home() {
 
           {/* Results count */}
           <p className="text-sm text-slate-500 mb-4">
-            {filteredCounsellors.length} counsellor{filteredCounsellors.length !== 1 ? "s" : ""} found
+            {filteredCounsellors.length} {t("counsellors.found")}
           </p>
 
           {/* Counsellor grid */}
@@ -193,12 +193,12 @@ export default function Home() {
             ))}
             {filteredCounsellors.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-slate-500">No counsellors match your filters.</p>
+                <p className="text-slate-500">{t("counsellors.noResults")}</p>
                 <button
                   onClick={() => { setSearchQuery(""); setSelectedCountry("All Countries"); setSelectedLanguage("All Languages"); setSelectedSpecialty("All Specialties"); }}
                   className="mt-3 text-emerald-600 hover:text-emerald-700 text-sm font-medium"
                 >
-                  Clear filters
+                  {t("counsellors.clearFilters")}
                 </button>
               </div>
             )}
@@ -322,7 +322,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">{t("nav.successStories")}</h2>
-            <p className="text-slate-500">Students who made it to their dream schools</p>
+            <p className="text-slate-500">{t("successStories.subtitle")}</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {[
@@ -365,7 +365,7 @@ export default function Home() {
                 </div>
                 <span className="text-white font-bold text-lg">PathPal</span>
               </div>
-              <p className="text-sm max-w-xs">Every student deserves a guide who&apos;s been there.</p>
+              <p className="text-sm max-w-xs">{t("footer.tagline")}</p>
             </div>
             <div className="flex flex-col items-start md:items-end gap-3">
               <LanguageSwitcher />
