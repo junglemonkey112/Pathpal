@@ -1,19 +1,59 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fafafa;
-  --foreground: #171717;
+  --background: #FAFAF7;
+  --foreground: #2D2D2D;
+
+  /* PathPal Brand — Ivy League Blue + Gold */
+  --color-primary: #1B3A5C;
+  --color-primary-light: #2A4F7A;
+  --color-primary-dark: #132C47;
+  --color-accent: #D4A843;
+  --color-accent-light: #F0DFA0;
+  --color-accent-dark: #B8912A;
+  --color-accent-bg: #FBF6E9;
+  --color-success: #3A7D5C;
+  --color-success-bg: #EBF5EF;
+  --color-warning: #E8963E;
+  --color-warning-bg: #FFF4E6;
+  --color-page-bg: #FAFAF7;
+  --color-card-bg: #FFFFFF;
+  --color-border: #E8E5DE;
+  --color-border-light: #F2F0EB;
+  --color-text-primary: #2D2D2D;
+  --color-text-secondary: #6B6B6B;
+  --color-text-tertiary: #A0A0A0;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  /* Brand colors as Tailwind utilities */
+  --color-primary: var(--color-primary);
+  --color-primary-light: var(--color-primary-light);
+  --color-primary-dark: var(--color-primary-dark);
+  --color-accent: var(--color-accent);
+  --color-accent-light: var(--color-accent-light);
+  --color-accent-dark: var(--color-accent-dark);
+  --color-accent-bg: var(--color-accent-bg);
+  --color-success: var(--color-success);
+  --color-success-bg: var(--color-success-bg);
+  --color-warning: var(--color-warning);
+  --color-warning-bg: var(--color-warning-bg);
+  --color-page-bg: var(--color-page-bg);
+  --color-card-bg: var(--color-card-bg);
+  --color-border: var(--color-border);
+  --color-border-light: var(--color-border-light);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-tertiary: var(--color-text-tertiary);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--color-page-bg);
+  color: var(--color-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -45,7 +85,7 @@ html {
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--color-border);
   border-radius: 2px;
 }
 
@@ -64,20 +104,20 @@ input[type="range"]::-webkit-slider-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #10b981;
+  background: var(--color-accent);
   cursor: pointer;
   border: 2px solid white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(27, 58, 92, 0.12);
 }
 
 /* Focus visible for accessibility */
 :focus-visible {
-  outline: 2px solid #10b981;
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
 /* Selection color */
 ::selection {
-  background: #d1fae5;
-  color: #064e3b;
+  background: var(--color-accent-bg);
+  color: var(--color-primary);
 }

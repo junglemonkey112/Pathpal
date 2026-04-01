@@ -52,11 +52,11 @@ function CommentItem({
   const canReply = depth < 2; // Max 2 levels of nesting
 
   return (
-    <div className={clsx(depth > 0 && "ml-8 border-l-2 border-slate-100 pl-4")}>
+    <div className={clsx(depth > 0 && "ml-8 border-l-2 border-border-light pl-4")}>
       <div className="flex gap-3 py-3">
         {/* Avatar */}
         <div className="flex-shrink-0">
-          <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-lg">
+          <div className="w-8 h-8 rounded-full bg-border-light flex items-center justify-center text-lg">
             {comment.author.avatar}
           </div>
         </div>
@@ -64,35 +64,35 @@ function CommentItem({
         <div className="flex-1">
           {/* Author info */}
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-semibold text-slate-900 text-sm">{comment.author.name}</span>
+            <span className="font-semibold text-text-primary text-sm">{comment.author.name}</span>
             {comment.author.isConsultant && (
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded-full">
+              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-accent-bg text-accent-dark text-xs rounded-full">
                 <Award className="w-2.5 h-2.5" />
                 Consultant
               </span>
             )}
-            <span className="text-slate-400 text-xs">· {formatTimeAgo(comment.createdAt)}</span>
+            <span className="text-text-tertiary text-xs">· {formatTimeAgo(comment.createdAt)}</span>
           </div>
 
           {/* Content */}
-          <p className="text-slate-700 text-sm mb-2">{comment.content}</p>
+          <p className="text-text-secondary text-sm mb-2">{comment.content}</p>
 
           {/* Actions */}
           <div className="flex items-center gap-4">
-            <button 
+            <button
               onClick={handleLike}
               className={clsx(
                 "flex items-center gap-1 text-xs",
-                liked ? "text-red-500" : "text-slate-500 hover:text-red-500"
+                liked ? "text-red-500" : "text-text-tertiary hover:text-red-500"
               )}
             >
               <Heart className={clsx("w-3.5 h-3.5", liked && "fill-current")} />
               {likes}
             </button>
             {canReply && (
-              <button 
+              <button
                 onClick={() => setShowReplyInput(!showReplyInput)}
-                className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700"
+                className="flex items-center gap-1 text-xs text-text-tertiary hover:text-text-primary"
               >
                 <MessageCircle className="w-3.5 h-3.5" />
                 Reply
@@ -108,13 +108,13 @@ function CommentItem({
                 value={replyContent}
                 onChange={(e) => setReplyContent(e.target.value)}
                 placeholder="Write a reply..."
-                className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                className="flex-1 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 onKeyDown={(e) => e.key === "Enter" && handleSubmitReply()}
               />
               <button
                 onClick={handleSubmitReply}
                 disabled={!replyContent.trim()}
-                className="px-3 py-2 bg-slate-900 text-white rounded-lg text-sm disabled:opacity-50"
+                className="px-3 py-2 bg-primary text-white rounded-lg text-sm disabled:opacity-50"
               >
                 <Send className="w-4 h-4" />
               </button>
@@ -220,10 +220,10 @@ export default function PostDetailPage() {
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-page-bg flex items-center justify-center">
         <div className="text-center">
-          <p className="text-slate-500 mb-4">Post not found</p>
-          <Link href="/forum" className="text-emerald-600 hover:text-emerald-700">
+          <p className="text-text-tertiary mb-4">Post not found</p>
+          <Link href="/forum" className="text-accent-dark hover:text-accent-dark">
             ← Back to Community
           </Link>
         </div>
@@ -232,20 +232,20 @@ export default function PostDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans">
+    <div className="min-h-screen bg-page-bg font-sans">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40">
+      <header className="bg-white/80 backdrop-blur-md border-b border-border sticky top-0 z-40">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
             <button onClick={() => router.back()} className="flex items-center gap-3">
-              <ArrowLeft className="w-5 h-5 text-slate-600" />
-              <span className="text-slate-600 hover:text-slate-900">Back</span>
+              <ArrowLeft className="w-5 h-5 text-text-secondary" />
+              <span className="text-text-secondary hover:text-text-primary">Back</span>
             </button>
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <GraduationCap className="w-4 h-4 text-white" />
               </div>
-              <span className="font-bold text-slate-900">PathPal</span>
+              <span className="font-bold text-text-primary">PathPal</span>
             </Link>
           </div>
         </div>
@@ -253,31 +253,31 @@ export default function PostDetailPage() {
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         {/* Post Content */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
+        <div className="bg-card-bg rounded-2xl border border-border p-6 mb-6">
           {/* Author */}
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-2xl">
+            <div className="w-12 h-12 rounded-full bg-border-light flex items-center justify-center text-2xl">
               {post.author.avatar}
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-slate-900">{post.author.name}</span>
+                <span className="font-semibold text-text-primary">{post.author.name}</span>
                 {post.author.isConsultant && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded-full">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-accent-bg text-accent-dark text-xs rounded-full">
                     <Award className="w-3 h-3" />
                     Consultant
                   </span>
                 )}
               </div>
-              <span className="text-slate-500 text-sm">{formatTimeAgo(post.createdAt)}</span>
+              <span className="text-text-tertiary text-sm">{formatTimeAgo(post.createdAt)}</span>
             </div>
           </div>
 
           {/* Title */}
-          <h1 className="text-2xl font-bold text-slate-900 mb-4">{post.title}</h1>
+          <h1 className="text-2xl font-bold text-text-primary mb-4">{post.title}</h1>
 
           {/* Content */}
-          <p className="text-slate-700 whitespace-pre-line mb-4">{post.content}</p>
+          <p className="text-text-secondary whitespace-pre-line mb-4">{post.content}</p>
 
           {/* Images */}
           {post.images.length > 0 && (
@@ -289,18 +289,18 @@ export default function PostDetailPage() {
           )}
 
           {/* Actions */}
-          <div className="flex items-center gap-4 pt-4 border-t border-slate-100">
-            <button 
+          <div className="flex items-center gap-4 pt-4 border-t border-border-light">
+            <button
               onClick={handleLike}
               className={clsx(
                 "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors",
-                liked ? "bg-red-50 text-red-500" : "text-slate-500 hover:bg-slate-50"
+                liked ? "bg-red-50 text-red-500" : "text-text-tertiary hover:bg-page-bg"
               )}
             >
               <Heart className={clsx("w-5 h-5", liked && "fill-current")} />
               {post.likes} likes
             </button>
-            <div className="flex items-center gap-2 text-slate-500">
+            <div className="flex items-center gap-2 text-text-tertiary">
               <MessageCircle className="w-5 h-5" />
               {post.comments.length} comments
             </div>
@@ -308,12 +308,12 @@ export default function PostDetailPage() {
         </div>
 
         {/* Comments Section */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Comments</h2>
+        <div className="bg-card-bg rounded-2xl border border-border p-6">
+          <h2 className="text-lg font-semibold text-text-primary mb-4">Comments</h2>
 
           {/* Comment Input */}
           <div className="flex gap-3 mb-6">
-            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-xl flex-shrink-0">
+            <div className="w-10 h-10 rounded-full bg-border-light flex items-center justify-center text-xl flex-shrink-0">
               {currentAuthor.avatar}
             </div>
             <div className="flex-1 flex gap-2">
@@ -322,13 +322,13 @@ export default function PostDetailPage() {
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder="Write a comment..."
-                className="flex-1 px-4 py-2.5 border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-900"
+                className="flex-1 px-4 py-2.5 border border-border rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
                 onKeyDown={(e) => e.key === "Enter" && handleAddComment()}
               />
               <button
                 onClick={handleAddComment}
                 disabled={!newComment.trim()}
-                className="px-4 py-2 bg-slate-900 text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-800 transition-colors"
+                className="px-4 py-2 bg-primary text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary-light transition-colors"
               >
                 <Send className="w-5 h-5" />
               </button>
@@ -336,18 +336,18 @@ export default function PostDetailPage() {
           </div>
 
           {/* Comments List */}
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-border-light">
             {post.comments.length > 0 ? (
               post.comments.map((comment) => (
-                <CommentItem 
-                  key={comment.id} 
-                  comment={comment} 
+                <CommentItem
+                  key={comment.id}
+                  comment={comment}
                   postId={post.id}
                   onReply={handleReply}
                 />
               ))
             ) : (
-              <p className="text-center text-slate-500 py-8">
+              <p className="text-center text-text-tertiary py-8">
                 No comments yet. Be the first to comment!
               </p>
             )}

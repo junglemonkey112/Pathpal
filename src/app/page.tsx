@@ -173,40 +173,40 @@ export default function Home() {
     });
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans">
+    <div className="min-h-screen bg-page-bg font-sans">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40">
+      <header className="bg-white/80 backdrop-blur-md border-b border-border sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
                 <GraduationCap className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-slate-900">PathPal</span>
+              <span className="text-xl font-bold text-text-primary">PathPal</span>
             </Link>
 
             <nav className="hidden md:flex items-center gap-8">
-              <button onClick={() => setShowAllConsultants(true)} className="text-slate-600 hover:text-slate-900 font-medium">All Consultants</button>
-              <Link href="/forum" className="text-slate-600 hover:text-slate-900 font-medium">Community</Link>
-              <a href="#how-it-works" className="text-slate-600 hover:text-slate-900 font-medium">How It Works</a>
-              <a href="#success-stories" className="text-slate-600 hover:text-slate-900 font-medium">Success Stories</a>
+              <button onClick={() => setShowAllConsultants(true)} className="text-text-secondary hover:text-text-primary font-medium">All Consultants</button>
+              <Link href="/forum" className="text-text-secondary hover:text-text-primary font-medium">Community</Link>
+              <a href="#how-it-works" className="text-text-secondary hover:text-text-primary font-medium">How It Works</a>
+              <a href="#success-stories" className="text-text-secondary hover:text-text-primary font-medium">Success Stories</a>
             </nav>
 
             <div className="hidden md:flex items-center gap-3">
               {user ? (
                 <>
-                  <Link href="/become-consultant" className="text-slate-600 hover:text-slate-900 font-medium text-sm">
+                  <Link href="/become-consultant" className="text-text-secondary hover:text-text-primary font-medium text-sm">
                     Become a Consultant
                   </Link>
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg">
-                    <User className="w-4 h-4 text-slate-600" />
-                    <span className="text-sm font-medium text-slate-700 max-w-[120px] truncate">
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-border-light rounded-lg">
+                    <User className="w-4 h-4 text-text-secondary" />
+                    <span className="text-sm font-medium text-text-secondary max-w-[120px] truncate">
                       {user.user_metadata?.full_name || user.email?.split("@")[0]}
                     </span>
                   </div>
                   <button
                     onClick={() => signOut()}
-                    className="text-slate-500 hover:text-slate-700 p-2 rounded-lg hover:bg-slate-100 transition-colors"
+                    className="text-text-tertiary hover:text-text-secondary p-2 rounded-lg hover:bg-border-light transition-colors"
                     title="Sign out"
                   >
                     <LogOut className="w-4 h-4" />
@@ -214,13 +214,13 @@ export default function Home() {
                 </>
               ) : (
                 <>
-                  <Link href="/become-consultant" className="text-slate-600 hover:text-slate-900 font-medium text-sm">
+                  <Link href="/become-consultant" className="text-text-secondary hover:text-text-primary font-medium text-sm">
                     Become a Consultant
                   </Link>
-                  <Link href="/login" className="text-slate-600 hover:text-slate-900 font-medium text-sm">
+                  <Link href="/login" className="text-text-secondary hover:text-text-primary font-medium text-sm">
                     Sign In
                   </Link>
-                  <Link href="/signup" className="bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm">
+                  <Link href="/signup" className="bg-primary text-white px-5 py-2.5 rounded-lg hover:bg-primary-light transition-colors font-medium text-sm">
                     Sign Up
                   </Link>
                 </>
@@ -229,7 +229,7 @@ export default function Home() {
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-slate-600"
+              className="md:hidden p-2 text-text-secondary"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -237,30 +237,30 @@ export default function Home() {
         </div>
 
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-3">
+          <div className="md:hidden border-t border-border bg-card-bg px-4 py-4 space-y-3">
             <button
               onClick={() => { setShowAllConsultants(true); setMobileMenuOpen(false); }}
-              className="block w-full text-left text-slate-600 hover:text-slate-900 font-medium py-2"
+              className="block w-full text-left text-text-secondary hover:text-text-primary font-medium py-2"
             >
               All Consultants
             </button>
-            <Link href="/forum" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">Community</Link>
-            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">How It Works</a>
-            <a href="#success-stories" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">Success Stories</a>
-            <Link href="/become-consultant" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">
+            <Link href="/forum" onClick={() => setMobileMenuOpen(false)} className="block text-text-secondary hover:text-text-primary font-medium py-2">Community</Link>
+            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="block text-text-secondary hover:text-text-primary font-medium py-2">How It Works</a>
+            <a href="#success-stories" onClick={() => setMobileMenuOpen(false)} className="block text-text-secondary hover:text-text-primary font-medium py-2">Success Stories</a>
+            <Link href="/become-consultant" onClick={() => setMobileMenuOpen(false)} className="block text-text-secondary hover:text-text-primary font-medium py-2">
               Become a Consultant
             </Link>
             {user ? (
               <button
                 onClick={() => { signOut(); setMobileMenuOpen(false); }}
-                className="block w-full text-left text-slate-600 hover:text-slate-900 font-medium py-2"
+                className="block w-full text-left text-text-secondary hover:text-text-primary font-medium py-2"
               >
                 Sign Out
               </button>
             ) : (
               <>
-                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="block text-slate-600 hover:text-slate-900 font-medium py-2">Sign In</Link>
-                <Link href="/signup" onClick={() => setMobileMenuOpen(false)} className="block bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm text-center">Sign Up</Link>
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="block text-text-secondary hover:text-text-primary font-medium py-2">Sign In</Link>
+                <Link href="/signup" onClick={() => setMobileMenuOpen(false)} className="block bg-primary text-white px-5 py-2.5 rounded-lg hover:bg-primary-light transition-colors font-medium text-sm text-center">Sign Up</Link>
               </>
             )}
           </div>
@@ -268,11 +268,11 @@ export default function Home() {
       </header>
 
       {/* Quick Finder Hero */}
-      <section className="bg-slate-900 text-white py-8 lg:py-12">
+      <section className="bg-primary text-white py-8 lg:py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-6">
             <h1 className="text-2xl md:text-3xl font-bold mb-2">
-              Find Your Perfect <span className="text-emerald-400">College Consultant</span>
+              Find Your Perfect <span className="text-accent-light">College Consultant</span>
             </h1>
             <p className="text-slate-400 text-sm md:text-base">
               Answer a few questions to get matched with top college students
@@ -287,10 +287,10 @@ export default function Home() {
                 <select
                   value={grade}
                   onChange={(e) => setGrade(e.target.value)}
-                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary"
                 >
-                  <option value="" className="text-slate-900">Select your grade</option>
-                  {GRADE_LEVELS.map(g => <option key={g} value={g} className="text-slate-900">{g}</option>)}
+                  <option value="" className="text-text-primary">Select your grade</option>
+                  {GRADE_LEVELS.map(g => <option key={g} value={g} className="text-text-primary">{g}</option>)}
                 </select>
               </div>
               <div>
@@ -303,7 +303,7 @@ export default function Home() {
                       className={clsx(
                         "px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5",
                         selectedInterests.includes(item.id)
-                          ? "bg-emerald-500 text-slate-900"
+                          ? "bg-accent text-text-primary"
                           : "bg-white/10 text-slate-300 hover:bg-white/20"
                       )}
                     >
@@ -319,7 +319,7 @@ export default function Home() {
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
                 Budget per session within
-                {budgetUnlimited ? <span className="text-emerald-400 ml-2">(No limit)</span> : <span className="ml-2">${budget}</span>}
+                {budgetUnlimited ? <span className="text-accent-light ml-2">(No limit)</span> : <span className="ml-2">${budget}</span>}
               </label>
               <div className="flex items-center gap-4">
                 <input
@@ -338,7 +338,7 @@ export default function Home() {
                   onClick={() => setBudgetUnlimited(!budgetUnlimited)}
                   className={clsx(
                     "px-3 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap",
-                    budgetUnlimited ? "bg-emerald-500 text-slate-900" : "bg-white/10 text-slate-400 hover:text-white"
+                    budgetUnlimited ? "bg-accent text-text-primary" : "bg-white/10 text-slate-400 hover:text-white"
                   )}
                 >
                   Any
@@ -354,13 +354,13 @@ export default function Home() {
               <select
                 value={gpa}
                 onChange={(e) => setGpa(e.target.value)}
-                className="w-full md:w-1/2 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full md:w-1/2 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                <option value="" className="text-slate-900">Select GPA</option>
-                <option value="3.0" className="text-slate-900">Below 3.5</option>
-                <option value="3.5" className="text-slate-900">3.5 - 3.79</option>
-                <option value="3.8" className="text-slate-900">3.8 - 3.99</option>
-                <option value="4.0" className="text-slate-900">4.0+</option>
+                <option value="" className="text-text-primary">Select GPA</option>
+                <option value="3.0" className="text-text-primary">Below 3.5</option>
+                <option value="3.5" className="text-text-primary">3.5 - 3.79</option>
+                <option value="3.8" className="text-text-primary">3.8 - 3.99</option>
+                <option value="4.0" className="text-text-primary">4.0+</option>
               </select>
             </div>
 
@@ -383,7 +383,7 @@ export default function Home() {
                     value={currentSchool}
                     onChange={(e) => setCurrentSchool(e.target.value)}
                     placeholder="e.g., Shanghai American School"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
                   />
                 </div>
                 <div>
@@ -393,7 +393,7 @@ export default function Home() {
                     value={targetMajor}
                     onChange={(e) => setTargetMajor(e.target.value)}
                     placeholder="e.g., Computer Science"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
                   />
                 </div>
                 <div>
@@ -403,7 +403,7 @@ export default function Home() {
                     value={targetSchools.join(", ")}
                     onChange={(e) => setTargetSchools(e.target.value.split(",").map(s => s.trim()).filter(Boolean))}
                     placeholder="e.g., Harvard, Stanford, MIT (comma separated)"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
                   />
                 </div>
                 <button
@@ -419,24 +419,24 @@ export default function Home() {
       </section>
 
       {/* Results */}
-      <section className="py-8 bg-slate-50">
+      <section className="py-8 bg-page-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Match Summary */}
           {(selectedInterests.length > 0 || grade) && (
-            <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-4 md:p-6 mb-6 text-white">
+            <div className="bg-gradient-to-r from-accent to-accent-dark rounded-2xl p-4 md:p-6 mb-6 text-white">
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="w-5 h-5" />
                 <span className="font-semibold">Your Match Summary</span>
               </div>
               <div className="grid md:grid-cols-3 gap-4 text-sm">
                 <div>
-                  <span className="text-emerald-100">Recommended Majors</span>
+                  <span className="text-accent-light">Recommended Majors</span>
                   <div className="font-semibold text-lg">
                     {getRecommendedMajors(selectedInterests).join(", ")}
                   </div>
                 </div>
                 <div>
-                  <span className="text-emerald-100">Target Schools</span>
+                  <span className="text-accent-light">Target Schools</span>
                   <div className="font-semibold text-lg">
                     {targetSchools.length > 0
                       ? targetSchools.slice(0, 3).join(", ") + (targetSchools.length > 3 ? "..." : "")
@@ -446,7 +446,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div>
-                  <span className="text-emerald-100">Matched Consultants</span>
+                  <span className="text-accent-light">Matched Consultants</span>
                   <div className="font-semibold text-lg">
                     {matchedConsultants.length} available
                   </div>
@@ -458,17 +458,17 @@ export default function Home() {
           {/* Results Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <Sparkles className="w-5 h-5 text-emerald-600" />
-              <h2 className="text-xl font-bold text-slate-900">
+              <Sparkles className="w-5 h-5 text-accent-dark" />
+              <h2 className="text-xl font-bold text-text-primary">
                 {showAllConsultants ? "All Consultants" : "Recommended for You"}
               </h2>
               {!showAllConsultants && matchedConsultants.length > 0 && (
-                <span className="text-sm text-slate-500">({matchedConsultants.length} matched)</span>
+                <span className="text-sm text-text-tertiary">({matchedConsultants.length} matched)</span>
               )}
             </div>
             <button
               onClick={() => setShowAllConsultants(!showAllConsultants)}
-              className="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+              className="text-sm text-accent-dark hover:text-accent-dark font-medium"
             >
               {showAllConsultants ? "Show matched only" : "View all"}
             </button>
@@ -477,20 +477,20 @@ export default function Home() {
           {/* Search & Filter */}
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-tertiary" />
               <input
                 type="text"
                 placeholder="Search by name, school, major..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900"
+                className="w-full pl-12 pr-4 py-3 bg-card-bg border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div className="flex gap-3">
               <select
                 value={selectedSchool}
                 onChange={(e) => setSelectedSchool(e.target.value)}
-                className="px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900"
+                className="px-4 py-3 bg-card-bg border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="">All Schools</option>
                 {["Harvard", "Stanford", "MIT", "Yale", "Princeton", "Columbia", "Cornell", "Duke"].map((school) => (
@@ -500,7 +500,7 @@ export default function Home() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900"
+                className="px-4 py-3 bg-card-bg border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="rating">Top Rated</option>
                 <option value="price-asc">Price: Low → High</option>
@@ -510,7 +510,7 @@ export default function Home() {
           </div>
 
           {/* Consultant Grid */}
-          <div className="grid gap-4">
+          <div className="grid md:grid-cols-2 gap-4">
             {filteredConsultants.map((item) => {
               const { consultant, score, reasons } = getConsultantData(item);
               return (
@@ -526,10 +526,10 @@ export default function Home() {
 
           {filteredConsultants.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-slate-500 text-lg">No consultants found</p>
+              <p className="text-text-tertiary text-lg">No consultants found</p>
               <button
                 onClick={() => { setSearchQuery(""); setSelectedSchool(""); setBudget(150); setBudgetUnlimited(true); }}
-                className="mt-4 text-emerald-600 hover:text-emerald-700 font-medium"
+                className="mt-4 text-accent-dark hover:text-accent-dark font-medium"
               >
                 Clear filters
               </button>
@@ -539,13 +539,13 @@ export default function Home() {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-16 bg-white">
+      <section id="how-it-works" className="py-16 bg-card-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">
+            <h2 className="text-2xl md:text-3xl font-bold text-text-primary mb-3">
               How PathPal Works
             </h2>
-            <p className="text-slate-600">
+            <p className="text-text-secondary">
               Get matched with perfect consultants in minutes
             </p>
           </div>
@@ -558,11 +558,11 @@ export default function Home() {
               { step: "4", icon: Video, title: "Start Session", desc: "Video call with your consultant" },
             ].map((item, idx) => (
               <div key={idx} className="text-center">
-                <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mx-auto mb-4">
                   <item.icon className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="font-semibold text-slate-900 mb-1">{item.title}</h3>
-                <p className="text-sm text-slate-600">{item.desc}</p>
+                <h3 className="font-semibold text-text-primary mb-1">{item.title}</h3>
+                <p className="text-sm text-text-secondary">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -573,7 +573,7 @@ export default function Home() {
       <ForumPreview posts={forumPosts} />
 
       {/* Success Stories */}
-      <section id="success-stories" className="py-16 bg-slate-900 text-white">
+      <section id="success-stories" className="py-16 bg-primary text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-bold mb-3">Success Stories</h2>
@@ -589,7 +589,7 @@ export default function Home() {
                 <p className="text-slate-300 mb-4">&ldquo;{story.quote}&rdquo;</p>
                 <div>
                   <div className="font-semibold">{story.name}</div>
-                  <div className="text-emerald-400 text-sm">Accepted to {story.school}</div>
+                  <div className="text-accent-light text-sm">Accepted to {story.school}</div>
                 </div>
               </div>
             ))}
@@ -598,16 +598,16 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-50 border-t border-slate-200 py-8">
+      <footer className="bg-page-bg border-t border-border py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <GraduationCap className="w-4 h-4 text-white" />
               </div>
-              <span className="text-lg font-bold text-slate-900">PathPal</span>
+              <span className="text-lg font-bold text-text-primary">PathPal</span>
             </div>
-            <p className="text-slate-500 text-sm">&copy; 2026 PathPal. All rights reserved.</p>
+            <p className="text-text-tertiary text-sm">&copy; 2026 PathPal. All rights reserved.</p>
           </div>
         </div>
       </footer>

@@ -136,11 +136,11 @@ export default function BecomeConsultant() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans">
+    <div className="min-h-screen bg-page-bg font-sans">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200">
+      <header className="bg-card-bg border-b border-border">
         <div className="max-w-4xl mx-auto px-4 py-4">
-          <Link href="/" className="flex items-center gap-2 text-slate-600 hover:text-slate-900">
+          <Link href="/" className="flex items-center gap-2 text-text-secondary hover:text-text-primary">
             <ArrowLeft className="w-4 h-4" />
             Back to Home
           </Link>
@@ -151,14 +151,14 @@ export default function BecomeConsultant() {
         {/* Success State */}
         {submitted && (
           <div className="text-center py-16">
-            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Check className="w-8 h-8 text-emerald-600" />
+            <div className="w-16 h-16 bg-accent-bg rounded-full flex items-center justify-center mx-auto mb-4">
+              <Check className="w-8 h-8 text-accent-dark" />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900 mb-2">Application Submitted!</h1>
-            <p className="text-slate-600 mb-6">
+            <h1 className="text-2xl font-bold text-text-primary mb-2">Application Submitted!</h1>
+            <p className="text-text-secondary mb-6">
               We&apos;ll review your profile and get back to you within 24-48 hours.
             </p>
-            <Link href="/" className="bg-slate-900 text-white px-6 py-3 rounded-xl hover:bg-slate-800 transition-colors font-medium">
+            <Link href="/" className="bg-primary text-white px-6 py-3 rounded-xl hover:bg-primary-light transition-colors font-medium">
               Back to Home
             </Link>
           </div>
@@ -168,12 +168,12 @@ export default function BecomeConsultant() {
         {/* Progress */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-slate-600">Step {step} of {totalSteps}</span>
-            <span className="text-sm text-slate-500">{Math.round((step / totalSteps) * 100)}%</span>
+            <span className="text-sm font-medium text-text-secondary">Step {step} of {totalSteps}</span>
+            <span className="text-sm text-text-tertiary">{Math.round((step / totalSteps) * 100)}%</span>
           </div>
-          <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-emerald-500 transition-all duration-300"
+          <div className="h-2 bg-border rounded-full overflow-hidden">
+            <div
+              className="h-full bg-accent transition-all duration-300"
               style={{ width: `${(step / totalSteps) * 100}%` }}
             />
           </div>
@@ -183,8 +183,8 @@ export default function BecomeConsultant() {
         {step === 1 && (
           <div className="space-y-6">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900 mb-2">Choose Your Role</h1>
-              <p className="text-slate-600">Select how you&apos;d like to help students</p>
+              <h1 className="text-2xl font-bold text-text-primary mb-2">Choose Your Role</h1>
+              <p className="text-text-secondary">Select how you&apos;d like to help students</p>
             </div>
 
             <div className="space-y-3">
@@ -195,20 +195,20 @@ export default function BecomeConsultant() {
                   className={clsx(
                     "w-full p-4 rounded-2xl border-2 text-left transition-all",
                     formData.role === role.id
-                      ? "border-emerald-500 bg-emerald-50"
-                      : "border-slate-200 hover:border-slate-300 bg-white"
+                      ? "border-primary bg-accent-bg"
+                      : "border-border hover:border-border bg-card-bg"
                   )}
                 >
                   <div className="flex items-center gap-3">
                     <div className={clsx(
                       "w-10 h-10 rounded-xl flex items-center justify-center",
-                      formData.role === role.id ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-600"
+                      formData.role === role.id ? "bg-accent text-white" : "bg-border-light text-text-secondary"
                     )}>
                       <User className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="font-semibold text-slate-900">{role.label}</div>
-                      <div className="text-sm text-slate-500">{role.desc}</div>
+                      <div className="font-semibold text-text-primary">{role.label}</div>
+                      <div className="text-sm text-text-tertiary">{role.desc}</div>
                     </div>
                   </div>
                 </button>
@@ -221,60 +221,60 @@ export default function BecomeConsultant() {
         {step === 2 && (
           <div className="space-y-6">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900 mb-2">Basic Information</h1>
-              <p className="text-slate-600">Tell us about yourself</p>
+              <h1 className="text-2xl font-bold text-text-primary mb-2">Basic Information</h1>
+              <p className="text-text-secondary">Tell us about yourself</p>
             </div>
 
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Full Name *</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">Full Name *</label>
                   <input
                     type="text"
                     value={formData.fullName}
                     onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-                    className={clsx("w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500", errors.fullName ? "border-red-300" : "border-slate-200")}
+                    className={clsx("w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary", errors.fullName ? "border-red-300" : "border-border")}
                     placeholder="John Smith"
                   />
                   {errors.fullName && <p className="text-red-500 text-xs mt-1">{errors.fullName}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Preferred Name</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">Preferred Name</label>
                   <input
                     type="text"
                     value={formData.preferredName}
                     onChange={(e) => setFormData(prev => ({ ...prev, preferredName: e.target.value }))}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full px-4 py-3 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="John"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Email (optional)</label>
+                <label className="block text-sm font-medium text-text-secondary mb-1">Email (optional)</label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-4 py-3 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder="john@example.com"
                 />
                 {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Phone (optional)</label>
+                <label className="block text-sm font-medium text-text-secondary mb-1">Phone (optional)</label>
                 <input
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-4 py-3 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder="+1 234 567 8900"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-text-secondary mb-1">
                   {formData.role === "counselor" ? "Company / Organization *" : "Current School *"}
                 </label>
                 <input
@@ -284,19 +284,19 @@ export default function BecomeConsultant() {
                     ...prev, 
                     [formData.role === "counselor" ? "company" : "school"]: e.target.value 
                   }))}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-4 py-3 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder={formData.role === "counselor" ? "ABC Admissions LLC" : "Harvard University"}
                 />
               </div>
 
               {formData.role === "peer" && (
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">High School Attended</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">High School Attended</label>
                   <input
                     type="text"
                     value={formData.highSchool}
                     onChange={(e) => setFormData(prev => ({ ...prev, highSchool: e.target.value }))}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full px-4 py-3 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="Shanghai American School"
                   />
                 </div>
@@ -304,21 +304,21 @@ export default function BecomeConsultant() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Country *</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">Country *</label>
                   <select
                     value={formData.country || "USA"}
                     onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full px-4 py-3 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     <option value="USA">United States</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">City *</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">City *</label>
                   <select
                     value={formData.city}
                     onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full px-4 py-3 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     <option value="">Select city...</option>
                     {usCities.map(city => (
@@ -329,7 +329,7 @@ export default function BecomeConsultant() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Hourly Rate *</label>
+                <label className="block text-sm font-medium text-text-secondary mb-2">Hourly Rate *</label>
                 <div className="flex flex-wrap gap-2">
                   {hourlyRates.map(rate => (
                     <button
@@ -338,8 +338,8 @@ export default function BecomeConsultant() {
                       className={clsx(
                         "px-4 py-2 rounded-lg font-medium transition-all",
                         formData.hourlyRate === rate
-                          ? "bg-emerald-500 text-white"
-                          : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                          ? "bg-accent text-white"
+                          : "bg-border-light text-text-secondary hover:bg-border-light"
                       )}
                     >
                       ${rate}
@@ -349,11 +349,11 @@ export default function BecomeConsultant() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">One-line Bio</label>
+                <label className="block text-sm font-medium text-text-secondary mb-1">One-line Bio</label>
                 <textarea
                   value={formData.bio}
                   onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+                  className="w-full px-4 py-3 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                   rows={2}
                   placeholder="Harvard junior, helped 20+ students get into top schools..."
                 />
@@ -366,12 +366,12 @@ export default function BecomeConsultant() {
         {step === 3 && (
           <div className="space-y-6">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900 mb-2">Services & Availability</h1>
-              <p className="text-slate-600">What can you help with?</p>
+              <h1 className="text-2xl font-bold text-text-primary mb-2">Services & Availability</h1>
+              <p className="text-text-secondary">What can you help with?</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Services Offered *</label>
+              <label className="block text-sm font-medium text-text-secondary mb-2">Services Offered *</label>
               <div className="grid grid-cols-2 gap-2">
                 {services.map(service => (
                   <button
@@ -380,8 +380,8 @@ export default function BecomeConsultant() {
                     className={clsx(
                       "p-3 rounded-xl text-sm text-left transition-all",
                       formData.services.includes(service)
-                        ? "bg-emerald-50 border-2 border-emerald-500 text-emerald-700"
-                        : "bg-white border-2 border-slate-200 text-slate-600 hover:border-slate-300"
+                        ? "bg-accent-bg border-2 border-primary text-accent-dark"
+                        : "bg-card-bg border-2 border-border text-text-secondary hover:border-border"
                     )}
                   >
                     {formData.services.includes(service) && <Check className="w-4 h-4 inline mr-1" />}
@@ -392,7 +392,7 @@ export default function BecomeConsultant() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Availability *</label>
+              <label className="block text-sm font-medium text-text-secondary mb-2">Availability *</label>
               <div className="grid grid-cols-2 gap-2">
                 {timeSlots.map(slot => (
                   <button
@@ -401,8 +401,8 @@ export default function BecomeConsultant() {
                     className={clsx(
                       "p-3 rounded-xl text-sm text-left transition-all flex items-center gap-2",
                       formData.availability.includes(slot.id)
-                        ? "bg-emerald-50 border-2 border-emerald-500 text-emerald-700"
-                        : "bg-white border-2 border-slate-200 text-slate-600 hover:border-slate-300"
+                        ? "bg-accent-bg border-2 border-primary text-accent-dark"
+                        : "bg-card-bg border-2 border-border text-text-secondary hover:border-border"
                     )}
                   >
                     <Clock className="w-4 h-4" />
@@ -419,7 +419,7 @@ export default function BecomeConsultant() {
           {step > 1 && (
             <button
               onClick={() => setStep(step - 1)}
-              className="px-6 py-3 border border-slate-200 rounded-xl text-slate-700 hover:bg-slate-50 font-medium"
+              className="px-6 py-3 border border-border rounded-xl text-text-secondary hover:bg-page-bg font-medium"
             >
               Back
             </button>
@@ -431,8 +431,8 @@ export default function BecomeConsultant() {
               className={clsx(
                 "flex-1 py-3 rounded-xl font-medium flex items-center justify-center gap-2",
                 canProceed()
-                  ? "bg-slate-900 text-white hover:bg-slate-800"
-                  : "bg-slate-200 text-slate-400 cursor-not-allowed"
+                  ? "bg-primary text-white hover:bg-primary-light"
+                  : "bg-border text-text-tertiary cursor-not-allowed"
               )}
             >
               Continue
@@ -445,8 +445,8 @@ export default function BecomeConsultant() {
               className={clsx(
                 "flex-1 py-3 rounded-xl font-medium",
                 canProceed()
-                  ? "bg-emerald-500 text-white hover:bg-emerald-600"
-                  : "bg-slate-200 text-slate-400 cursor-not-allowed"
+                  ? "bg-accent text-white hover:bg-accent-dark"
+                  : "bg-border text-text-tertiary cursor-not-allowed"
               )}
             >
               Submit Application

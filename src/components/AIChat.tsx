@@ -124,7 +124,7 @@ export default function AIChat() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-emerald-500 hover:bg-emerald-600 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 z-50"
+        className="fixed bottom-6 right-6 w-14 h-14 bg-accent hover:bg-accent-dark rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 z-50"
         aria-label="Open AI chat assistant"
       >
         <MessageCircle className="w-7 h-7 text-white" />
@@ -133,19 +133,19 @@ export default function AIChat() {
   }
 
   return (
-    <div className="fixed bottom-0 right-0 w-full sm:bottom-6 sm:right-6 sm:w-[28rem] md:w-[32rem] bg-white sm:rounded-2xl shadow-2xl z-50 overflow-hidden">
-      <div className="bg-slate-900 text-white px-4 py-3 flex items-center justify-between">
+    <div className="fixed bottom-0 right-0 w-full sm:bottom-6 sm:right-6 sm:w-[28rem] md:w-[32rem] bg-card-bg sm:rounded-2xl shadow-2xl z-50 overflow-hidden">
+      <div className="bg-primary text-white px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <GraduationCap className="w-5 h-5" />
           <span className="font-semibold">PathPal AI</span>
-          <span className="text-xs bg-emerald-500 px-2 py-0.5 rounded-full">Free</span>
+          <span className="text-xs bg-accent px-2 py-0.5 rounded-full">Free</span>
         </div>
         <button onClick={() => setIsOpen(false)} className="hover:bg-white/10 p-1 rounded" aria-label="Close chat">
           <X className="w-5 h-5" />
         </button>
       </div>
 
-      <div className="bg-emerald-50 px-4 py-2 text-xs text-emerald-700 flex items-center gap-2">
+      <div className="bg-accent-bg px-4 py-2 text-xs text-accent-dark flex items-center gap-2">
         <Sparkles className="w-3 h-3" />
         Free questions remaining: {Math.max(0, MAX_FREE_QUESTIONS - questionCount)}
       </div>
@@ -157,8 +157,8 @@ export default function AIChat() {
             className={clsx(
               "max-w-[85%] rounded-2xl px-4 py-2",
               msg.role === "user"
-                ? "ml-auto bg-slate-900 text-white rounded-br-sm"
-                : "bg-slate-100 text-slate-800 rounded-bl-sm"
+                ? "ml-auto bg-primary text-white rounded-br-sm"
+                : "bg-border-light text-text-primary rounded-bl-sm"
             )}
           >
             <p className="text-sm whitespace-pre-line">
@@ -168,7 +168,7 @@ export default function AIChat() {
                   return (
                     <span key={i}>
                       📅{" "}
-                      <Link href={linkMatch[1]} className="text-emerald-600 underline hover:text-emerald-700">
+                      <Link href={linkMatch[1]} className="text-accent-dark underline hover:text-accent-dark">
                         Book Now
                       </Link>
                     </span>
@@ -180,8 +180,8 @@ export default function AIChat() {
           </div>
         ))}
         {isTyping && (
-          <div className="max-w-[85%] rounded-2xl px-4 py-3 bg-slate-100 text-slate-800 rounded-bl-sm">
-            <div className="flex items-center gap-2 text-sm text-slate-500">
+          <div className="max-w-[85%] rounded-2xl px-4 py-3 bg-border-light text-text-primary rounded-bl-sm">
+            <div className="flex items-center gap-2 text-sm text-text-tertiary">
               <Loader2 className="w-4 h-4 animate-spin" />
               Thinking...
             </div>
@@ -193,11 +193,11 @@ export default function AIChat() {
       <div className="border-t p-3">
         {questionCount >= MAX_FREE_QUESTIONS ? (
           <div className="text-center space-y-2">
-            <p className="text-xs text-slate-500">Free questions used. Get personalized help from a consultant.</p>
+            <p className="text-xs text-text-tertiary">Free questions used. Get personalized help from a consultant.</p>
             <Link
               href="/"
               onClick={() => setIsOpen(false)}
-              className="block w-full bg-emerald-500 text-white py-2.5 rounded-full text-sm font-medium hover:bg-emerald-600 transition-colors"
+              className="block w-full bg-accent text-white py-2.5 rounded-full text-sm font-medium hover:bg-accent-dark transition-colors"
             >
               Browse Consultants
             </Link>
@@ -212,12 +212,12 @@ export default function AIChat() {
                 onKeyDown={handleKeyDown}
                 placeholder={isTyping ? "Waiting for response..." : "Ask your question..."}
                 disabled={isTyping}
-                className="flex-1 px-4 py-2 border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
+                className="flex-1 px-4 py-2 border border-border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
               />
               <button
                 onClick={handleSend}
                 disabled={!input.trim() || isTyping}
-                className="w-10 h-10 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-200 rounded-full flex items-center justify-center transition-colors"
+                className="w-10 h-10 bg-accent hover:bg-accent-dark disabled:bg-border-light rounded-full flex items-center justify-center transition-colors"
                 aria-label="Send message"
               >
                 <Send className="w-4 h-4 text-white" />

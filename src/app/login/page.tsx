@@ -29,20 +29,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-page-bg flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
               <GraduationCap className="w-7 h-7 text-white" />
             </div>
-            <span className="text-2xl font-bold text-slate-900">PathPal</span>
+            <span className="text-2xl font-bold text-text-primary">PathPal</span>
           </Link>
-          <h1 className="text-2xl font-bold text-slate-900">Welcome back</h1>
-          <p className="text-slate-600 mt-1">Sign in to your account</p>
+          <h1 className="text-2xl font-bold text-text-primary">Welcome back</h1>
+          <p className="text-text-secondary mt-1">Sign in to your account</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <div className="bg-card-bg rounded-2xl border border-border p-6 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
@@ -51,24 +51,24 @@ export default function LoginPage() {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Email</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-tertiary" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Password</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-tertiary" />
                 <input
                   type="password"
                   value={password}
@@ -76,7 +76,7 @@ export default function LoginPage() {
                   placeholder="Enter your password"
                   required
                   minLength={6}
-                  className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
             </div>
@@ -84,22 +84,22 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-slate-900 text-white py-3 rounded-xl hover:bg-slate-800 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-primary text-white py-3 rounded-xl hover:bg-primary-light transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-slate-600">
+          <div className="mt-6 text-center text-sm text-text-secondary">
             Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-emerald-600 hover:text-emerald-700 font-medium">
+            <Link href="/signup" className="text-accent-dark hover:text-accent-dark font-medium">
               Sign up
             </Link>
           </div>
         </div>
 
         <div className="mt-4 text-center">
-          <Link href="/" className="text-sm text-slate-500 hover:text-slate-700 inline-flex items-center gap-1">
+          <Link href="/" className="text-sm text-text-tertiary hover:text-text-primary inline-flex items-center gap-1">
             <ArrowLeft className="w-4 h-4" />
             Back to home
           </Link>
