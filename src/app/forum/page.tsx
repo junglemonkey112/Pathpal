@@ -6,6 +6,7 @@ import { GraduationCap, MessageCircle, Heart, Plus, Award } from "lucide-react";
 import { samplePosts, Post } from "@/data/forum";
 import { getForumPosts } from "@/lib/db/forum";
 import { clsx } from "clsx";
+import { SkeletonForumPost } from "@/components/Skeleton";
 
 function formatTimeAgo(date: Date): string {
   const now = new Date();
@@ -72,6 +73,7 @@ export default function ForumPage() {
 
         {/* Posts List */}
         <div className="space-y-4">
+          {!isClient && Array.from({ length: 3 }).map((_, i) => <SkeletonForumPost key={i} />)}
           {posts.map((post) => (
             <Link
               key={post.id}

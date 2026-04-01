@@ -16,6 +16,9 @@ import { useUser } from "@/context/UserContext";
 import { getConsultants } from "@/lib/db/consultants";
 import { getForumPosts } from "@/lib/db/forum";
 import { getSuccessStories, type SuccessStory } from "@/lib/db/stories";
+import { getUniversitiesRich, type SupabaseUniversity } from "@/lib/db/universities";
+import { SkeletonConsultantCard } from "@/components/Skeleton";
+import UniversityCard from "@/components/UniversityCard";
 
 interface MatchedConsultant {
   consultant: Consultant;
@@ -57,11 +60,20 @@ export default function Home() {
     { name: "James K.", school: "MIT", quote: "Got into MIT thanks to the resume guidance.", avatar: "👨🏻" },
   ]);
 
+  // Universities state
+  const [universities, setUniversities] = useState<SupabaseUniversity[]>([]);
+
+  // Loading state
+  const [isLoading, setIsLoading] = useState(true);
+
   // Load data from Supabase
   useEffect(() => {
-    getConsultants().then(setAllConsultants).catch(() => {});
-    getForumPosts().then(setForumPosts).catch(() => {});
-    getSuccessStories().then(setSuccessStories).catch(() => {});
+    Promise.all([
+      getConsultants().then(setAllConsultants).catch(() => {}),
+      getForumPosts().then(setForumPosts).catch(() => {}),
+      getSuccessStories().then(setSuccessStories).catch(() => {}),
+      getUniversitiesRich().then(setUniversities).catch(() => {}),
+    ]).finally(() => setIsLoading(false));
   }, []);
 
   // Toggle interest
@@ -187,6 +199,7 @@ export default function Home() {
 
             <nav className="hidden md:flex items-center gap-8">
               <button onClick={() => setShowAllConsultants(true)} className="text-text-secondary hover:text-text-primary font-medium">All Consultants</button>
+              <Link href="/universities" className="text-text-secondary hover:text-text-primary font-medium">Universities</Link>
               <Link href="/forum" className="text-text-secondary hover:text-text-primary font-medium">Community</Link>
               <a href="#how-it-works" className="text-text-secondary hover:text-text-primary font-medium">How It Works</a>
               <a href="#success-stories" className="text-text-secondary hover:text-text-primary font-medium">Success Stories</a>
@@ -511,20 +524,24 @@ export default function Home() {
 
           {/* Consultant Grid */}
           <div className="grid md:grid-cols-2 gap-4">
-            {filteredConsultants.map((item) => {
-              const { consultant, score, reasons } = getConsultantData(item);
-              return (
-                <ConsultantCard
-                  key={consultant.id}
-                  consultant={consultant}
-                  matchScore={score > 0 ? score : undefined}
-                  reasons={reasons}
-                />
-              );
-            })}
+            {isLoading ? (
+              Array.from({ length: 4 }).map((_, i) => <SkeletonConsultantCard key={i} />)
+            ) : (
+              filteredConsultants.map((item) => {
+                const { consultant, score, reasons } = getConsultantData(item);
+                return (
+                  <ConsultantCard
+                    key={consultant.id}
+                    consultant={consultant}
+                    matchScore={score > 0 ? score : undefined}
+                    reasons={reasons}
+                  />
+                );
+              })
+            )}
           </div>
 
-          {filteredConsultants.length === 0 && (
+          {!isLoading && filteredConsultants.length === 0 && (
             <div className="text-center py-12">
               <p className="text-text-tertiary text-lg">No consultants found</p>
               <button
@@ -537,6 +554,30 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      {/* University Explorer */}
+      {universities.length > 0 && (
+        <section className="py-12 bg-card-bg border-t border-border">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl md:text-2xl font-bold text-text-primary">Explore Universities</h2>
+                <p className="text-text-secondary text-sm mt-1">{universities.length} US universities with detailed admission data</p>
+              </div>
+              <Link href="/universities" className="text-accent-dark hover:text-accent font-medium text-sm flex items-center gap-1">
+                View all <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
+              {universities.slice(0, 8).map((u) => (
+                <div key={u.id} className="snap-start min-w-[280px] max-w-[320px] flex-shrink-0">
+                  <UniversityCard university={u} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* How It Works */}
       <section id="how-it-works" className="py-16 bg-card-bg">
@@ -598,16 +639,47 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-page-bg border-t border-border py-8">
+      <footer className="bg-primary text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <GraduationCap className="w-4 h-4 text-white" />
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+                  <GraduationCap className="w-4 h-4 text-accent-light" />
+                </div>
+                <span className="text-lg font-bold">PathPal</span>
               </div>
-              <span className="text-lg font-bold text-text-primary">PathPal</span>
+              <p className="text-white/60 text-sm leading-relaxed">
+                Peer-to-peer college counseling. Get matched with verified students at top US universities.
+              </p>
             </div>
-            <p className="text-text-tertiary text-sm">&copy; 2026 PathPal. All rights reserved.</p>
+            <div>
+              <h4 className="font-semibold mb-3 text-accent-light">Platform</h4>
+              <ul className="space-y-2 text-sm text-white/60">
+                <li><button onClick={() => setShowAllConsultants(true)} className="hover:text-white transition-colors">Browse Consultants</button></li>
+                <li><Link href="/universities" className="hover:text-white transition-colors">Universities</Link></li>
+                <li><Link href="/forum" className="hover:text-white transition-colors">Community</Link></li>
+                <li><Link href="/become-consultant" className="hover:text-white transition-colors">Become a Consultant</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-3 text-accent-light">Resources</h4>
+              <ul className="space-y-2 text-sm text-white/60">
+                <li><a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a></li>
+                <li><a href="#success-stories" className="hover:text-white transition-colors">Success Stories</a></li>
+                <li><Link href="/forum" className="hover:text-white transition-colors">Ask the Community</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-3 text-accent-light">Account</h4>
+              <ul className="space-y-2 text-sm text-white/60">
+                <li><Link href="/login" className="hover:text-white transition-colors">Sign In</Link></li>
+                <li><Link href="/signup" className="hover:text-white transition-colors">Sign Up</Link></li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-white/10 pt-6 text-center text-white/40 text-sm">
+            &copy; 2026 PathPal. All rights reserved.
           </div>
         </div>
       </footer>
