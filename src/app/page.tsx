@@ -3,7 +3,7 @@
 import { useState, useEffect, startTransition } from "react";
 import Link from "next/link";
 import { Search, GraduationCap, ChevronRight, Sparkles, FileText, Calendar, Video, SlidersHorizontal, X, Menu, LogOut, User } from "lucide-react";
-import { consultants, Consultant } from "@/data/consultants";
+import { consultants as mockConsultants, Consultant } from "@/data/consultants";
 import { clsx } from "clsx";
 import AIChat from "@/components/AIChat";
 import ConsultantCard from "@/components/ConsultantCard";
@@ -13,6 +13,9 @@ import { getRecommendedSchools, getRecommendedMajors } from "@/data/universities
 import { INTERESTS, GRADE_LEVELS } from "@/lib/constants";
 import type { SortOption } from "@/lib/constants";
 import { useUser } from "@/context/UserContext";
+import { getConsultants } from "@/lib/db/consultants";
+import { getForumPosts } from "@/lib/db/forum";
+import { getSuccessStories, type SuccessStory } from "@/lib/db/stories";
 
 interface MatchedConsultant {
   consultant: Consultant;
@@ -45,37 +48,20 @@ export default function Home() {
   // Mobile menu state
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Forum posts state
+  // Data state (loaded from Supabase with fallback to mock)
+  const [allConsultants, setAllConsultants] = useState<Consultant[]>(mockConsultants);
   const [forumPosts, setForumPosts] = useState<Post[]>(samplePosts);
+  const [successStories, setSuccessStories] = useState<SuccessStory[]>([
+    { name: "Alex T.", school: "Harvard", quote: "My consultant helped me craft a compelling narrative that stood out.", avatar: "👨🏿" },
+    { name: "Sarah M.", school: "Stanford", quote: "The mock interview sessions were incredibly helpful!", avatar: "👩🏻" },
+    { name: "James K.", school: "MIT", quote: "Got into MIT thanks to the resume guidance.", avatar: "👨🏻" },
+  ]);
 
-  // Load forum posts from localStorage
+  // Load data from Supabase
   useEffect(() => {
-    startTransition(() => {
-      try {
-        const stored = localStorage.getItem("forum_posts");
-        if (stored) {
-          const storedPosts = JSON.parse(stored).map((p: Post) => ({
-            ...p,
-            createdAt: new Date(p.createdAt),
-            comments: (p.comments ?? []).map((c) => ({
-              ...c,
-              createdAt: new Date(c.createdAt),
-              replies: (c.replies ?? []).map((r) => ({
-                ...r,
-                createdAt: new Date(r.createdAt)
-              }))
-            }))
-          }));
-
-          const allPosts = [...storedPosts, ...samplePosts].sort((a: Post, b: Post) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-          setForumPosts(allPosts);
-        }
-      } catch (e) {
-        console.error("Failed to load forum posts:", e);
-      }
-    });
+    getConsultants().then(setAllConsultants).catch(() => {});
+    getForumPosts().then(setForumPosts).catch(() => {});
+    getSuccessStories().then(setSuccessStories).catch(() => {});
   }, []);
 
   // Toggle interest
@@ -87,7 +73,7 @@ export default function Home() {
 
   // Simple matching logic
   const getMatchedConsultants = (): MatchedConsultant[] => {
-    return consultants.map(c => {
+    return allConsultants.map(c => {
       let score = 0;
       const reasons: string[] = [];
 
@@ -152,7 +138,7 @@ export default function Home() {
   const matchedConsultants = getMatchedConsultants();
 
   const displayedConsultants: (MatchedConsultant | Consultant)[] = showAllConsultants
-    ? consultants
+    ? allConsultants
     : matchedConsultants.slice(0, 5);
 
   const getConsultantData = (item: MatchedConsultant | Consultant) => {
@@ -597,11 +583,7 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { name: "Alex T.", school: "Harvard", quote: "My consultant helped me craft a compelling narrative that stood out.", avatar: "👨🏿" },
-              { name: "Sarah M.", school: "Stanford", quote: "The mock interview sessions were incredibly helpful!", avatar: "👩🏻" },
-              { name: "James K.", school: "MIT", quote: "Got into MIT thanks to the resume guidance.", avatar: "👨🏻" },
-            ].map((story, idx) => (
+            {successStories.map((story, idx) => (
               <div key={idx} className="bg-white/5 rounded-2xl p-6 hover:bg-white/10 transition-colors">
                 <div className="text-4xl mb-4">{story.avatar}</div>
                 <p className="text-slate-300 mb-4">&ldquo;{story.quote}&rdquo;</p>

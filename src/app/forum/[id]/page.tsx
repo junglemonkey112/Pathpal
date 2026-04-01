@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { GraduationCap, ArrowLeft, Heart, MessageCircle, Award, Send, CornerDownRight } from "lucide-react";
 import { Post, Comment, samplePosts, guestUser, createAuthUser, createComment } from "@/data/forum";
+import { getForumPostById, addComment as addDbComment } from "@/lib/db/forum";
 import { clsx } from "clsx";
 import { useUser } from "@/context/UserContext";
 
@@ -155,35 +156,16 @@ export default function PostDetailPage() {
     : guestUser;
 
   useEffect(() => {
-    // Try localStorage first, then sample data
-    try {
-      const stored = localStorage.getItem("forum_posts");
-      if (stored) {
-        const storedPosts: Post[] = JSON.parse(stored).map((p: Post) => ({
-          ...p,
-          createdAt: new Date(p.createdAt),
-          comments: (p.comments ?? []).map((c: Comment) => ({
-            ...c,
-            createdAt: new Date(c.createdAt),
-            replies: (c.replies ?? []).map((r: Comment) => ({
-              ...r,
-              createdAt: new Date(r.createdAt)
-            }))
-          }))
-        }));
-        const found = storedPosts.find(p => p.id === postId);
-        if (found) {
-          startTransition(() => setPost(found));
-          return;
-        }
+    getForumPostById(postId).then((found) => {
+      if (found) {
+        startTransition(() => setPost(found));
       }
-    } catch {
-      // fallthrough to sample data
-    }
-    const found = samplePosts.find(p => p.id === postId);
-    if (found) {
-      startTransition(() => setPost(found));
-    }
+    }).catch(() => {
+      const found = samplePosts.find(p => p.id === postId);
+      if (found) {
+        startTransition(() => setPost(found));
+      }
+    });
   }, [postId]);
 
   const handleLike = () => {
@@ -195,7 +177,7 @@ export default function PostDetailPage() {
     });
   };
 
-  const handleAddComment = () => {
+  const handleAddComment = async () => {
     if (!newComment.trim() || !post) return;
 
     const comment = createComment(newComment, currentAuthor);
@@ -204,6 +186,9 @@ export default function PostDetailPage() {
       comments: [...post.comments, comment]
     });
     setNewComment("");
+
+    // Persist to DB
+    addDbComment(post.id, newComment, currentAuthor).catch(() => {});
   };
 
   const handleReply = (parentId: string, content: string) => {

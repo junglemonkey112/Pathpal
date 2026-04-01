@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, startTransition } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { GraduationCap, MessageCircle, Heart, Plus, Award } from "lucide-react";
 import { samplePosts, Post } from "@/data/forum";
+import { getForumPosts } from "@/lib/db/forum";
 import { clsx } from "clsx";
 
 function formatTimeAgo(date: Date): string {
@@ -17,40 +18,17 @@ function formatTimeAgo(date: Date): string {
   return "Just now";
 }
 
-// Helper to parse dates from localStorage
-function parsePosts(posts: Post[]): Post[] {
-  return posts.map(p => ({
-    ...p,
-    createdAt: new Date(p.createdAt),
-    comments: (p.comments ?? []).map((c) => ({
-      ...c,
-      createdAt: new Date(c.createdAt),
-      replies: (c.replies ?? []).map((r) => ({
-        ...r,
-        createdAt: new Date(r.createdAt)
-      }))
-    }))
-  }));
-}
 
 export default function ForumPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    startTransition(() => {
-      setIsClient(true);
-      try {
-        const stored = localStorage.getItem("forum_posts");
-        const storedPosts = stored ? parsePosts(JSON.parse(stored)) : [];
-        const allPosts = [...storedPosts, ...samplePosts].sort((a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-        setPosts(allPosts);
-      } catch (e) {
-        console.error("Failed to load posts:", e);
-        setPosts(samplePosts);
-      }
+    setIsClient(true);
+    getForumPosts().then((dbPosts) => {
+      setPosts(dbPosts);
+    }).catch(() => {
+      setPosts(samplePosts);
     });
   }, []);
 

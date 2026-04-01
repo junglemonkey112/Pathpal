@@ -1,22 +1,34 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Star, Calendar, Video, Check, LogIn } from "lucide-react";
-import { consultants } from "@/data/consultants";
+import { consultants as mockConsultants, type Consultant } from "@/data/consultants";
+import { getConsultantById } from "@/lib/db/consultants";
 import { clsx } from "clsx";
 import { useUser } from "@/context/UserContext";
 
 export default function ConsultantPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
-  const consultant = consultants.find((c) => c.id === resolvedParams.id);
   const { user } = useUser();
 
+  const [consultant, setConsultant] = useState<Consultant | undefined>(
+    () => mockConsultants.find((c) => c.id === resolvedParams.id)
+  );
   const [selectedService, setSelectedService] = useState(consultant?.services[0]);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [bookingStep, setBookingStep] = useState(1);
+
+  useEffect(() => {
+    getConsultantById(resolvedParams.id).then((c) => {
+      if (c) {
+        setConsultant(c);
+        setSelectedService(c.services[0]);
+      }
+    }).catch(() => {});
+  }, [resolvedParams.id]);
 
   if (!consultant) {
     return (

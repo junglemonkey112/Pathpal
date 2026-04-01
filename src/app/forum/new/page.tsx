@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Image, X, LogIn } from "lucide-react";
 import { createPost, createAuthUser } from "@/data/forum";
+import { createForumPost } from "@/lib/db/forum";
 import { useUser } from "@/context/UserContext";
 
 export default function NewPostPage() {
@@ -46,10 +47,14 @@ export default function NewPostPage() {
       user.id,
       user.user_metadata?.full_name || user.email?.split("@")[0] || "User"
     );
-    const newPost = createPost(title, content, images, author);
 
-    const existingPosts = JSON.parse(localStorage.getItem("forum_posts") || "[]");
-    localStorage.setItem("forum_posts", JSON.stringify([newPost, ...existingPosts]));
+    // Try Supabase first, fall back to localStorage
+    const dbPost = await createForumPost(title, content, images, author);
+    if (!dbPost) {
+      const newPost = createPost(title, content, images, author);
+      const existingPosts = JSON.parse(localStorage.getItem("forum_posts") || "[]");
+      localStorage.setItem("forum_posts", JSON.stringify([newPost, ...existingPosts]));
+    }
 
     router.push("/forum");
   };
