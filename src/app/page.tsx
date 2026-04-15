@@ -62,6 +62,7 @@ export default function Home() {
 
   // Universities state
   const [universities, setUniversities] = useState<SupabaseUniversity[]>([]);
+  const [universitiesError, setUniversitiesError] = useState<string | null>(null);
 
   // Loading state
   const [isLoading, setIsLoading] = useState(true);
@@ -72,7 +73,15 @@ export default function Home() {
       getConsultants().then(setAllConsultants).catch(() => {}),
       getForumPosts().then(setForumPosts).catch(() => {}),
       getSuccessStories().then(setSuccessStories).catch(() => {}),
-      getUniversitiesRich().then(setUniversities).catch(() => {}),
+      getUniversitiesRich()
+        .then((data) => {
+          setUniversities(data);
+          setUniversitiesError(null);
+        })
+        .catch((err) => {
+          console.error("Failed to load universities:", err);
+          setUniversitiesError(err?.message ?? "Failed to load universities");
+        }),
     ]).finally(() => setIsLoading(false));
   }, []);
 
@@ -556,25 +565,36 @@ export default function Home() {
       </section>
 
       {/* University Explorer */}
-      {universities.length > 0 && (
+      {(universities.length > 0 || universitiesError) && (
         <section className="py-12 bg-card-bg border-t border-border">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="text-xl md:text-2xl font-bold text-text-primary">Explore Universities</h2>
-                <p className="text-text-secondary text-sm mt-1">{universities.length} US universities with detailed admission data</p>
+                <p className="text-text-secondary text-sm mt-1">
+                  {universitiesError
+                    ? "Couldn't load universities"
+                    : `${universities.length} US universities with detailed admission data`}
+                </p>
               </div>
               <Link href="/universities" className="text-accent-dark hover:text-accent font-medium text-sm flex items-center gap-1">
                 View all <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
-            <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
-              {universities.slice(0, 8).map((u) => (
-                <div key={u.id} className="snap-start min-w-[280px] max-w-[320px] flex-shrink-0">
-                  <UniversityCard university={u} />
-                </div>
-              ))}
-            </div>
+            {universitiesError ? (
+              <div className="rounded-xl border border-red-300 bg-red-50 text-red-800 p-4 text-sm">
+                <p className="font-medium mb-1">Failed to load universities</p>
+                <p className="opacity-80 break-words">{universitiesError}</p>
+              </div>
+            ) : (
+              <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
+                {universities.slice(0, 8).map((u) => (
+                  <div key={u.id} className="snap-start min-w-[280px] max-w-[320px] flex-shrink-0">
+                    <UniversityCard university={u} />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       )}
